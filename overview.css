@@ -1,67 +1,64 @@
-/* Base Styling */
-body {
+/* Sakura Canvas & Base Reset */
+html, body {
+  height: 100%;
   margin: 0;
   padding: 0;
+  overflow-x: hidden;
+  position: relative;
   font-family: 'Poppins', sans-serif;
   background: linear-gradient(to bottom, #fdf6ff, #ece0ff);
-  overflow-x: hidden;
-  height: 100vh;
-  position: relative;
 }
 
-/* Fluttering petals stay behind everything */
-body::before {
-  content: '';
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
+/* Ensure sakura canvas stays in the background */
+canvas.sakura {
+  position: fixed !important;
+  top: 0;
+  left: 0;
   pointer-events: none;
+  z-index:999;
 }
 
-/* Container for everything */
+/* Main Container */
 .container {
-  max-width: 800px;
+  max-width: 900px;
   margin: 0 auto;
-  padding: 30px 20px;
-  background-color: rgba(255, 255, 255, 0.9);
+  padding: 40px 25px;
+  background-color: rgba(255, 255, 255, 0.85);
   border-radius: 20px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
   position: relative;
-  z-index: 2;
-  min-height: 90vh;
+  z-index: 1;
 }
 
 /* Headings */
 h1 {
   color: #9e74c1;
   text-align: center;
-  font-size: 2.4rem;
+  font-size: 2.5rem;
   margin-bottom: 5px;
 }
 
 .subtitle {
-  font-size: 1.2rem;
+  font-size: 1.15rem;
   text-align: center;
   color: #a78dc5;
   margin: 4px 0;
 }
 
-/* Mascot Placeholder */
+/* Mascot */
 .mascot {
   display: flex;
   justify-content: center;
-  margin: 10px 0 20px;
+  margin: 20px 0 30px;
 }
 
 .mascot img {
-  width: 120px;
+  width: 180px;
+  max-width: 40%;
   height: auto;
-  border-radius: 12px;
-  border: 3px dashed #d6b3ff;
-  padding: 5px;
-  background-color: #fff4ff;
+  border: none;
+  border-radius: 0;
+  background: none;
 }
 
 /* Toggle Switch */
@@ -80,8 +77,10 @@ h1 {
 .slider {
   position: absolute;
   cursor: pointer;
-  top: 0; left: 0;
-  right: 0; bottom: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background-color: #ccc;
   border-radius: 34px;
   transition: 0.4s;
@@ -116,7 +115,7 @@ input:checked + .slider:before {
   margin-right: 20px;
 }
 
-/* Data Table */
+/* Table Styling */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -141,12 +140,12 @@ td {
 }
 
 .total-row {
-  background-color: #f4eaff; /* same as header */
+  background-color: #f4eaff;
   font-weight: bold;
   color: #5e3d84;
 }
 
-/* Extra Info and Notes */
+/* Extra Info */
 #extraInfo {
   margin-top: 20px;
 }
@@ -160,29 +159,60 @@ td {
 
 /* Achievements Section */
 .achievements {
-  margin-top: 40px;
+  margin-top: 50px;
   display: flex;
-  flex-direction: column;
-  gap: 15px;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
 }
 
 .achievement-card {
-  background: #fff9fc;
-  border-left: 5px solid #caa0f8;
-  padding: 12px 16px;
-  border-radius: 14px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  background-color: #fff6ff;
+  border: 2px dashed #d6b3ff;
+  border-radius: 15px;
+  padding: 16px 20px;
+  width: 250px;
+  box-shadow: 0 4px 12px rgba(210, 170, 240, 0.2);
+  text-align: center;
+  transition: transform 0.2s ease;
+}
+
+.achievement-card:hover {
+  transform: scale(1.03);
 }
 
 .achievement-card h3 {
-  margin: 0;
+  margin: 0 0 8px;
+  color: #8b5fbf;
   font-size: 1.1rem;
-  color: #865eb3;
 }
 
 .achievement-card p {
-  margin: 4px 0 0;
-  font-family: 'Handlee', cursive;
-  color: #6f5b93;
-  font-size: 1rem;
+  color: #6d5d89;
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .achievement-card {
+    width: 100%;
+  }
+
+  .mascot img {
+    width: 130px;
+  }
+
+  table th, table td {
+    font-size: 0.85rem;
+    padding: 10px;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  .subtitle {
+    font-size: 1rem;
+  }
 }
