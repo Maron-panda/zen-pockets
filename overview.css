@@ -1,108 +1,102 @@
-/* Sakura Canvas - floats OVER everything */
+/* overview.css */
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #c9a0dc 0%, #f3e5f5 100%);
+  background-attachment: fixed;
+  color: #333;
+  overflow-x: hidden;
+  position: relative;
+}
+
 canvas.sakura {
   position: fixed !important;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
   pointer-events: none;
-  z-index: 9999;
+  z-index: 1000 !important;
 }
 
-/* Page Background */
-html, body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden;
-  font-family: 'Poppins', sans-serif;
-  background: linear-gradient(to bottom, #fdf6ff, #ece0ff);
-}
-
-/* Main Container - less opaque now */
+/* Remove the container boxy style */
 .container {
-  max-width: 900px;
-  margin: 40px auto;
-  padding: 40px 25px;
-  background-color: rgba(255, 255, 255, 0.7);
-  border-radius: 20px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  padding: 2rem 1rem;
+  max-width: 800px;
+  margin: 0 auto;
   position: relative;
-  z-index: 1;
 }
 
-/* Headings */
+/* Heading styles */
 h1 {
-  color: #9e74c1;
-  text-align: center;
   font-size: 2.5rem;
-  margin-bottom: 5px;
+  color: #663399;
+  text-align: center;
+  margin-bottom: 0.2rem;
 }
 
 .subtitle {
-  font-size: 1.15rem;
   text-align: center;
-  color: #a78dc5;
-  margin: 4px 0;
+  font-weight: 600;
+  color: #8855aa;
+  margin-top: 0;
 }
 
-/* Mascot */
+/* Mascot image */
 .mascot {
-  display: flex;
-  justify-content: center;
-  margin: 20px 0 30px;
+  text-align: center;
+  margin: 1rem 0;
 }
 
 .mascot img {
-  width: 180px;
-  max-width: 40%;
+  width: 120px;
   height: auto;
+  border-radius: 1rem;
+  box-shadow: 0 4px 10px rgba(102, 51, 153, 0.3);
 }
 
-/* Toggle + Label Layout Fix */
+/* Toggle switch */
 #toggleContainer {
   display: flex;
+  justify-content: center;
   align-items: center;
-  justify-content: flex-end;
-  gap: 12px;
-  margin-top: 10px;
-  margin-bottom: -15px;
-}
-
-#toggleLabel {
-  font-size: 1rem;
+  margin: 1rem 0;
+  gap: 0.5rem;
   font-weight: 600;
-  color: #7e5ea7;
+  color: #6a1b9a;
 }
 
 .switch {
   position: relative;
-  width: 45px;
-  height: 24px;
+  display: inline-block;
+  width: 50px;
+  height: 26px;
 }
 
 .switch input {
-  display: none;
+  opacity: 0;
+  width: 0;
+  height: 0;
 }
 
 .slider {
   position: absolute;
   cursor: pointer;
+  background-color: #ccc;
+  transition: 0.4s;
+  border-radius: 26px;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #ccc;
-  border-radius: 34px;
-  transition: 0.4s;
 }
 
 .slider:before {
   position: absolute;
   content: "";
-  height: 18px;
-  width: 18px;
-  left: 3px;
+  height: 20px;
+  width: 20px;
+  left: 4px;
   bottom: 3px;
   background-color: white;
   transition: 0.4s;
@@ -110,116 +104,77 @@ h1 {
 }
 
 input:checked + .slider {
-  background-color: #d6b3ff;
+  background-color: #9c27b0;
 }
 
 input:checked + .slider:before {
-  transform: translateX(20px);
+  transform: translateX(24px);
 }
 
-/* Table Styling */
-table {
+/* Table styling */
+#dataTable {
   width: 100%;
-  border-collapse: collapse;
-  margin-top: 30px;
+  margin-top: 1rem;
+  border-collapse: separate;
+  border-spacing: 0;
+  background-color: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(102, 51, 153, 0.2);
+  overflow: hidden;
 }
 
-th, td {
-  padding: 12px;
-  text-align: center;
-  border-bottom: 1px solid #ecdfff;
-}
-
-th {
-  background-color: #f4eaff;
-  color: #6e4b9b;
-  font-weight: 600;
-}
-
-td {
-  color: #6b5a89;
-  font-size: 0.95rem;
-}
-
-/* Category label cell left-aligned */
-td:first-child {
+#dataTable th,
+#dataTable td {
+  padding: 1rem;
   text-align: left;
 }
 
-.total-row {
-  background-color: #f4eaff;
+#dataTable thead {
+  background-color: #ede7f6;
+  color: #4a148c;
   font-weight: bold;
-  color: #5e3d84;
 }
 
-/* Extra Info */
-#extraInfo {
-  margin-top: 20px;
+#dataTable tbody tr:nth-child(even) {
+  background-color: #f3e5f5;
 }
 
-.footnote {
-  font-size: 0.85rem;
-  color: #9987b2;
-  font-style: italic;
-  margin-top: 10px;
+.total-row {
+  font-weight: bold;
+  background-color: #d1c4e9 !important;
 }
 
-/* Achievements Section */
+/* Achievements */
 .achievements {
-  margin-top: 50px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  justify-content: center;
+  margin-top: 2rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
 }
 
 .achievement-card {
-  background-color: #fff6ff;
-  border: 2px dashed #d6b3ff;
-  border-radius: 15px;
-  padding: 16px 20px;
-  width: 250px;
-  box-shadow: 0 4px 12px rgba(210, 170, 240, 0.2);
-  text-align: center;
-  transition: transform 0.2s ease;
-}
-
-.achievement-card:hover {
-  transform: scale(1.03);
+  background-color: #fff8fc;
+  border: 2px solid #ce93d8;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 4px 10px rgba(186, 104, 200, 0.3);
 }
 
 .achievement-card h3 {
-  margin: 0 0 8px;
-  color: #8b5fbf;
-  font-size: 1.1rem;
+  margin-top: 0;
+  color: #8e24aa;
 }
 
 .achievement-card p {
-  color: #6d5d89;
+  margin: 0.3rem 0 0 0;
+  color: #6a1b9a;
   font-size: 0.95rem;
-  margin: 0;
 }
 
-/* Responsive */
-@media (max-width: 600px) {
-  .achievement-card {
-    width: 100%;
-  }
-
-  .mascot img {
-    width: 130px;
-  }
-
-  table th, table td {
-    font-size: 0.85rem;
-    padding: 10px;
-  }
-
-  h1 {
-    font-size: 2rem;
-  }
-
-  .subtitle {
-    font-size: 1rem;
-  }
+/* Footnote & extra info */
+.footnote {
+  font-size: 0.8rem;
+  color: #6a1b9a;
+  margin-top: 1rem;
+  text-align: center;
 }
