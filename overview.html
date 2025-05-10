@@ -5,7 +5,24 @@
   <title>Zen Pockets Overview</title>
   <link rel="stylesheet" href="overview.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"> 
-  <link type="text/css" rel="stylesheet" media="screen" href="/css/jquery-sakura.min.css"
+  <link rel="stylesheet" href="jquery-sakura.min.css">
+   <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    canvas.sakura {
+      position: fixed !important;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 9999;
+    }
+  </style>
 </head>
 <body>
   <div class="container">
@@ -16,7 +33,7 @@
     <div class="mascot">
       <img src="momorin-placeholder.png" alt="Momorin the Mascot"> 
     </div>
-
+    
 
     <!-- Toggle Switch -->
     <label class="switch">
@@ -152,16 +169,15 @@
       return str.charAt(0).toUpperCase() + str.slice(1);
     }
   </script>
-  <!-- End of your HTML body -->
-  <script src="/js/jquery-sakura.min.js"></script>
+  
+  <!-- ✅ jQuery must come before the Sakura plugin -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="jquery-sakura.min.js"></script> <!-- ✅ Check this path too -->
+  
+  
   <script>
-    // domReady
-    $(function() {
-      $.fn.sakura();
-    });
-    // windowLoad
-    $(window).load(function() {
-      $.fn.sakura();
+    $(window).on('load', function () {
+      $('body').sakura(); // ✅ this is the actual usage
     });
   </script>
 </body>
