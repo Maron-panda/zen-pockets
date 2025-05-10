@@ -5,6 +5,7 @@
   <title>Zen Pockets Overview</title>
   <link rel="stylesheet" href="overview.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"> 
+  <link type="text/css" rel="stylesheet" media="screen" href="/css/jquery-sakura.min.css"
 </head>
 <body>
   <div class="container">
@@ -151,14 +152,17 @@
       return str.charAt(0).toUpperCase() + str.slice(1);
     }
   </script>
-
-  <script src="https://cdn.jsdelivr.net/gh/jhammann/sakura@master/dist/sakura.min.js"></script>
-
+  <!-- End of your HTML body -->
+  <script src="/js/jquery-sakura.min.js"></script>
   <script>
-  window.addEventListener('DOMContentLoaded', () => {
-    new Sakura('body');
-  });
-</script>
-
+    // domReady
+    $(function() {
+      $.fn.sakura();
+    });
+    // windowLoad
+    $(window).load(function() {
+      $.fn.sakura();
+    });
+  </script>
 </body>
 </html>
