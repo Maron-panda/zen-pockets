@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <link rel="stylesheet" href="overview.css">
+  </head>
+  <body>
+    <div class="wrapper">
+      <h1>🐼 Welcome back, Queen Maron!</h1>
+      <p class="greeting">Momorin reporting for duty!✨</p>
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Giant_Panda_in_Beijing_Zoo_1.JPG/640px-Giant_Panda_in_Beijing_Zoo_1.JPG" alt="Momorin the panda" class="panda">
+
+      <div class="header-row">
+        <h2 id="viewTitle">Current monthly allocations</h2>
+        <label class="switch">
+          <input type="checkbox" id="toggleView">
+          <span class="slider round"></span>
+        </label>
+        <span class="toggle-label">Showing: Current monthly allocations</span>
+      </div>
+
+      <div id="allocations" class="card-container">Loading...</div>
+    </div>
+
+    <script>
+      const categoryLabels = {
+        Loan: "Loan Down Payments",
+        Savings: "Savings",
+        Charity: "Charity",
+        Fond: "Fond",
+        "Free use": "Free Use"
+      };
+
+      function cardHTML(id, label, total, lastPay) {
+        return `
+          <div class="card" id="${id}">
+            <h3>${label}</h3>
+            <p><strong>Total:</strong> ${Number(total).toLocaleString("no-NO")} NOK</p>
+            <p class="last-pay"><em>Last Pay:</em> ${lastPay !== "—" ? Number(lastPay).toLocaleString("no-NO") + " NOK" : "—"}</p>
+          </div>`;
+      }
+
+      fetch('https://script.google.com/macros/s/AKfycbwpZk0uPc5wRGvo5qKuE7ZUhUanft_Ax45erylAuvGqoj4B_Dp0YDR6hkKYqYPm-Qzp3g/exec')
+        .then(res => res.json())
+        .then(data => {
+          if (!data.length) return;
+
+          const categories = ["Loan", "Savings", "Charity", "Fond", "Free use"];
+          const monthlyRow = data.find(row => row.Month);
+          const totalRowsStart = data.findIndex(row => row.Category === "Loan");
+          const totalRows = data.slice(totalRowsStart, totalRowsStart + 5);
+          const lastPayValue = data.find(row => row.Category === "Pay Amount")?.["Last Pay"] || "—";
+
+          const renderView = (isTotal) => {
+            const target = document.getElementById("allocations");
+            target.innerHTML = "";
+            const viewData = isTotal
+              ? totalRows
+              : categories.map(c => ({
+                  Category: c,
+                  Total: monthlyRow?.[c] || "0",
+                  "Last Pay": lastPayValue
+                }));
+
+            viewData.forEach(row => {
+              target.innerHTML += cardHTML(
+                row.Category.toLowerCase().replace(" ", ""),
+                categoryLabels[row.Category],
+                row.Total,
+                row["Last Pay"]
+              );
+            });
+
+            document.querySelector(".toggle-label").textContent = isTotal
+              ? "Showing: Total allocations"
+              : "Showing: Current monthly allocations";
+            document.getElementById("viewTitle").textContent = isTotal
+              ? "Total allocations"
+              : "Current monthly allocations";
+          };
+
+          let isTotal = false;
+          renderView(isTotal);
+
+          document.getElementById("toggleView").addEventListener("change", () => {
+            isTotal = !isTotal;
+            renderView(isTotal);
+          });
+        });
+    </script>
+  </body>
+</html>

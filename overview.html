@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Zen Pockets Overview</title>
+  <link rel="stylesheet" href="overview.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"> 
+</head>
+<body>
+  <div class="container">
+    <h1>🐼 Zen Pockets</h1>
+    <p class="subtitle">Sweet savings, Panda Queen!</p>
+
+    <!-- Toggle Switch -->
+    <label class="switch">
+      <input type="checkbox" id="viewToggle">
+      <span class="slider round"></span>
+    </label>
+    <span id="toggleLabel">Monthly View</span>
+
+    <!-- Data Table -->
+    <table id="dataTable">
+      <thead>
+        <tr>
+          <th>Category</th>
+          <th id="amountHeader">This Month</th>
+          <th>Last Pay</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody">
+        <!-- Data will be populated here -->
+      </tbody>
+    </table>
+
+    <!-- Extra Info will be added dynamically -->
+    <div id="extraInfo"></div>
+
+    <!-- Achievements Section -->
+    <div class="achievements">
+      <div class="achievement-card">
+        <h3>🦊 Back to Back Zen</h3>
+        <p>"Budgeted two days in a row — foxy dedication!"</p>
+      </div>
+      <div class="achievement-card">
+        <h3>🐰 Perfect Round</h3>
+        <p>"Some bunnies make good points. You budget even numbers!"</p>
+      </div>
+      <div class="achievement-card">
+        <h3>🐼 The Ghost Budgeter</h3>
+        <p>"Some pandas budget by daylight... legends do it after midnight."</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const viewToggle = document.getElementById('viewToggle');
+    const toggleLabel = document.getElementById('toggleLabel');
+    const tableBody = document.getElementById('tableBody');
+    const amountHeader = document.getElementById('amountHeader');
+    const extraInfo = document.getElementById('extraInfo');
+
+    let data = [];
+
+    fetch('https://script.google.com/macros/s/AKfycbwpZk0uPc5wRGvo5qKuE7ZUhUanft_Ax45erylAuvGqoj4B_Dp0YDR6hkKYqYPm-Qzp3g/exec')
+      .then(response => response.json())
+      .then(json => {
+        data = json;
+        populateTable('monthly');
+        updateExtraInfo();
+      });
+
+    viewToggle.addEventListener('change', () => {
+      const view = viewToggle.checked ? 'total' : 'monthly';
+      toggleLabel.textContent = viewToggle.checked ? 'Total View' : 'Monthly View';
+      amountHeader.textContent = viewToggle.checked ? 'Total' : 'This Month';
+      populateTable(view);
+    });
+
+    function populateTable(view) {
+      tableBody.innerHTML = '';
+      const isTotalView = view === 'total';
+      const source = isTotalView ? data.totalView : data.overview[data.overview.length - 1];
+      const categories = [
+        { key: 'Loan', label: 'Loan' },
+        { key: 'Savings', label: 'Savings' },
+        { key: 'Charity', label: 'Charity' },
+        { key: 'Fond', label: 'Fond' },
+        { key: 'FreeUse', label: 'Free Use' }
+      ];
+      
+      categories.forEach(cat => {
+        const row = document.createElement('tr');
+        const categoryCell = document.createElement('td');
+        categoryCell.textContent = cat.label;
+
+        const amountCell = document.createElement('td');
+        const lastPayCell = document.createElement('td');
+
+        amountCell.textContent = `${source[cat.key]} NOK`;
+        lastPayCell.textContent = `${data.lastPay[cat.key]} NOK`;
+
+        row.appendChild(categoryCell);
+        row.appendChild(amountCell);
+        row.appendChild(lastPayCell);
+        tableBody.appendChild(row);
+      });
+
+      // Total row
+      const totalRow = document.createElement('tr');
+      totalRow.classList.add('total-row');
+
+      const totalLabelCell = document.createElement('td');
+      totalLabelCell.textContent = 'Total';
+
+      const totalAmountCell = document.createElement('td');
+      totalAmountCell.textContent = `${isTotalView ? source.Total : source.total} NOK`;
+
+      const totalLastPayCell = document.createElement('td');
+      totalLastPayCell.textContent = `${data.lastPay.Total} NOK`;
+
+      totalRow.appendChild(totalLabelCell);
+      totalRow.appendChild(totalAmountCell);
+      totalRow.appendChild(totalLastPayCell);
+      tableBody.appendChild(totalRow);
+    }
+
+    function updateExtraInfo() {
+      // Clear previous extras
+      extraInfo.innerHTML = '';
+
+      // Add rounding buffer
+      const roundingNote = document.createElement('p');
+      roundingNote.className = 'footnote';
+      roundingNote.textContent = `* Rounding buffer is currently ${data.totalView.roundingBuffer} NOK.`;
+      extraInfo.appendChild(roundingNote);
+
+      // Add Momorin message
+      const paysThisMonth = data.overview[data.overview.length - 1].payCount;
+      const momorinMsg = document.createElement('p');
+      momorinMsg.textContent = `Momorin 🐾: You have in total ${paysThisMonth} pays this month!`;
+      extraInfo.appendChild(momorinMsg);
+    }
+
+    function capitalize(str) {
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/gh/jhammann/sakura@master/dist/sakura.min.js"></script>
+
+  <script>
+  window.addEventListener('DOMContentLoaded', () => {
+    new Sakura('body');
+  });
+</script>
+
+</body>
+</html>
