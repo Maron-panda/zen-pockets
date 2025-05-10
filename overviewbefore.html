@@ -1,92 +1,159 @@
-or<!DOCTYPE html>
-<html>
-  <head>
-    <base target="_top">
-    <link rel="stylesheet" href="overviewbefore.css">
-  </head>
-  <body>
-    <div class="wrapper">
-      <h1>🐼 Welcome back, Queen Maron!</h1>
-      <p class="greeting">Momorin reporting for duty!✨</p>
-      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Giant_Panda_in_Beijing_Zoo_1.JPG/640px-Giant_Panda_in_Beijing_Zoo_1.JPG" alt="Momorin the panda" class="panda">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Zen Pockets Overview</title>
+  <link rel="stylesheet" href="overviewbefore.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"> 
+</head>
+<body>
+  <div class="container">
+    <h1>🐼 Zen Pockets</h1>
+    <p class="subtitle">Sweet savings, Panda Queen!</p>
+    <p class="subtitle">Momorin reporting for duty!</p>
 
-      <div class="header-row">
-        <h2 id="viewTitle">Current monthly allocations</h2>
-        <label class="switch">
-          <input type="checkbox" id="toggleView">
-          <span class="slider round"></span>
-        </label>
-        <span class="toggle-label">Showing: Current monthly allocations</span>
+    <!-- Toggle Switch -->
+    <label class="switch">
+      <input type="checkbox" id="viewToggle">
+      <span class="slider round"></span>
+    </label>
+    <span id="toggleLabel">Monthly View</span>
+
+    <!-- Data Table -->
+    <table id="dataTable">
+      <thead>
+        <tr>
+          <th>Category</th>
+          <th id="amountHeader">This Month</th>
+          <th>Last Pay</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody">
+        <!-- Data will be populated here -->
+      </tbody>
+    </table>
+
+    <!-- Extra Info will be added dynamically -->
+    <div id="extraInfo"></div>
+
+    <!-- Achievements Section -->
+    <div class="achievements">
+      <div class="achievement-card">
+        <h3>🦊 Back to Back Zen</h3>
+        <p>"Budgeted two days in a row — foxy dedication!"</p>
       </div>
-
-      <div id="allocations" class="card-container">Loading...</div>
+      <div class="achievement-card">
+        <h3>🐰 Perfect Round</h3>
+        <p>"Some bunnies make good points. You budget even numbers!"</p>
+      </div>
+      <div class="achievement-card">
+        <h3>🐼 The Ghost Budgeter</h3>
+        <p>"Some pandas budget by daylight... legends do it after midnight."</p>
+      </div>
     </div>
+  </div>
 
-    <script>
-      const categoryLabels = {
-        Loan: "Loan Down Payments",
-        Savings: "Savings",
-        Charity: "Charity",
-        Fond: "Fond",
-        "Free use": "Free Use"
-      };
+  <script>
+    const viewToggle = document.getElementById('viewToggle');
+    const toggleLabel = document.getElementById('toggleLabel');
+    const tableBody = document.getElementById('tableBody');
+    const amountHeader = document.getElementById('amountHeader');
+    const extraInfo = document.getElementById('extraInfo');
 
-      function cardHTML(id, label, total, lastPay) {
-        return `
-          <div class="card" id="${id}">
-            <h3>${label}</h3>
-            <p><strong>Total:</strong> ${Number(total).toLocaleString("no-NO")} NOK</p>
-            <p class="last-pay"><em>Last Pay:</em> ${lastPay !== "—" ? Number(lastPay).toLocaleString("no-NO") + " NOK" : "—"}</p>
-          </div>`;
-      }
+    let data = [];
 
-      fetch('https://script.google.com/macros/s/AKfycbwpZk0uPc5wRGvo5qKuE7ZUhUanft_Ax45erylAuvGqoj4B_Dp0YDR6hkKYqYPm-Qzp3g/exec')
-        .then(res => res.json())
-        .then(data => {
-          if (!data.length) return;
+    fetch('https://script.google.com/macros/s/AKfycbwpZk0uPc5wRGvo5qKuE7ZUhUanft_Ax45erylAuvGqoj4B_Dp0YDR6hkKYqYPm-Qzp3g/exec')
+      .then(response => response.json())
+      .then(json => {
+        data = json;
+        populateTable('monthly');
+        updateExtraInfo();
+      });
 
-          const categories = ["Loan", "Savings", "Charity", "Fond", "Free use"];
-          const monthlyRow = data.find(row => row.Month);
-          const totalRowsStart = data.findIndex(row => row.Category === "Loan");
-          const totalRows = data.slice(totalRowsStart, totalRowsStart + 5);
-          const lastPayValue = data.find(row => row.Category === "Pay Amount")?.["Last Pay"] || "—";
+    viewToggle.addEventListener('change', () => {
+      const view = viewToggle.checked ? 'total' : 'monthly';
+      toggleLabel.textContent = viewToggle.checked ? 'Total View' : 'Monthly View';
+      amountHeader.textContent = viewToggle.checked ? 'Total' : 'This Month';
+      populateTable(view);
+    });
 
-          const renderView = (isTotal) => {
-            const target = document.getElementById("allocations");
-            target.innerHTML = "";
-            const viewData = isTotal
-              ? totalRows
-              : categories.map(c => ({
-                  Category: c,
-                  Total: monthlyRow?.[c] || "0",
-                  "Last Pay": lastPayValue
-                }));
+    function populateTable(view) {
+      tableBody.innerHTML = '';
+      const isTotalView = view === 'total';
+      const source = isTotalView ? data.totalView : data.overview[data.overview.length - 1];
+      const categories = [
+        { key: 'Loan', label: 'Loan' },
+        { key: 'Savings', label: 'Savings' },
+        { key: 'Charity', label: 'Charity' },
+        { key: 'Fond', label: 'Fond' },
+        { key: 'FreeUse', label: 'Free Use' }
+      ];
+      
+      categories.forEach(cat => {
+        const row = document.createElement('tr');
+        const categoryCell = document.createElement('td');
+        categoryCell.textContent = cat.label;
 
-            viewData.forEach(row => {
-              target.innerHTML += cardHTML(
-                row.Category.toLowerCase().replace(" ", ""),
-                categoryLabels[row.Category],
-                row.Total,
-                row["Last Pay"]
-              );
-            });
+        const amountCell = document.createElement('td');
+        const lastPayCell = document.createElement('td');
 
-            document.querySelector(".toggle-label").textContent = isTotal
-              ? "Showing: Total allocations"
-              : "Showing: Current monthly allocations";
-            document.getElementById("viewTitle").textContent = isTotal
-              ? "Total allocations"
-              : "Current monthly allocations";
-          };
+        amountCell.textContent = `${source[cat.key]} NOK`;
+        lastPayCell.textContent = `${data.lastPay[cat.key]} NOK`;
 
-          let isTotal = false;
-          renderView(isTotal);
+        row.appendChild(categoryCell);
+        row.appendChild(amountCell);
+        row.appendChild(lastPayCell);
+        tableBody.appendChild(row);
+      });
 
-          document.getElementById("toggleView").addEventListener("change", () => {
-            isTotal = !isTotal;
-            renderView(isTotal);
-          });
-        });
-    </script>
-  </body>
+      // Total row
+      const totalRow = document.createElement('tr');
+      totalRow.classList.add('total-row');
+
+      const totalLabelCell = document.createElement('td');
+      totalLabelCell.textContent = 'Total';
+
+      const totalAmountCell = document.createElement('td');
+      totalAmountCell.textContent = `${isTotalView ? source.Total : source.total} NOK`;
+
+      const totalLastPayCell = document.createElement('td');
+      totalLastPayCell.textContent = `${data.lastPay.Total} NOK`;
+
+      totalRow.appendChild(totalLabelCell);
+      totalRow.appendChild(totalAmountCell);
+      totalRow.appendChild(totalLastPayCell);
+      tableBody.appendChild(totalRow);
+    }
+
+    function updateExtraInfo() {
+      // Clear previous extras
+      extraInfo.innerHTML = '';
+
+      // Add rounding buffer
+      const roundingNote = document.createElement('p');
+      roundingNote.className = 'footnote';
+      roundingNote.textContent = `* Rounding buffer is currently ${data.totalView.roundingBuffer} NOK.`;
+      extraInfo.appendChild(roundingNote);
+
+      // Add Momorin message
+      const paysThisMonth = data.overview[data.overview.length - 1].payCount;
+      const momorinMsg = document.createElement('p');
+      momorinMsg.textContent = `Momorin 🐾: You have in total ${paysThisMonth} pays this month!`;
+      extraInfo.appendChild(momorinMsg);
+    }
+
+    function capitalize(str) {
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/gh/jhammann/sakura@master/dist/sakura.min.js"></script>
+
+  <script>
+  window.addEventListener('DOMContentLoaded', () => {
+    new Sakura('body');
+  });
+</script>
+
+</body>
 </html>
