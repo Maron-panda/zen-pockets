@@ -7,15 +7,16 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"> 
   <link rel="stylesheet" href="jquery-sakura.min.css">
 </head>
+  
 <body>
   <div class="container">
-    <h1>🐼 Zen Pockets</h1>
-    <p class="subtitle">Sweet savings, Panda Queen!</p>
+    <h1>🐼 Zen Pockets</h1> 
     <p class="subtitle">Momorin reporting for duty!</p>
-    
-    <div class="mascot">
+
+    <!-- Change this to random pictures from same folder? Folder called images -->
+    <div class="mascot"> 
       <img src="momorin-placeholder.png" alt="Momorin the Mascot"> 
-    </div>
+    </div> 
     
 
     <!-- Toggle Switch -->
@@ -38,6 +39,7 @@
           <th>Last Pay</th>
         </tr>
       </thead>
+      
       <tbody id="tableBody">
         <!-- Data will be populated here -->
       </tbody>
@@ -49,21 +51,22 @@
     <!-- Achievements Section -->
     <div class="achievements">
       <div class="achievement-card">
-        <h3>🦊 Back to Back Zen</h3>
-        <p>"Budgeted two days in a row — foxy dedication!"</p>
+        <h3>🦊 Cunning Fox</h3>
+        <p>"Got 33333 in fond"</p>
       </div>
       <div class="achievement-card">
-        <h3>🐰 Perfect Round</h3>
-        <p>"Some bunnies make good points. You budget even numbers!"</p>
+        <h3>🐰 Burrowing bunny</h3>
+        <p>"Some bunnies make good points. You're saving 50000 for the future"</p>
       </div>
       <div class="achievement-card">
-        <h3>🐼 The Ghost Budgeter</h3>
-        <p>"Some pandas budget by daylight... legends do it after midnight."</p>
+        <h3>🐼 Free Panda</h3>
+        <p>"Payed down 50000 debt"</p>
       </div>
     </div>
   </div>
 
   <script>
+    //For the fetching and table. Do not touch it, it's hanging by a very thin thread
     const viewToggle = document.getElementById('viewToggle');
     const toggleLabel = document.getElementById('toggleLabel');
     const tableBody = document.getElementById('tableBody');
@@ -156,16 +159,23 @@
       return str.charAt(0).toUpperCase() + str.slice(1);
     }
   </script>
+
   
-  <!-- ✅ jQuery must come before the Sakura plugin -->
+  <!-- Sakura plugin -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-  <script src="jquery-sakura.min.js"></script> <!-- ✅ Check this path too -->
-  
-  
+  <script src="jquery-sakura.min.js"></script> 
   <script>
     $(window).on('load', function () {
       $('body').sakura(); // ✅ this is the actual usage
     });
   </script>
+  <!-- Floating Panda Link to Reading Pavilion -->
+  <a href="form.html" id="pandaReturn" title="Back to Reading Pavilion">
+    <img src="images/panda-writing.png" alt="Return to Reading Pavilion">
+  </a>
+
+<!-- Floating Letters Animation -->
+<div class="floating-letters"></div>
+
 </body>
 </html>
