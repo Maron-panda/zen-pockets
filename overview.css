@@ -1,16 +1,19 @@
-/* Sakura Canvas - floats OVER everything */
+/* Sakura Canvas - Always on top. Do not change */
 canvas.sakura {
   position: fixed !important;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  width: 100% !important;
+  height: 100% !important;
   pointer-events: none;
-  z-index: 9999!important;
+  z-index: 99999 !important;
+  opacity: 0.5 !important;
+  transform: scale(1);
 }
 
 /* Page Background */
-html, body {
+
+body {
   height: 100%;
   margin: 0;
   padding: 0;
@@ -42,7 +45,7 @@ h1 {
 }
 
 .subtitle {
-  font-size: 1.15rem;
+  font-size: 1.2rem;
   text-align: center;
   color: #a78dc5;
   margin: 4px 0;
@@ -56,8 +59,7 @@ h1 {
 }
 
 .mascot img {
-  width: 180px;
-  max-width: 40%;
+  width: 200px;
   height: auto;
 }
 
@@ -223,5 +225,51 @@ td:first-child {
 
   .subtitle {
     font-size: 1rem;
+  }
+}
+
+/* Panda Float Back Link */
+#pandaReturn {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 100px;
+  z-index: 9999;
+  animation: float 4s ease-in-out infinite;
+  cursor: pointer;
+}
+
+#pandaReturn img {
+  width: 100%;
+}
+
+/* Panda Letters Animation */
+.floating-letters {
+  position: fixed;
+  bottom: 90px;
+  right: 40px;
+  width: 20px;
+  height: 20px;
+  background: url('images/letter.png') no-repeat center center / contain;
+  animation: riseLetters 5s linear infinite;
+  z-index: 9998;
+  opacity: 0.7;
+}
+
+/* Animations */
+@keyframes float {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0); }
+}
+
+@keyframes riseLetters {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-200px) scale(1.2);
+    opacity: 0;
   }
 }
