@@ -64,26 +64,39 @@
       $('body').sakura(); // 
     });
   </script>
-
+  
   <script>
     function createBubble() {
       const bubble = document.createElement('div');
       bubble.classList.add('bubble');
 
-      // Random position near panda
-      bubble.style.left = `${60 + Math.random() * 80}px`;
-      bubble.style.width = bubble.style.height = `${8 + Math.random() * 10}px`;
+      // Random pastel color
+      const colors = [
+        'rgba(255, 200, 255, 0.9)', // pink
+        'rgba(200, 255, 255, 0.9)', // aqua
+        'rgba(255, 255, 200, 0.9)', // yellow
+        'rgba(200, 255, 200, 0.9)', // mint
+        'rgba(220, 200, 255, 0.9)'  // lilac
+        ];
+      const glow = colors[Math.floor(Math.random() * colors.length)];
+      bubble.style.background = glow;
+      bubble.style.boxShadow = `0 0 6px ${glow}`;
 
-      // Slight animation variation
+      // Random size & position
+      bubble.style.left = `${60 + Math.random() * 80}px`;
+      bubble.style.width = bubble.style.height = `${10 + Math.random() * 12}px`;
+
+      // Float timing
       bubble.style.animationDuration = `${4 + Math.random() * 4}s`;
-      
+
       document.body.appendChild(bubble);
       setTimeout(() => {
-        bubble.remove();}, 8000);
+        bubble.remove();
+      }, 8000);
     }
-    
-    setInterval(createBubble, 700); // creates a new bubble every 0.7s
-  </script>
+    setInterval(createBubble, 700);
+</script>
+
 
 
   <a href="overview.html" class="float-to-lotus-link" aria-label="Go to Lotus Pond"></a>
