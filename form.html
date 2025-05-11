@@ -37,9 +37,9 @@
       const data = { 
         pay: document.getElementById('pay').value,
         notes: document.getElementById('notes').value,
-        date: document.getElementById('date').value  // new line
-          };
-    
+        date: document.getElementById('date').value
+      };
+
       fetch('https://script.google.com/macros/s/AKfycbwpZk0uPc5wRGvo5qKuE7ZUhUanft_Ax45erylAuvGqoj4B_Dp0YDR6hkKYqYPm-Qzp3g/exec', {
         method: 'POST',
         mode: 'no-cors',
@@ -49,58 +49,46 @@
         body: JSON.stringify(data)
       });
 
-      alert('Budget submitted successfully!');
+      document.getElementById('statusMessage').innerHTML = `
+        <div class="success-message">
+          🌸 Your budget has been submitted, Maron! <br>Time to sip boba and relax! 🫧🫧
+        </div>`;
       document.getElementById('budgetForm').reset();
     });
   </script>
   
-  <!-- jQuery must come before the Sakura plugin -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script src="jquery-sakura.min.js"></script> 
-  
-  
   <script>
     $(window).on('load', function () {
-      $('body').sakura(); // 
+      $('body').sakura();
     });
   </script>
-  
+
   <script> 
     function createBubble() {
       const bubble = document.createElement('div');
       bubble.className = 'bubble';
-
-      // More natural soap-bubble-like colors
       const colors = [
-        'rgba(255, 255, 255, 0.6)', // white
-        'rgba(200, 220, 255, 0.5)', // very soft blue
-        'rgba(240, 255, 250, 0.4)', // faint mint
-        'rgba(255, 255, 255, 0.7)'  // bright white
+        'rgba(255, 255, 255, 0.6)',
+        'rgba(200, 220, 255, 0.5)',
+        'rgba(240, 255, 250, 0.4)',
+        'rgba(255, 255, 255, 0.7)'
       ];
       const glow = colors[Math.floor(Math.random() * colors.length)];
       bubble.style.background = glow;
-      bubble.style.boxShadow = `0 0 4px rgba(255, 255, 255, 0.5)`; // soft glow highlight
-
-      // Random size & position
+      bubble.style.boxShadow = `0 0 4px rgba(255, 255, 255, 0.5)`;
       const size = 8 + Math.random() * 18;
       bubble.style.left = `${40 + Math.random() * 120}px`;
       bubble.style.width = bubble.style.height = `${size}px`;
-
-      // Float timing
       const duration = 5 + Math.random() * 5;
       bubble.style.animationDuration = `${duration}s`;
-
       document.body.appendChild(bubble);
-      setTimeout(() => {
-      bubble.remove();
-      }, duration * 1000 + 1000); // remove after animation
+      setTimeout(() => { bubble.remove(); }, duration * 1000 + 1000);
     }
     setInterval(createBubble, 700);
   </script>
 
-
-
   <a href="overview.html" class="float-to-lotus-link" aria-label="Go to Lotus Pond"></a>
-
 </body>
 </html>
