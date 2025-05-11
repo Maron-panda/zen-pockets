@@ -1,34 +1,49 @@
 /* Base styling */
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   padding: 0;
-  background: #fff8f5;
+  background: linear-gradient(to bottom, #fff0f5, #fdf6fb);
   font-family: 'Poppins', sans-serif;
   color: #444;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 60px;
   overflow-x: hidden;
   position: relative;
 }
 
-/* Sakura override */
+/* Sakura Canvas - keep petals on top */
 canvas.sakura {
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
   z-index: 9999 !important;
-  opacity: 0.3 !important;  /* softer */
-  transform: scale(0.7);    /* smaller petals */
+  opacity: 0.3 !important;
+  transform: scale(0.7);
 }
 
 /* Container */
 .form-container {
-  max-width: 400px;
-  margin: 80px auto;
-  background: #fffafa;
+  background: #fffefe;
   border-radius: 24px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
   padding: 30px;
+  max-width: 420px;
+  width: 90%;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
   position: relative;
   z-index: 1;
 }
 
-/* Header & subtitle */
+/* Title */
 h1 {
   text-align: center;
   color: #ec6f9c;
@@ -41,35 +56,41 @@ h1 {
   text-align: center;
   font-size: 1rem;
   color: #aa5e88;
-  margin-bottom: 1.2em;
+  margin-bottom: 1.4em;
 }
 
-/* Mascot image */
+/* Mascot Styling */
+.mascot {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
 .mascot img {
-  display: block;
-  margin: 0 auto 20px auto;
-  max-width: 120px;
+  width: 100px;
+  height: auto;
+  border-radius: 16px;
+  object-fit: contain;
   animation: float 4s ease-in-out infinite;
 }
 
 @keyframes float {
   0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-8px); }
+  50% { transform: translateY(-6px); }
 }
 
-/* Form elements */
+/* Form fields */
 form label {
   display: block;
-  margin-bottom: 5px;
-  color: #7c4c66;
+  margin-bottom: 6px;
   font-weight: 500;
+  color: #7c4c66;
 }
 
 form input,
 form textarea {
   width: 100%;
   padding: 10px 14px;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
   border: 2px solid #f1d7e0;
   border-radius: 12px;
   background: #fffefe;
@@ -89,7 +110,7 @@ textarea {
   resize: vertical;
 }
 
-/* Button */
+/* Submit Button */
 button[type="submit"] {
   background: linear-gradient(to right, #fca4c1, #e48ccf);
   color: white;
@@ -100,7 +121,7 @@ button[type="submit"] {
   font-weight: 600;
   cursor: pointer;
   width: 100%;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   transition: background 0.3s;
 }
 
@@ -108,7 +129,7 @@ button[type="submit"]:hover {
   background: linear-gradient(to right, #f687b3, #d86dd1);
 }
 
-/* Status message */
+/* Status Message */
 #statusMessage {
   margin-top: 15px;
   font-size: 0.9rem;
