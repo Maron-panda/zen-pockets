@@ -28,7 +28,7 @@ canvas.sakura {
   pointer-events: none;
   z-index: 99999 !important;
   opacity: 0.5 !important;
-  transform: scale(0.8); /* smaller petals */
+  transform: scale(1); /* smaller petals */
 }
 
 /* Main Form Container */
@@ -66,7 +66,7 @@ h1 {
 }
 
 .mascot img {
-  width: 140px; /* bigger panda */
+  width: 200px; /* bigger panda */
   height: auto;
   border-radius: 16px;
   object-fit: contain;
