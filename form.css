@@ -136,3 +136,26 @@ button[type="submit"]:hover {
   color: #6a4f59;
   text-align: center;
 }
+
+
+.float-to-lotus-link {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 160px;
+  height: 200px;
+  background-image: url('panda-float-to-lotus-pond.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  z-index: 10000;
+  cursor: pointer;
+  animation: float 3.5s ease-in-out infinite;
+}
+
+/* Subtle floating effect */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
