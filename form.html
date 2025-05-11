@@ -65,24 +65,24 @@
     });
   </script>
   
-  <script>
+  <script> 
     function createBubble() {
       const bubble = document.createElement('div');
       bubble.className = 'bubble';
 
-      // Prism soap bubble look with radial gradients
-      
-      const gradients = [
-        'radial-gradient(circle at 30% 30%, rgba(255,255,255,0.7), rgba(173,216,230,0.3), rgba(255,182,193,0.2))',
-        'radial-gradient(circle at 70% 40%, rgba(255,255,255,0.6), rgba(221,160,221,0.3), rgba(144,238,144,0.2))',
-        'radial-gradient(circle at 50% 50%, rgba(255,255,255,0.6), rgba(255,228,225,0.3), rgba(224,255,255,0.2))'
+      // More natural soap-bubble-like colors
+      const colors = [
+        'rgba(255, 255, 255, 0.6)', // white
+        'rgba(200, 220, 255, 0.5)', // very soft blue
+        'rgba(240, 255, 250, 0.4)', // faint mint
+        'rgba(255, 255, 255, 0.7)'  // bright white
       ];
-      const chosen = gradients[Math.floor(Math.random() * gradients.length)];
-      bubble.style.background = chosen;
-      bubble.style.boxShadow = `0 0 6px rgba(255, 255, 255, 0.6)`;
+      const glow = colors[Math.floor(Math.random() * colors.length)];
+      bubble.style.background = glow;
+      bubble.style.boxShadow = `0 0 4px rgba(255, 255, 255, 0.5)`; // soft glow highlight
 
       // Random size & position
-      const size = 10 + Math.random() * 18;
+      const size = 8 + Math.random() * 18;
       bubble.style.left = `${40 + Math.random() * 120}px`;
       bubble.style.width = bubble.style.height = `${size}px`;
 
@@ -92,12 +92,11 @@
 
       document.body.appendChild(bubble);
       setTimeout(() => {
-        bubble.remove();
-      }, duration * 1000 + 1000);
+      bubble.remove();
+      }, duration * 1000 + 1000); // remove after animation
     }
     setInterval(createBubble, 700);
-
-</script>
+  </script>
 
 
 
