@@ -158,38 +158,34 @@ button[type="submit"]:hover {
   50% { transform: translateY(-6px); }
 }
 
-
 .bubble {
   position: fixed;
   bottom: 40px;
   left: 80px;
-  width: 14px;
-  height: 14px;
-  background: rgba(255, 200, 255, 1); /* FULL opacity now */
+  width: 18px;
+  height: 18px;
+  background: rgba(255, 240, 255, 0.4); /* soft translucent */
   border-radius: 50%;
-  box-shadow: 0 0 10px rgba(255, 200, 255, 0.9); /* Stronger glow */
-  animation: riseBubble 6s infinite ease-in;
-  z-index: 10001; /* Still above panda */
+  box-shadow: 0 0 8px rgba(255, 200, 255, 0.3), 
+              inset 0 0 4px rgba(255, 255, 255, 0.6); /* bubble sheen */
+  animation: riseBubble 7s infinite ease-in;
+  z-index: 10001;
   pointer-events: none;
+  backdrop-filter: blur(1px);
 }
-
 @keyframes riseBubble {
   0% {
     transform: translate(0, 0) scale(1);
     opacity: 0;
   }
-  10% {
-    opacity: 1; /* Make it fully visible earlier */
+  15% {
+    opacity: 0.6;
   }
-  90% {
-    opacity: 1;
+  80% {
+    opacity: 0.5;
   }
   100% {
-    transform: translateX(-60px) translateY(-400px) scale(1.4);
-    opacity: 0; /* Fade out at the very end */
+    transform: translateX(-40px) translateY(-400px) scale(1.4);
+    opacity: 0;
   }
 }
-
-
-
-
