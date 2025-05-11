@@ -28,7 +28,7 @@ canvas.sakura {
   pointer-events: none;
   z-index: 99999 !important;
   opacity: 0.5 !important;
-  transform: scale(1); /* smaller petals */
+  transform: scale(1);
 }
 
 /* Main Form Container */
@@ -40,7 +40,6 @@ canvas.sakura {
   width: 90%;
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
   position: relative;
-  /* z-index removed so canvas stays on top */
 }
 
 /* Title */
@@ -66,7 +65,7 @@ h1 {
 }
 
 .mascot img {
-  width: 200px; /* bigger panda */
+  width: 200px;
   height: auto;
   border-radius: 16px;
   object-fit: contain;
@@ -74,7 +73,7 @@ h1 {
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0px); }
+  0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-6px); }
 }
 
@@ -132,15 +131,39 @@ button[type="submit"]:hover {
 /* Status Message */
 #statusMessage {
   margin-top: 15px;
-  font-size: 0.9rem;
-  color: #6a4f59;
   text-align: center;
+}
+
+/* Cute Success Message */
+.success-message {
+  background-color: #fceef4;
+  color: #b65784;
+  border: 2px dashed #f7a3c1;
+  border-radius: 16px;
+  padding: 14px 20px;
+  font-size: 1rem;
+  line-height: 1.4;
+  box-shadow: 0 4px 10px rgba(252, 174, 212, 0.2);
+  animation: fadeInPop 0.6s ease-out;
+  display: inline-block;
+  margin-top: 10px;
+}
+
+@keyframes fadeInPop {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 .float-to-lotus-link {
   position: fixed;
   bottom: 20px;
-  left: 20px; /* changed from right to left */
+  left: 20px;
   width: 160px;
   height: 200px;
   background-image: url('panda-float-to-lotus-pond.png');
@@ -150,12 +173,6 @@ button[type="submit"]:hover {
   z-index: 10000;
   cursor: pointer;
   animation: float 3.5s ease-in-out infinite;
-}
-
-/* Subtle floating effect */
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
 }
 
 .bubble {
@@ -172,7 +189,6 @@ button[type="submit"]:hover {
   pointer-events: none;
 }
 
-/* Bubble float animation */
 @keyframes riseBubble {
   0% {
     transform: translate(0, 0) scale(1);
@@ -187,7 +203,6 @@ button[type="submit"]:hover {
   }
 }
 
-/* Subtle shimmer animation */
 @keyframes shimmer {
   0% {
     filter: hue-rotate(0deg);
