@@ -162,14 +162,16 @@ button[type="submit"]:hover {
 .bubble {
   position: fixed;
   bottom: 40px;
-  left: 80px; /* near the panda */
-  width: 12px;
-  height: 12px;
-  background: rgba(255, 255, 255, 0.6);
+  left: 80px;
+  width: 14px;
+  height: 14px;
+  background: rgba(255, 200, 255, 0.9); /* soft pastel by default */
   border-radius: 50%;
+  box-shadow: 0 0 6px rgba(255, 200, 255, 0.6);
   animation: riseBubble 6s infinite ease-in;
-  z-index: 9999;
+  z-index: 10001; /* higher than panda now */
   opacity: 0;
+  pointer-events: none;
 }
 
 @keyframes riseBubble {
@@ -185,5 +187,7 @@ button[type="submit"]:hover {
     opacity: 0;
   }
 }
+
+
 
 
