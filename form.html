@@ -68,33 +68,35 @@
   <script>
     function createBubble() {
       const bubble = document.createElement('div');
-      bubble.classList.add('bubble');
+      bubble.className = 'bubble';
 
-      // Random pastel color
-      const colors = [
-        'rgba(255, 200, 255, 0.9)', // pink
-        'rgba(200, 255, 255, 0.9)', // aqua
-        'rgba(255, 255, 200, 0.9)', // yellow
-        'rgba(200, 255, 200, 0.9)', // mint
-        'rgba(220, 200, 255, 0.9)'  // lilac
-        ];
-      const glow = colors[Math.floor(Math.random() * colors.length)];
-      bubble.style.background = glow;
-      bubble.style.boxShadow = `0 0 6px ${glow}`;
+      // Prism soap bubble look with radial gradients
+      
+      const gradients = [
+        'radial-gradient(circle at 30% 30%, rgba(255,255,255,0.7), rgba(173,216,230,0.3), rgba(255,182,193,0.2))',
+        'radial-gradient(circle at 70% 40%, rgba(255,255,255,0.6), rgba(221,160,221,0.3), rgba(144,238,144,0.2))',
+        'radial-gradient(circle at 50% 50%, rgba(255,255,255,0.6), rgba(255,228,225,0.3), rgba(224,255,255,0.2))'
+      ];
+      const chosen = gradients[Math.floor(Math.random() * gradients.length)];
+      bubble.style.background = chosen;
+      bubble.style.boxShadow = `0 0 6px rgba(255, 255, 255, 0.6)`;
 
       // Random size & position
-      bubble.style.left = `${60 + Math.random() * 80}px`;
-      bubble.style.width = bubble.style.height = `${10 + Math.random() * 12}px`;
+      const size = 10 + Math.random() * 18;
+      bubble.style.left = `${40 + Math.random() * 120}px`;
+      bubble.style.width = bubble.style.height = `${size}px`;
 
       // Float timing
-      bubble.style.animationDuration = `${4 + Math.random() * 4}s`;
+      const duration = 5 + Math.random() * 5;
+      bubble.style.animationDuration = `${duration}s`;
 
       document.body.appendChild(bubble);
       setTimeout(() => {
         bubble.remove();
-      }, 8000);
+      }, duration * 1000 + 1000);
     }
     setInterval(createBubble, 700);
+
 </script>
 
 
