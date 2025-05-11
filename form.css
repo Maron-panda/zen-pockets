@@ -165,12 +165,11 @@ button[type="submit"]:hover {
   left: 80px;
   width: 14px;
   height: 14px;
-  background: rgba(255, 200, 255, 0.9); /* soft pastel by default */
+  background: rgba(255, 200, 255, 1); /* FULL opacity now */
   border-radius: 50%;
-  box-shadow: 0 0 6px rgba(255, 200, 255, 0.6);
+  box-shadow: 0 0 10px rgba(255, 200, 255, 0.9); /* Stronger glow */
   animation: riseBubble 6s infinite ease-in;
-  z-index: 10001; /* higher than panda now */
-  opacity: 0;
+  z-index: 10001; /* Still above panda */
   pointer-events: none;
 }
 
@@ -180,11 +179,14 @@ button[type="submit"]:hover {
     opacity: 0;
   }
   10% {
-    opacity: 0.8;
+    opacity: 1; /* Make it fully visible earlier */
+  }
+  90% {
+    opacity: 1;
   }
   100% {
     transform: translateX(-60px) translateY(-400px) scale(1.4);
-    opacity: 0;
+    opacity: 0; /* Fade out at the very end */
   }
 }
 
