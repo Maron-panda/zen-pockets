@@ -1,11 +1,117 @@
-/* Sakura Canvas - want it to float over everything, so in front of every container text etc. */
-canvas.sakura {
-  position: fixed !important;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 9999!important;
+/* Base styling */
+body {
+  margin: 0;
+  padding: 0;
+  background: #fff8f5;
+  font-family: 'Poppins', sans-serif;
+  color: #444;
+  overflow-x: hidden;
+  position: relative;
 }
 
+/* Sakura override */
+canvas.sakura {
+  z-index: 9999 !important;
+  opacity: 0.3 !important;  /* softer */
+  transform: scale(0.7);    /* smaller petals */
+}
+
+/* Container */
+.form-container {
+  max-width: 400px;
+  margin: 80px auto;
+  background: #fffafa;
+  border-radius: 24px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  padding: 30px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Header & subtitle */
+h1 {
+  text-align: center;
+  color: #ec6f9c;
+  font-weight: 600;
+  font-size: 2rem;
+  margin-bottom: 0.2em;
+}
+
+.subtitle {
+  text-align: center;
+  font-size: 1rem;
+  color: #aa5e88;
+  margin-bottom: 1.2em;
+}
+
+/* Mascot image */
+.mascot img {
+  display: block;
+  margin: 0 auto 20px auto;
+  max-width: 120px;
+  animation: float 4s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+/* Form elements */
+form label {
+  display: block;
+  margin-bottom: 5px;
+  color: #7c4c66;
+  font-weight: 500;
+}
+
+form input,
+form textarea {
+  width: 100%;
+  padding: 10px 14px;
+  margin-bottom: 15px;
+  border: 2px solid #f1d7e0;
+  border-radius: 12px;
+  background: #fffefe;
+  font-size: 0.95rem;
+  transition: 0.2s;
+}
+
+form input:focus,
+form textarea:focus {
+  border-color: #f7a3c1;
+  outline: none;
+  box-shadow: 0 0 0 3px #fce4ed;
+}
+
+textarea {
+  min-height: 70px;
+  resize: vertical;
+}
+
+/* Button */
+button[type="submit"] {
+  background: linear-gradient(to right, #fca4c1, #e48ccf);
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 20px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  transition: background 0.3s;
+}
+
+button[type="submit"]:hover {
+  background: linear-gradient(to right, #f687b3, #d86dd1);
+}
+
+/* Status message */
+#statusMessage {
+  margin-top: 15px;
+  font-size: 0.9rem;
+  color: #6a4f59;
+  text-align: center;
+}
