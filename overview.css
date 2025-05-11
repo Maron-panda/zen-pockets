@@ -1,216 +1,227 @@
-/* Base Styles */
-body {
-  margin: 0;
-  font-family: 'Poppins', sans-serif;
-  background: linear-gradient(to bottom, #fdf6f0, #f2e8de);
-  color: #333;
-  overflow-x: hidden;
+/* Sakura Canvas - floats OVER everything */
+canvas.sakura {
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999!important;
 }
 
+/* Page Background */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(to bottom, #fdf6ff, #ece0ff);
+  position: relative;
+  z-index: 0;
+}
+
+/* Main Container - less opaque now */
 .container {
   max-width: 900px;
-  margin: auto;
-  padding: 2rem;
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 2rem;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  margin: 40px auto;
+  padding: 40px 25px;
+  background-color: rgba(255, 255, 255, 0.7);
+  border-radius: 20px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
   position: relative;
+  z-index: 1;
 }
 
+/* Headings */
 h1 {
+  color: #9e74c1;
   text-align: center;
   font-size: 2.5rem;
-  color: #6c5b7b;
+  margin-bottom: 5px;
 }
 
 .subtitle {
+  font-size: 1.15rem;
   text-align: center;
-  font-size: 1.2rem;
-  color: #999;
-  margin-bottom: 1rem;
+  color: #a78dc5;
+  margin: 4px 0;
 }
 
 /* Mascot */
 .mascot {
-  text-align: center;
-  margin-bottom: 2rem;
+  display: flex;
+  justify-content: center;
+  margin: 20px 0 30px;
 }
 
 .mascot img {
-  width: 150px;
-  animation: float 4s ease-in-out infinite;
+  width: 180px;
+  max-width: 40%;
+  height: auto;
 }
 
-/* Toggle Switch */
+/* Toggle + Label Layout Fix */
 #toggleContainer {
   display: flex;
   align-items: center;
-  justify-content: center;
-  margin-bottom: 1.5rem;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 10px;
+  margin-bottom: -15px;
 }
 
 #toggleLabel {
-  margin-right: 0.5rem;
+  font-size: 1rem;
   font-weight: 600;
+  color: #7e5ea7;
 }
 
 .switch {
   position: relative;
-  display: inline-block;
-  width: 50px;
+  width: 45px;
   height: 24px;
 }
 
 .switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
+  display: none;
 }
 
 .slider {
   position: absolute;
   cursor: pointer;
-  top: 0; left: 0;
-  right: 0; bottom: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background-color: #ccc;
+  border-radius: 34px;
   transition: 0.4s;
-  border-radius: 24px;
 }
 
 .slider:before {
   position: absolute;
   content: "";
-  height: 18px; width: 18px;
-  left: 3px; bottom: 3px;
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
   background-color: white;
   transition: 0.4s;
   border-radius: 50%;
 }
 
 input:checked + .slider {
-  background-color: #88c9bf;
+  background-color: #d6b3ff;
 }
 
 input:checked + .slider:before {
-  transform: translateX(26px);
+  transform: translateX(20px);
 }
 
-/* Table Styles */
-#dataTable {
+/* Table Styling */
+table {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 2rem;
-  font-size: 1rem;
+  margin-top: 30px;
 }
 
-#dataTable th,
-#dataTable td {
-  border: 1px solid #ddd;
+th, td {
   padding: 12px;
   text-align: center;
+  border-bottom: 1px solid #ecdfff;
 }
 
-#dataTable th {
-  background-color: #e0cfe2;
-  color: #4b3b58;
+th {
+  background-color: #f4eaff;
+  color: #6e4b9b;
+  font-weight: 600;
 }
 
-.total-row td {
+td {
+  color: #6b5a89;
+  font-size: 0.95rem;
+}
+
+/* Category label cell left-aligned */
+td:first-child {
+  text-align: left;
+}
+
+.total-row {
+  background-color: #f4eaff;
   font-weight: bold;
-  background-color: #f6e8fc;
+  color: #5e3d84;
 }
 
 /* Extra Info */
-.footnote {
-  font-size: 0.85rem;
-  color: #666;
-  margin-top: 0.5rem;
+#extraInfo {
+  margin-top: 20px;
 }
 
-/* Achievements */
+.footnote {
+  font-size: 0.85rem;
+  color: #9987b2;
+  font-style: italic;
+  margin-top: 10px;
+}
+
+/* Achievements Section */
 .achievements {
+  margin-top: 50px;
   display: flex;
   flex-wrap: wrap;
+  gap: 20px;
   justify-content: center;
-  gap: 1rem;
 }
 
 .achievement-card {
-  background: #fff4e6;
-  border: 2px dashed #c6a87d;
-  border-radius: 1rem;
-  padding: 1rem;
-  width: 220px;
-  box-shadow: 0 5px 10px rgba(0,0,0,0.05);
+  background-color: #fff6ff;
+  border: 2px dashed #d6b3ff;
+  border-radius: 15px;
+  padding: 16px 20px;
+  width: 250px;
+  box-shadow: 0 4px 12px rgba(210, 170, 240, 0.2);
   text-align: center;
+  transition: transform 0.2s ease;
+}
+
+.achievement-card:hover {
+  transform: scale(1.03);
 }
 
 .achievement-card h3 {
-  margin-top: 0;
-  font-size: 1.2rem;
-  color: #7f5a58;
+  margin: 0 0 8px;
+  color: #8b5fbf;
+  font-size: 1.1rem;
 }
 
 .achievement-card p {
-  font-style: italic;
-  color: #5a4747;
+  color: #6d5d89;
+  font-size: 0.95rem;
+  margin: 0;
 }
 
-/* Sakura Canvas - Always on top. Do not change */
-canvas.sakura {
-  position: fixed !important;
-  top: 0;
-  left: 0;
-  width: 100% !important;
-  height: 100% !important;
-  pointer-events: none;
-  z-index: 99999 !important;
-  opacity: 0.5 !important;
-  transform: scale(1);
-}
-
-/* Panda Float Back Link */
-#pandaReturn {
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
-  width: 100px;
-  z-index: 9999;
-  animation: float 4s ease-in-out infinite;
-  cursor: pointer;
-}
-
-#pandaReturn img {
-  width: 100%;
-}
-
-/* Panda Letters Animation */
-.floating-letters {
-  position: fixed;
-  bottom: 90px;
-  right: 40px;
-  width: 20px;
-  height: 20px;
-  background: url('images/letter.png') no-repeat center center / contain;
-  animation: riseLetters 5s linear infinite;
-  z-index: 9998;
-  opacity: 0.7;
-}
-
-/* Animations */
-@keyframes float {
-  0% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-  100% { transform: translateY(0); }
-}
-
-@keyframes riseLetters {
-  0% {
-    transform: translateY(0) scale(1);
-    opacity: 1;
+/* Responsive */
+@media (max-width: 600px) {
+  .achievement-card {
+    width: 100%;
   }
-  100% {
-    transform: translateY(-200px) scale(1.2);
-    opacity: 0;
+
+  .mascot img {
+    width: 130px;
+  }
+
+  table th, table td {
+    font-size: 0.85rem;
+    padding: 10px;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  .subtitle {
+    font-size: 1rem;
   }
 }
