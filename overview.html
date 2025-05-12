@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -110,8 +110,8 @@
         const amountCell = document.createElement('td');
         const lastPayCell = document.createElement('td');
 
-        amountCell.textContent = `${source[cat.key]} NOK`;
-        lastPayCell.textContent = `${data.lastPay[cat.key]} NOK`;
+        amountCell.textContent = ${source[cat.key]} NOK;
+        lastPayCell.textContent = ${data.lastPay[cat.key]} NOK;
 
         row.appendChild(categoryCell);
         row.appendChild(amountCell);
@@ -127,10 +127,10 @@
       totalLabelCell.textContent = 'Total';
 
       const totalAmountCell = document.createElement('td');
-      totalAmountCell.textContent = `${isTotalView ? source.Total : source.total} NOK`;
+      totalAmountCell.textContent = ${isTotalView ? source.Total : source.total} NOK;
 
       const totalLastPayCell = document.createElement('td');
-      totalLastPayCell.textContent = `${data.lastPay.Total} NOK`;
+      totalLastPayCell.textContent = ${data.lastPay.Total} NOK;
 
       totalRow.appendChild(totalLabelCell);
       totalRow.appendChild(totalAmountCell);
@@ -145,13 +145,13 @@
       // Add rounding buffer
       const roundingNote = document.createElement('p');
       roundingNote.className = 'footnote';
-      roundingNote.textContent = `* Rounding buffer is currently ${data.totalView.roundingBuffer} NOK.`;
+      roundingNote.textContent = * Rounding buffer is currently ${data.totalView.roundingBuffer} NOK.;
       extraInfo.appendChild(roundingNote);
 
       // Add Momorin message
       const paysThisMonth = data.overview[data.overview.length - 1].payCount;
       const momorinMsg = document.createElement('p');
-      momorinMsg.textContent = `Momorin 🐾: You have in total ${paysThisMonth} pays this month!`;
+      momorinMsg.textContent = Momorin 🐾: You have in total ${paysThisMonth} pays this month!;
       extraInfo.appendChild(momorinMsg);
     }
 
