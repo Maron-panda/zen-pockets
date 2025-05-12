@@ -1,121 +1,275 @@
-/* Base styling */
-body {
-  margin: 0;
-  padding: 0;
-  font-family: 'Comic Neue', 'Poppins', sans-serif;
-  background: linear-gradient(180deg, #fdfbff 0%, #f1eaff 100%);
-  overflow-x: hidden;
-  position: relative;
-}
-
-/* Sakura and canvas elements on top */
-#sakura, canvas#leafCanvas {
-  position: fixed;
+/* Sakura Canvas - Always on top. Do not change */
+canvas.sakura {
+  position: fixed !important;
   top: 0;
   left: 0;
+  width: 100% !important;
+  height: 100% !important;
   pointer-events: none;
-  z-index: 9999;
+  z-index: 99999 !important;
+  opacity: 0.5 !important;
+  transform: scale(1);
 }
 
-/* Toggle & view label */
-.view-toggle {
-  font-size: 0.9rem;
-  color: #444;
-  margin: 1rem;
+/* Page Background */
+
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(to bottom, #fdf6ff, #ece0ff);
+  position: relative;
+  z-index: 0;
+}
+
+/* Main Container - less opaque now */
+.container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 40px 25px;
+  background-color: rgba(255, 255, 255, 0.7);
+  border-radius: 20px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  position: relative;
+  z-index: 1;
+}
+
+/* Headings */
+h1 {
+  color: #9e74c1;
+  text-align: center;
+  font-size: 2.5rem;
+  margin-bottom: 5px;
+}
+
+.subtitle {
+  font-size: 1.2rem;
+  text-align: center;
+  color: #a78dc5;
+  margin: 4px 0;
+}
+
+/* Mascot */
+.mascot {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0 30px;
+}
+
+.mascot img {
+  width: 200px;
+  height: auto;
+}
+
+/* Toggle + Label Layout Fix */
+#toggleContainer {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 10px;
+  margin-bottom: -15px;
 }
 
-.view-toggle input[type="checkbox"] {
-  appearance: none;
-  width: 36px;
-  height: 18px;
-  background: #d3b3ff;
-  border-radius: 10px;
-  position: relative;
-  outline: none;
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
-
-.view-toggle input[type="checkbox"]::before {
-  content: '';
-  width: 16px;
-  height: 16px;
-  background: #fff;
-  border-radius: 50%;
-  position: absolute;
-  top: 1px;
-  left: 1px;
-  transition: transform 0.3s ease;
-}
-
-.view-toggle input[type="checkbox"]:checked::before {
-  transform: translateX(18px);
-}
-
-/* Cute Table Styling */
-.budget-table {
-  margin: 2rem auto;
-  border-collapse: collapse;
-  background: #ffffffcc;
-  border-radius: 1rem;
-  overflow: hidden;
-  box-shadow: 0 8px 16px rgba(90, 80, 120, 0.2);
-  width: 90%;
-  max-width: 700px;
-}
-
-.budget-table th, .budget-table td {
-  padding: 1rem;
-  text-align: left;
+#toggleLabel {
   font-size: 1rem;
-  color: #333;
-  border-bottom: 1px dashed #ddd;
+  font-weight: 600;
+  color: #7e5ea7;
 }
 
-.budget-table thead {
-  background: #e8dbff;
-  color: #4b0082;
+.switch {
+  position: relative;
+  width: 45px;
+  height: 24px;
 }
 
-.budget-table tfoot td {
-  font-weight: bold;
-  background: #f6f1ff;
+.switch input {
+  display: none;
 }
 
-/* Footnote Styling */
-.footnote {
-  font-size: 0.75rem;
-  text-align: left;
-  color: #666;
-  margin-left: 1.5rem;
-  margin-top: -1rem;
-}
-
-/* Panda mascot */
-#panda-mascot {
-  position: fixed;
-  bottom: 0;
-  right: 1rem;
-  width: 80px;
-  transition: transform 0.3s ease;
-  cursor: pointer;
-  z-index: 10000; /* above leaves */
-}
-
-#panda-mascot:hover {
-  transform: translateY(-10px);
-}
-
-/* Optional message or overlay when covered */
-#leaf-overlay {
+.slider {
   position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
   bottom: 0;
+  background-color: #ccc;
+  border-radius: 34px;
+  transition: 0.4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #d6b3ff;
+}
+
+input:checked + .slider:before {
+  transform: translateX(20px);
+}
+
+/* Table Styling */
+table {
   width: 100%;
-  height: 100px;
-  background: transparent;
+  border-collapse: collapse;
+  margin-top: 30px;
+}
+
+th, td {
+  padding: 12px;
+  text-align: center;
+  border-bottom: 1px solid #ecdfff;
+}
+
+th {
+  background-color: #f4eaff;
+  color: #6e4b9b;
+  font-weight: 600;
+}
+
+td {
+  color: #6b5a89;
+  font-size: 0.95rem;
+}
+
+/* Category label cell left-aligned */
+td:first-child {
+  text-align: left;
+}
+
+.total-row {
+  background-color: #f4eaff;
+  font-weight: bold;
+  color: #5e3d84;
+}
+
+/* Extra Info */
+#extraInfo {
+  margin-top: 20px;
+}
+
+.footnote {
+  font-size: 0.85rem;
+  color: #9987b2;
+  font-style: italic;
+  margin-top: 10px;
+}
+
+/* Achievements Section */
+.achievements {
+  margin-top: 50px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+.achievement-card {
+  background-color: #fff6ff;
+  border: 2px dashed #d6b3ff;
+  border-radius: 15px;
+  padding: 16px 20px;
+  width: 250px;
+  box-shadow: 0 4px 12px rgba(210, 170, 240, 0.2);
+  text-align: center;
+  transition: transform 0.2s ease;
+}
+
+.achievement-card:hover {
+  transform: scale(1.03);
+}
+
+.achievement-card h3 {
+  margin: 0 0 8px;
+  color: #8b5fbf;
+  font-size: 1.1rem;
+}
+
+.achievement-card p {
+  color: #6d5d89;
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .achievement-card {
+    width: 100%;
+  }
+
+  .mascot img {
+    width: 130px;
+  }
+
+  table th, table td {
+    font-size: 0.85rem;
+    padding: 10px;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  .subtitle {
+    font-size: 1rem;
+  }
+}
+
+/* Panda Float Back Link */
+#pandaReturn {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 100px;
+  z-index: 9999;
+  animation: float 4s ease-in-out infinite;
+  cursor: pointer;
+}
+
+#pandaReturn img {
+  width: 100%;
+}
+
+/* Panda Letters Animation */
+.floating-letters {
+  position: fixed;
+  bottom: 90px;
+  right: 40px;
+  width: 20px;
+  height: 20px;
+  background: url('images/letter.png') no-repeat center center / contain;
+  animation: riseLetters 5s linear infinite;
   z-index: 9998;
-  pointer-events: none;
+  opacity: 0.7;
+}
+
+/* Animations */
+@keyframes float {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0); }
+}
+
+@keyframes riseLetters {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-200px) scale(1.2);
+    opacity: 0;
+  }
 }
