@@ -6,7 +6,7 @@ canvas.sakura {
   height: 100% !important;
   pointer-events: none;
   z-index: 99999 !important;
-  opacity: 0.5 !important;
+  opacity: 1 !important;
   transform: scale(1);
 }
 
@@ -228,47 +228,3 @@ td:first-child {
   }
 }
 
-/* Panda Float Back Link */
-#pandaReturn {
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
-  width: 100px;
-  z-index: 9999;
-  animation: float 4s ease-in-out infinite;
-  cursor: pointer;
-}
-
-#pandaReturn img {
-  width: 100%;
-}
-
-/* Panda Letters Animation */
-.floating-letters {
-  position: fixed;
-  bottom: 90px;
-  right: 40px;
-  width: 20px;
-  height: 20px;
-  background: url('images/letter.png') no-repeat center center / contain;
-  animation: riseLetters 5s linear infinite;
-  z-index: 9998;
-  opacity: 0.7;
-}
-
-/* Animations */
-@keyframes float {
-  0% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-  100% { transform: translateY(0); }
-}
-
-@keyframes riseLetters {
-  0% {
-    transform: translateY(0) scale(1);
-    opacity: 1;
-  }
-  100% {
-    transform: translateY(-200px) scale(1.2);
-    opacity: 0;
-  }
