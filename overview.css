@@ -1,4 +1,3 @@
-/* Sakura Canvas - Always on top. Do not change */
 canvas.sakura {
   position: fixed !important;
   top: 0;
@@ -10,6 +9,7 @@ canvas.sakura {
   opacity: 0.5 !important;
   transform: scale(1);
 }
+
 
 /* Page Background */
 
@@ -272,4 +272,3 @@ td:first-child {
     transform: translateY(-200px) scale(1.2);
     opacity: 0;
   }
-}
