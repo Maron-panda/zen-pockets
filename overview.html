@@ -9,17 +9,17 @@
 </head>
   
 <body>
+  <!-- Sakura + Leaf Canvas Layers -->
+  <canvas id="leafCanvas"></canvas>
+
   <div class="container">
     <h1>🐼 Zen Pockets</h1> 
     <p class="subtitle">Momorin reporting for duty!</p>
 
-    <!-- Change this to random pictures from same folder? Folder called images -->
     <div class="mascot"> 
       <img src="momorin-placeholder.png" alt="Momorin the Mascot"> 
     </div> 
-    
 
-    <!-- Toggle Switch -->
     <!-- Toggle Switch and Label Together -->
     <div id="toggleContainer">
       <span id="toggleLabel">Monthly View</span>
@@ -28,7 +28,6 @@
         <span class="slider round"></span>
       </label>
     </div>
-
 
     <!-- Data Table -->
     <table id="dataTable">
@@ -39,13 +38,9 @@
           <th>Last Pay</th>
         </tr>
       </thead>
-      
-      <tbody id="tableBody">
-        <!-- Data will be populated here -->
-      </tbody>
+      <tbody id="tableBody"></tbody>
     </table>
 
-    <!-- Extra Info will be added dynamically -->
     <div id="extraInfo"></div>
 
     <!-- Achievements Section -->
@@ -65,8 +60,15 @@
     </div>
   </div>
 
+  <!-- Floating Panda Button -->
+  <a href="form.html" id="pandaReturn" title="Back to Reading Pavilion">
+    <img src="images/panda-writing.png" alt="Return to Reading Pavilion" id="panda-mascot">
+  </a>
+
+  <div class="floating-letters"></div>
+
+  <!-- Data Fetching Script (do not touch) -->
   <script>
-    //For the fetching and table. Do not touch it, it's hanging by a very thin thread
     const viewToggle = document.getElementById('viewToggle');
     const toggleLabel = document.getElementById('toggleLabel');
     const tableBody = document.getElementById('tableBody');
@@ -119,7 +121,6 @@
         tableBody.appendChild(row);
       });
 
-      // Total row
       const totalRow = document.createElement('tr');
       totalRow.classList.add('total-row');
 
@@ -139,43 +140,91 @@
     }
 
     function updateExtraInfo() {
-      // Clear previous extras
       extraInfo.innerHTML = '';
-
-      // Add rounding buffer
       const roundingNote = document.createElement('p');
       roundingNote.className = 'footnote';
       roundingNote.textContent = `* Rounding buffer is currently ${data.totalView.roundingBuffer} NOK.`;
       extraInfo.appendChild(roundingNote);
 
-      // Add Momorin message
       const paysThisMonth = data.overview[data.overview.length - 1].payCount;
       const momorinMsg = document.createElement('p');
       momorinMsg.textContent = `Momorin 🐾: You have in total ${paysThisMonth} pays this month!`;
       extraInfo.appendChild(momorinMsg);
     }
-
-    function capitalize(str) {
-      return str.charAt(0).toUpperCase() + str.slice(1);
-    }
   </script>
 
-  
   <!-- Sakura plugin -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script src="jquery-sakura.min.js"></script> 
   <script>
     $(window).on('load', function () {
-      $('body').sakura(); // ✅ this is the actual usage
+      $('body').sakura();
     });
   </script>
-  <!-- Floating Panda Link to Reading Pavilion -->
-  <a href="form.html" id="pandaReturn" title="Back to Reading Pavilion">
-    <img src="images/panda-writing.png" alt="Return to Reading Pavilion">
-  </a>
 
-<!-- Floating Letters Animation -->
-<div class="floating-letters"></div>
+  <!-- Leaf Animation Script -->
+  <script>
+    const canvas = document.getElementById('leafCanvas');
+    const ctx = canvas.getContext('2d');
+    let leaves = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function Leaf() {
+      this.x = Math.random() * canvas.width;
+      this.y = -20;
+      this.size = 20 + Math.random() * 10;
+      this.speedY = 1 + Math.random() * 1.5;
+      this.speedX = Math.random() * 1 - 0.5;
+      this.angle = Math.random() * 360;
+      this.spin = Math.random() * 0.05 - 0.025;
+      this.opacity = 0.8;
+    }
+
+    Leaf.prototype.update = function() {
+      this.y += this.speedY;
+      this.x += this.speedX;
+      this.angle += this.spin;
+    }
+
+    Leaf.prototype.draw = function() {
+      ctx.save();
+      ctx.translate(this.x, this.y);
+      ctx.rotate(this.angle);
+      ctx.globalAlpha = this.opacity;
+      ctx.drawImage(leafImage, -this.size/2, -this.size/2, this.size, this.size);
+      ctx.restore();
+    }
+
+    const leafImage = new Image();
+    leafImage.src = 'images/leaf.png'; // Make sure this file exists
+
+    function animateLeaves() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      if (leaves.length < 150) {
+        leaves.push(new Leaf());
+      }
+
+      for (let i = 0; i < leaves.length; i++) {
+        leaves[i].update();
+        leaves[i].draw();
+      }
+
+      requestAnimationFrame(animateLeaves);
+    }
+
+    leafImage.onload = animateLeaves;
+
+    // Reset leaves on panda hover or click
+    const panda = document.getElementById('panda-mascot');
+    panda.addEventListener('mouseenter', () => leaves = []);
+    panda.addEventListener('touchstart', () => leaves = []);
+  </script>
 
 </body>
 </html>
