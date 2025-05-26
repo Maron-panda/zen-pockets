@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zen Pockets Overview</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    /* Sakura Canvas Styling */
+    canvas.sakura {
+      position: fixed !important;
+      top: 0;
+      left: 0;
+      width: 100% !important;
+      height: 100% !important;
+      pointer-events: none;
+      z-index: 99999 !important;
+      opacity: 0.6 !important;
+      transform: scale(1);
+    }
+
+    /* Page Background */
+    body {
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #fdf6ff 0%, #f0e6ff 50%, #ece0ff 100%);
+      position: relative;
+      z-index: 0;
+      min-height: 100vh;
+    }
+
+    /* Floating Elements Animation */
+    .floating-letters {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 2;
+      overflow: hidden;
+    }
+
+    .floating-letters::before {
+      content: '🌸 💜 🐼 ✨ 🌙 ⭐ 🦋 🌺';
+      position: absolute;
+      font-size: 2rem;
+      color: rgba(190, 140, 230, 0.3);
+      animation: float 20s infinite linear;
+      white-space: nowrap;
+      top: 10%;
+    }
+
+    @keyframes float {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100vw); }
+    }
+
+    /* Main Container */
+    .container {
+      max-width: 95%;
+      margin: 20px auto;
+      padding: 25px 20px;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(10px);
+      border-radius: 25px;
+      box-shadow: 0 20px 40px rgba(150, 100, 200, 0.15);
+      position: relative;
+      z-index: 3;
+      border: 2px solid rgba(214, 179, 255, 0.3);
+    }
+
+    /* Headings */
+    h1 {
+      color: #9e74c1;
+      text-align: center;
+      font-size: 2.2rem;
+      margin-bottom: 5px;
+      text-shadow: 2px 2px 4px rgba(158, 116, 193, 0.3);
+      animation: glow 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes glow {
+      from { text-shadow: 2px 2px 4px rgba(158, 116, 193, 0.3); }
+      to { text-shadow: 2px 2px 15px rgba(158, 116, 193, 0.6); }
+    }
+
+    .subtitle {
+      font-size: 1.1rem;
+      text-align: center;
+      color: #a78dc5;
+      margin: 4px 0 20px;
+      font-weight: 500;
+    }
+
+    /* Mascot */
+    .mascot {
+      display: flex;
+      justify-content: center;
+      margin: 20px 0 30px;
+      position: relative;
+    }
+
+    .mascot img {
+      width: 150px;
+      height: auto;
+      border-radius: 50%;
+      box-shadow: 0 10px 30px rgba(214, 179, 255, 0.4);
+      transition: transform 0.3s ease;
+      animation: bounce 3s ease-in-out infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .mascot img:hover {
+      transform: scale(1.1) rotate(5deg);
+    }
+
+    /* Toggle Container */
+    #toggleContainer {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+      margin: 20px 0;
+      padding: 15px;
+      background: rgba(244, 234, 255, 0.6);
+      border-radius: 20px;
+      border: 2px dashed #d6b3ff;
+    }
+
+    #toggleLabel {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #7e5ea7;
+      text-shadow: 1px 1px 2px rgba(126, 94, 167, 0.2);
+    }
+
+    /* Toggle Switch */
+    .switch {
+      position: relative;
+      width: 60px;
+      height: 30px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(45deg, #d6b3ff, #e6ccff);
+      border-radius: 34px;
+      transition: 0.4s;
+      box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 24px;
+      width: 24px;
+      left: 3px;
+      bottom: 3px;
+      background: linear-gradient(45deg, #fff, #f8f4ff);
+      transition: 0.4s;
+      border-radius: 50%;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    input:checked + .slider {
+      background: linear-gradient(45deg, #b899ff, #c9b3ff);
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(30px);
+    }
+
+    /* Table Styling */
+    #dataTable {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 25px 0;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 10px 25px rgba(150, 100, 200, 0.1);
+    }
+
+    #dataTable th {
+      background: linear-gradient(135deg, #f4eaff, #e6d6ff);
+      color: #6e4b9b;
+      font-weight: 600;
+      padding: 15px 12px;
+      text-align: center;
+      border-bottom: 3px solid #d6b3ff;
+      font-size: 1rem;
+    }
+
+    #dataTable td {
+      padding: 12px;
+      text-align: center;
+      border-bottom: 1px solid rgba(236, 224, 255, 0.5);
+      color: #6b5a89;
+      font-size: 0.95rem;
+      transition: background-color 0.2s ease;
+    }
+
+    #dataTable td:first-child {
+      text-align: left;
+      font-weight: 500;
+      color: #8b5fbf;
+    }
+
+    #dataTable tr:hover td {
+      background-color: rgba(244, 234, 255, 0.4);
+    }
+
+    .total-row {
+      background: linear-gradient(135deg, #f4eaff, #ebe0ff) !important;
+      font-weight: bold;
+      color: #5e3d84 !important;
+    }
+
+    .total-row:hover td {
+      background: linear-gradient(135deg, #ebe0ff, #e0d0ff) !important;
+    }
+
+    /* Extra Info */
+    #extraInfo {
+      margin: 25px 0;
+      padding: 20px;
+      background: rgba(255, 246, 255, 0.8);
+      border-radius: 15px;
+      border: 2px dashed #d6b3ff;
+    }
+
+    #extraInfo p {
+      margin: 8px 0;
+      color: #8b5fbf;
+      font-weight: 500;
+    }
+
+    .footnote {
+      font-size: 0.9rem;
+      color: #9987b2;
+      font-style: italic;
+    }
+
+    /* Achievements Section */
+    .achievements {
+      margin-top: 40px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      justify-items: center;
+    }
+
+    .achievement-card {
+      background: linear-gradient(135deg, #fff6ff, #f8f0ff);
+      border: 3px solid #d6b3ff;
+      border-radius: 20px;
+      padding: 20px;
+      width: 100%;
+      max-width: 300px;
+      box-shadow: 0 8px 25px rgba(214, 179, 255, 0.25);
+      text-align: center;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .achievement-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(45deg, transparent, rgba(214, 179, 255, 0.1), transparent);
+      transform: rotate(45deg);
+      transition: all 0.5s ease;
+      opacity: 0;
+    }
+
+    .achievement-card:hover {
+      transform: translateY(-5px) scale(1.02);
+      box-shadow: 0 15px 35px rgba(214, 179, 255, 0.4);
+      border-color: #b899ff;
+    }
+
+    .achievement-card:hover::before {
+      opacity: 1;
+      top: -100%;
+      left: -100%;
+    }
+
+    .achievement-card h3 {
+      margin: 0 0 12px;
+      color: #8b5fbf;
+      font-size: 1.2rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .achievement-card p {
+      color: #6d5d89;
+      font-size: 0.95rem;
+      margin: 0;
+      line-height: 1.4;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Floating Panda Return Button */
+    #pandaReturn {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #fff, #f8f4ff);
+      border-radius: 50%;
+      box-shadow: 0 8px 25px rgba(150, 100, 200, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      transition: all 0.3s ease;
+      border: 3px solid #d6b3ff;
+    }
+
+    #pandaReturn:hover {
+      transform: scale(1.1) rotate(10deg);
+      box-shadow: 0 12px 35px rgba(150, 100, 200, 0.5);
+    }
+
+    #pandaReturn img {
+      width: 35px;
+      height: 35px;
+      object-fit: contain;
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      .container {
+        margin: 10px;
+        padding: 20px 15px;
+        border-radius: 20px;
+      }
+
+      h1 {
+        font-size: 1.8rem;
+      }
+
+      .subtitle {
+        font-size: 1rem;
+      }
+
+      .mascot img {
+        width: 120px;
+      }
+
+      #toggleContainer {
+        flex-direction: column;
+        gap: 12px;
+        padding: 12px;
+      }
+
+      #dataTable th,
+      #dataTable td {
+        padding: 10px 8px;
+        font-size: 0.85rem;
+      }
+
+      #dataTable th {
+        font-size: 0.9rem;
+      }
+
+      .achievements {
+        grid-template-columns: 1fr;
+        gap: 15px;
+      }
+
+      .achievement-card {
+        padding: 16px;
+      }
+
+      #pandaReturn {
+        bottom: 20px;
+        right: 20px;
+        width: 50px;
+        height: 50px;
+      }
+
+      #pandaReturn img {
+        width: 28px;
+        height: 28px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        margin: 5px;
+        padding: 15px 10px;
+      }
+
+      h1 {
+        font-size: 1.6rem;
+      }
+
+      #dataTable th,
+      #dataTable td {
+        padding: 8px 6px;
+        font-size: 0.8rem;
+      }
+
+      .floating-letters::before {
+        font-size: 1.5rem;
+      }
+    }
+
+    /* Loading State */
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #9e74c1;
+      font-size: 1.1rem;
+    }
+
+    .loading::after {
+      content: '...';
+      animation: dots 1.5s steps(3, end) infinite;
+    }
+
+    @keyframes dots {
+      0%, 20% { color: rgba(0,0,0,0); text-shadow: .25em 0 0 rgba(0,0,0,0), .5em 0 0 rgba(0,0,0,0); }
+      40% { color: #9e74c1; text-shadow: .25em 0 0 rgba(0,0,0,0), .5em 0 0 rgba(0,0,0,0); }
+      60% { text-shadow: .25em 0 0 #9e74c1, .5em 0 0 rgba(0,0,0,0); }
+      80%, 100% { text-shadow: .25em 0 0 #9e74c1, .5em 0 0 #9e74c1; }
+    }
+  </style>
+</head>
+  
+<body>
+  <div class="container">
+    <h1>🐼 Zen Pockets</h1> 
+    <p class="subtitle">Momorin reporting for duty!</p>
+
+    <div class="mascot"> 
+      <img src="momorin-placeholder.png" alt="Momorin the Mascot"> 
+    </div> 
+
+    <!-- Toggle Switch and Label -->
+    <div id="toggleContainer">
+      <span id="toggleLabel">Monthly View</span>
+      <label class="switch">
+        <input type="checkbox" id="viewToggle">
+        <span class="slider round"></span>
+      </label>
+    </div>
+
+    <!-- Data Table -->
+    <table id="dataTable">
+      <thead>
+        <tr>
+          <th>Category</th>
+          <th id="amountHeader">This Month</th>
+          <th>Last Pay</th>
+        </tr>
+      </thead>
+      
+      <tbody id="tableBody">
+        <tr><td colspan="3" class="loading">Loading your data</td></tr>
+      </tbody>
+    </table>
+
+    <!-- Extra Info -->
+    <div id="extraInfo"></div>
+
+    <!-- Achievements Section -->
+    <div class="achievements">
+      <div class="achievement-card">
+        <h3>🦊 Cunning Fox</h3>
+        <p>"Got 33333 in fond"</p>
+      </div>
+      <div class="achievement-card">
+        <h3>🐰 Burrowing bunny</h3>
+        <p>"Some bunnies make good points. You're saving 50000 for the future"</p>
+      </div>
+      <div class="achievement-card">
+        <h3>🐼 Free Panda</h3>
+        <p>"Payed down 50000 debt"</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating Panda Link to Reading Pavilion -->
+  <a href="form.html" id="pandaReturn" title="Back to Reading Pavilion">
+    <img src="images/panda-writing.png" alt="Return to Reading Pavilion">
+  </a>
+
+  <!-- Floating Letters Animation -->
+  <div class="floating-letters"></div>
+
+  <!-- jQuery and Sakura Plugin -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-sakura/1.1.1/jquery-sakura.min.js"></script>
+
+  <script>
+    // Initialize Sakura effect
+    $(document).ready(function() {
+      try {
+        $('body').sakura({
+          blowAnimations: ['blow-soft-left', 'blow-medium-left', 'blow-soft-right', 'blow-medium-right'],
+          className: 'sakura',
+          fallSpeed: 1,
+          maxSize: 14,
+          minSize: 9,
+          newOn: 300
+        });
+      } catch(e) {
+        console.log('Sakura plugin not available');
+      }
+    });
+
+    // Main application logic
+    const viewToggle = document.getElementById('viewToggle');
+    const toggleLabel = document.getElementById('toggleLabel');
+    const tableBody = document.getElementById('tableBody');
+    const amountHeader = document.getElementById('amountHeader');
+    const extraInfo = document.getElementById('extraInfo');
+
+    let data = [];
+
+    // Mock data for testing (remove when real API is working)
+    const mockData = {
+      overview: [{
+        Loan: 15000,
+        Savings: 25000,
+        Charity: 2000,
+        Fond: 33333,
+        FreeUse: 8000,
+        total: 83333,
+        payCount: 3
+      }],
+      totalView: {
+        Loan: 150000,
+        Savings: 250000,
+        Charity: 20000,
+        Fond: 333330,
+        FreeUse: 80000,
+        Total: 833330,
+        roundingBuffer: 500
+      },
+      lastPay: {
+        Loan: 5000,
+        Savings: 8000,
+        Charity: 500,
+        Fond: 10000,
+        FreeUse: 3000,
+        Total: 26500
+      }
+    };
+
+    // Fetch data from API
+    async function fetchData() {
+      try {
+        const response = await fetch('https://script.google.com/macros/s/AKfycbwpZk0uPc5wRGvo5qKuE7ZUhUanft_Ax45erylAuvGqoj4B_Dp0YDR6hkKYqYPm-Qzp3g/exec');
+        
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        
+        const json = await response.json();
+        data = json;
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        // Use mock data if API fails
+        data = mockData;
+      }
+      
+      populateTable('monthly');
+      updateExtraInfo();
+    }
+
+    // Event listener for toggle
+    viewToggle.addEventListener('change', () => {
+      const view = viewToggle.checked ? 'total' : 'monthly';
+      toggleLabel.textContent = viewToggle.checked ? 'Total View' : 'Monthly View';
+      amountHeader.textContent = viewToggle.checked ? 'Total' : 'This Month';
+      populateTable(view);
+    });
+
+    function populateTable(view) {
+      tableBody.innerHTML = '';
+      
+      if (!data || (!data.overview && !data.totalView)) {
+        tableBody.innerHTML = '<tr><td colspan="3" class="loading">No data available</td></tr>';
+        return;
+      }
+
+      const isTotalView = view === 'total';
+      const source = isTotalView ? data.totalView : data.overview[data.overview.length - 1];
+      
+      const categories = [
+        { key: 'Loan', label: 'Loan' },
+        { key: 'Savings', label: 'Savings' },
+        { key: 'Charity', label: 'Charity' },
+        { key: 'Fond', label: 'Fond' },
+        { key: 'FreeUse', label: 'Free Use' }
+      ];
+      
+      categories.forEach(cat => {
+        const row = document.createElement('tr');
+        
+        const categoryCell = document.createElement('td');
+        categoryCell.textContent = cat.label;
+
+        const amountCell = document.createElement('td');
+        const lastPayCell = document.createElement('td');
+
+        const amount = source[cat.key] || 0;
+        const lastPay = data.lastPay ? (data.lastPay[cat.key] || 0) : 0;
+
+        amountCell.textContent = `${amount.toLocaleString()} NOK`;
+        lastPayCell.textContent = `${lastPay.toLocaleString()} NOK`;
+
+        row.appendChild(categoryCell);
+        row.appendChild(amountCell);
+        row.appendChild(lastPayCell);
+        tableBody.appendChild(row);
+      });
+
+      // Total row
+      const totalRow = document.createElement('tr');
+      totalRow.classList.add('total-row');
+
+      const totalLabelCell = document.createElement('td');
+      totalLabelCell.textContent = 'Total';
+
+      const totalAmountCell = document.createElement('td');
+      const totalAmount = isTotalView ? (source.Total || 0) : (source.total || 0);
+      totalAmountCell.textContent = `${totalAmount.toLocaleString()} NOK`;
+
+      const totalLastPayCell = document.createElement('td');
+      const totalLastPay = data.lastPay ? (data.lastPay.Total || 0) : 0;
+      totalLastPayCell.textContent = `${totalLastPay.toLocaleString()} NOK`;
+
+      totalRow.appendChild(totalLabelCell);
+      totalRow.appendChild(totalAmountCell);
+      totalRow.appendChild(totalLastPayCell);
+      tableBody.appendChild(totalRow);
+    }
+
+    function updateExtraInfo() {
+      extraInfo.innerHTML = '';
+
+      if (!data) return;
+
+      // Add rounding buffer
+      if (data.totalView && data.totalView.roundingBuffer !== undefined) {
+        const roundingNote = document.createElement('p');
+        roundingNote.className = 'footnote';
+        roundingNote.textContent = `✨ Rounding buffer is currently ${data.totalView.roundingBuffer.toLocaleString()} NOK.`;
+        extraInfo.appendChild(roundingNote);
+      }
+
+      // Add Momorin message
+      if (data.overview && data.overview.length > 0) {
+        const paysThisMonth = data.overview[data.overview.length - 1].payCount || 0;
+        const momorinMsg = document.createElement('p');
+        momorinMsg.innerHTML = `🐼 Momorin says: You have made <strong>${paysThisMonth}</strong> payments this month! Keep it up! 🌟`;
+        extraInfo.appendChild(momorinMsg);
+      }
+    }
+
+    // Initialize the app
+    fetchData();
+  </script>
+</body>
+</html>
