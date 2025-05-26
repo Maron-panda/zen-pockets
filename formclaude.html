@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Zen Pockets - Budget Input</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  
+  <style>
+    /* Reset & Base Styling */
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      height: 100%;
+      overflow-x: hidden;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to bottom, #fff0f5, #fdf6fb);
+      font-family: 'Poppins', sans-serif;
+      color: #444;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 60px 20px 40px;
+      overflow-x: hidden;
+      position: relative;
+      /* Prevent layout shifts */
+      transform: translateZ(0);
+      backface-visibility: hidden;
+    }
+
+    /* Sakura Canvas - In front of everything except bubbles */
+    canvas.sakura {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 1000;
+      opacity: 0.6;
+      /* Remove problematic transforms */
+    }
+
+    /* Main Form Container - Enhanced stability */
+    .form-container {
+      background: #fffefe;
+      border-radius: 24px;
+      padding: 30px;
+      max-width: 420px;
+      width: 100%;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+      position: relative;
+      z-index: 10;
+      /* Prevent movement on mobile */
+      transform: translate3d(0, 0, 0);
+      will-change: auto;
+    }
+
+    /* Title */
+    h1 {
+      text-align: center;
+      color: #ec6f9c;
+      font-weight: 600;
+      font-size: 2rem;
+      margin-bottom: 0.2em;
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 1rem;
+      color: #aa5e88;
+      margin-bottom: 1.4em;
+    }
+
+    /* Mascot Styling */
+    .mascot {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .mascot img {
+      width: 200px;
+      height: auto;
+      border-radius: 16px;
+      object-fit: contain;
+      animation: float 4s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+
+    /* Form Elements */
+    form label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 500;
+      color: #7c4c66;
+    }
+
+    form input,
+    form textarea {
+      width: 100%;
+      padding: 10px 14px;
+      margin-bottom: 20px;
+      border: 2px solid #f1d7e0;
+      border-radius: 12px;
+      background: #fffefe;
+      font-size: 0.95rem;
+      transition: 0.2s;
+    }
+
+    form input:focus,
+    form textarea:focus {
+      border-color: #f7a3c1;
+      outline: none;
+      box-shadow: 0 0 0 3px #fce4ed;
+    }
+
+    textarea {
+      min-height: 70px;
+      resize: vertical;
+    }
+
+    /* Submit Button */
+    button[type="submit"] {
+      background: linear-gradient(to right, #fca4c1, #e48ccf);
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 20px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      transition: background 0.3s;
+    }
+
+    button[type="submit"]:hover {
+      background: linear-gradient(to right, #f687b3, #d86dd1);
+    }
+
+    /* Status Message */
+    #statusMessage {
+      margin-top: 15px;
+      text-align: center;
+    }
+
+    /* Cute Success Message */
+    .success-message {
+      background-color: #fceef4;
+      color: #b65784;
+      border: 2px dashed #f7a3c1;
+      border-radius: 16px;
+      padding: 14px 20px;
+      font-size: 1rem;
+      line-height: 1.4;
+      box-shadow: 0 4px 10px rgba(252, 174, 212, 0.2);
+      animation: fadeInPop 0.6s ease-out;
+      display: inline-block;
+      margin-top: 10px;
+    }
+
+    @keyframes fadeInPop {
+      0% {
+        transform: scale(0.8);
+        opacity: 0;
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .float-to-lotus-link {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      width: 160px;
+      height: 200px;
+      background-image: url('panda-float-to-lotus-pond.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      z-index: 2000;
+      cursor: pointer;
+      animation: float 3.5s ease-in-out infinite;
+    }
+
+    .bubble {
+      position: fixed;
+      bottom: 40px;
+      left: 80px;
+      width: 14px;
+      height: 14px;
+      background: radial-gradient(circle at center, rgba(255,255,255,0.7), rgba(200,200,255,0.3));
+      border-radius: 50%;
+      box-shadow: 0 0 6px rgba(255, 255, 255, 0.6);
+      animation: riseBubble 6s ease-in forwards, shimmer 2s infinite linear;
+      z-index: 2001;
+      pointer-events: none;
+    }
+
+    @keyframes riseBubble {
+      0% {
+        transform: translate(0, 0) scale(1);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.8;
+      }
+      100% {
+        transform: translateX(-60px) translateY(-400px) scale(1.4);
+        opacity: 0;
+      }
+    }
+
+    @keyframes shimmer {
+      0% {
+        filter: hue-rotate(0deg);
+      }
+      100% {
+        filter: hue-rotate(360deg);
+      }
+    }
+
+    /* Mobile-specific optimizations */
+    @media (max-width: 768px) {
+      body {
+        padding: 40px 10px 40px;
+        /* Prevent bounce scrolling on iOS */
+        -webkit-overflow-scrolling: touch;
+        overflow-x: hidden;
+      }
+
+      .form-container {
+        width: 95%;
+        max-width: 380px;
+        padding: 25px;
+        /* Ensure container stays put */
+        position: relative;
+        top: 0;
+        left: 0;
+        transform: none;
+      }
+
+      h1 {
+        font-size: 1.8rem;
+      }
+
+      .mascot img {
+        width: 150px;
+      }
+
+      /* Keep sakura in front on mobile too */
+      canvas.sakura {
+        opacity: 0.4;
+        z-index: 1000;
+      }
+
+      .float-to-lotus-link {
+        width: 120px;
+        height: 150px;
+        bottom: 15px;
+        left: 15px;
+      }
+    }
+
+    /* Small mobile screens */
+    @media (max-width: 480px) {
+      .form-container {
+        padding: 20px;
+        margin: 10px;
+      }
+
+      h1 {
+        font-size: 1.6rem;
+      }
+
+      .mascot img {
+        width: 120px;
+      }
+    }
+  </style>
+</head>
+  
+<body>
+  <div class="form-container">
+    <h1> 🐼 Zen Pockets</h1>
+    <p class="subtitle">Sweet savings, Panda Queen! ✨</p>
+    <div class="mascot">
+      <img src="momorin-placeholder.png" alt="Momorin the Mascot"> 
+    </div>    
+    
+    <form id="budgetForm">
+      <label for="pay">Enter Pay Amount (NOK):</label>
+      <input type="number" id="pay" name="pay" required>
+      <label for="date">Pick a date (optional):</label>
+      <input type="datetime-local" id="date" name="date">
+      <label for="notes">Internal Notes (optional):</label>
+      <textarea id="notes" name="notes"></textarea>
+      <button type="submit">Budget it!</button>
+    </form>
+    <div id="statusMessage"></div>
+  </div>
+
+  <!-- Sakura Animation -->
+  <canvas id="sakura-canvas" class="sakura"></canvas>
+
+  <script>
+    // Custom lightweight sakura animation
+    class SakuraAnimation {
+      constructor() {
+        this.canvas = document.getElementById('sakura-canvas');
+        this.ctx = this.canvas.getContext('2d');
+        this.petals = [];
+        this.init();
+      }
+
+      init() {
+        this.resize();
+        this.createPetals();
+        this.animate();
+        
+        window.addEventListener('resize', () => this.resize());
+      }
+
+      resize() {
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;
+      }
+
+      createPetals() {
+        const petalCount = window.innerWidth < 768 ? 15 : 25; // Fewer petals on mobile
+        
+        for (let i = 0; i < petalCount; i++) {
+          this.petals.push({
+            x: Math.random() * this.canvas.width,
+            y: Math.random() * this.canvas.height - this.canvas.height,
+            size: Math.random() * 8 + 4,
+            speedX: (Math.random() - 0.5) * 2,
+            speedY: Math.random() * 2 + 1,
+            rotation: Math.random() * 360,
+            rotationSpeed: (Math.random() - 0.5) * 4,
+            opacity: Math.random() * 0.6 + 0.2
+          });
+        }
+      }
+
+      drawPetal(petal) {
+        this.ctx.save();
+        this.ctx.translate(petal.x, petal.y);
+        this.ctx.rotate(petal.rotation * Math.PI / 180);
+        this.ctx.globalAlpha = petal.opacity;
+        
+        // Simple petal shape
+        this.ctx.fillStyle = '#ffb3d9';
+        this.ctx.beginPath();
+        this.ctx.ellipse(0, 0, petal.size, petal.size * 0.6, 0, 0, Math.PI * 2);
+        this.ctx.fill();
+        
+        this.ctx.restore();
+      }
+
+      animate() {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        
+        for (let petal of this.petals) {
+          petal.x += petal.speedX;
+          petal.y += petal.speedY;
+          petal.rotation += petal.rotationSpeed;
+          
+          // Reset petal when it goes off screen
+          if (petal.y > this.canvas.height + 20) {
+            petal.y = -20;
+            petal.x = Math.random() * this.canvas.width;
+          }
+          
+          if (petal.x > this.canvas.width + 20) {
+            petal.x = -20;
+          } else if (petal.x < -20) {
+            petal.x = this.canvas.width + 20;
+          }
+          
+          this.drawPetal(petal);
+        }
+        
+        requestAnimationFrame(() => this.animate());
+      }
+    }
+
+    // Form submission handler
+    document.getElementById('budgetForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const data = { 
+        pay: document.getElementById('pay').value,
+        notes: document.getElementById('notes').value,
+        date: document.getElementById('date').value
+      };
+      
+      fetch('https://script.google.com/macros/s/AKfycbwpZk0uPc5wRGvo5qKuE7ZUhUanft_Ax45erylAuvGqoj4B_Dp0YDR6hkKYqYPm-Qzp3g/exec', {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+      
+      document.getElementById('statusMessage').innerHTML = `
+        <div class="success-message">
+          🌸 Your budget has been submitted, Maron! <br>Time to sip boba and relax! 🫧🫧
+        </div>`;
+      document.getElementById('budgetForm').reset();
+    });
+
+    // Bubble animation
+    function createBubble() {
+      const bubble = document.createElement('div');
+      bubble.className = 'bubble';
+      const colors = [
+        'rgba(255, 255, 255, 0.6)',
+        'rgba(200, 220, 255, 0.5)',
+        'rgba(240, 255, 250, 0.4)',
+        'rgba(255, 255, 255, 0.7)'
+      ];
+      const glow = colors[Math.floor(Math.random() * colors.length)];
+      bubble.style.background = glow;
+      bubble.style.boxShadow = `0 0 4px rgba(255, 255, 255, 0.5)`;
+      const size = 8 + Math.random() * 18;
+      bubble.style.left = `${40 + Math.random() * 120}px`;
+      bubble.style.width = bubble.style.height = `${size}px`;
+      const duration = 5 + Math.random() * 5;
+      bubble.style.animationDuration = `${duration}s`;
+      document.body.appendChild(bubble);
+      setTimeout(() => { bubble.remove(); }, duration * 1000 + 1000);
+    }
+
+    // Initialize everything when page loads
+    window.addEventListener('load', function() {
+      new SakuraAnimation();
+      setInterval(createBubble, 700);
+    });
+  </script>
+  
+  <a href="overview.html" class="float-to-lotus-link" aria-label="Go to Lotus Pond"></a>
+</body>
+</html>
