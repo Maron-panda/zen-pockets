@@ -1,0 +1,444 @@
+/* Zen Pockets - Serene & Whimsical Design */
+
+/* Import fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Noto+Sans+JP:wght@300;400;500&display=swap');
+
+/* CSS Variables for consistent theming */
+:root {
+  --primary-sage: #a8b5a0;
+  --secondary-cream: #f9f7f4;
+  --accent-blush: #e8d5d0;
+  --soft-mint: #e8f4f0;
+  --warm-white: #fefcfa;
+  --gentle-gray: #8a8a8a;
+  --text-dark: #3d4142;
+  --text-soft: #6b7280;
+  --shadow-light: rgba(0, 0, 0, 0.08);
+  --shadow-soft: rgba(0, 0, 0, 0.12);
+  --border-gentle: rgba(168, 181, 160, 0.2);
+}
+
+/* Global Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Poppins', 'Noto Sans JP', sans-serif;
+  background: linear-gradient(135deg, var(--secondary-cream) 0%, var(--soft-mint) 100%);
+  min-height: 100vh;
+  color: var(--text-dark);
+  line-height: 1.6;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Container */
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  position: relative;
+  z-index: 10;
+}
+
+/* Header Styles */
+h1 {
+  font-size: 2.5rem;
+  font-weight: 600;
+  text-align: center;
+  color: var(--primary-sage);
+  margin-bottom: 0.5rem;
+  text-shadow: 0 2px 4px rgba(168, 181, 160, 0.1);
+}
+
+.subtitle {
+  text-align: center;
+  font-size: 1.1rem;
+  color: var(--text-soft);
+  margin-bottom: 2rem;
+  font-weight: 300;
+  font-style: italic;
+}
+
+/* Mascot Section */
+.mascot {
+  text-align: center;
+  margin: 2rem 0 3rem 0;
+  position: relative;
+}
+
+.mascot img {
+  max-width: 120px;
+  height: auto;
+  border-radius: 50%;
+  box-shadow: 0 8px 24px var(--shadow-light);
+  background: var(--warm-white);
+  padding: 8px;
+  animation: gentleFloat 4s ease-in-out infinite;
+  transition: transform 0.3s ease;
+}
+
+.mascot img:hover {
+  transform: translateY(-5px) scale(1.05);
+}
+
+@keyframes gentleFloat {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+/* Toggle Section */
+#toggleContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 2rem 0 2.5rem 0;
+  padding: 1rem 1.5rem;
+  background: var(--warm-white);
+  border-radius: 16px;
+  box-shadow: 0 4px 16px var(--shadow-light);
+  border: 1px solid var(--border-gentle);
+}
+
+#toggleLabel {
+  font-weight: 500;
+  color: var(--text-dark);
+  font-size: 1.1rem;
+}
+
+/* Toggle Switch Styles */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 32px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--accent-blush);
+  border: 2px solid var(--border-gentle);
+  transition: 0.3s ease;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 22px;
+  width: 22px;
+  left: 3px;
+  bottom: 3px;
+  background: white;
+  transition: 0.3s ease;
+  box-shadow: 0 2px 8px var(--shadow-light);
+}
+
+input:checked + .slider {
+  background: var(--primary-sage);
+  border-color: var(--primary-sage);
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
+
+.slider.round {
+  border-radius: 32px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+/* Table Styles */
+#dataTable {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--warm-white);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px var(--shadow-light);
+  margin-bottom: 2rem;
+  border: 1px solid var(--border-gentle);
+}
+
+#dataTable thead {
+  background: linear-gradient(135deg, var(--primary-sage), #9ca594);
+  color: white;
+}
+
+#dataTable th {
+  padding: 1.2rem 1rem;
+  text-align: left;
+  font-weight: 500;
+  font-size: 1rem;
+  letter-spacing: 0.5px;
+}
+
+#dataTable th:nth-child(2),
+#dataTable th:nth-child(3) {
+  text-align: center;
+}
+
+#dataTable tbody tr {
+  transition: background-color 0.3s ease;
+  border-bottom: 1px solid rgba(168, 181, 160, 0.1);
+}
+
+#dataTable tbody tr:nth-child(even) {
+  background: rgba(232, 244, 240, 0.3);
+}
+
+#dataTable tbody tr:hover {
+  background: rgba(168, 181, 160, 0.1);
+  transform: translateY(-1px);
+}
+
+#dataTable td {
+  padding: 1rem;
+  font-size: 0.95rem;
+}
+
+#dataTable td:nth-child(2),
+#dataTable td:nth-child(3) {
+  text-align: center;
+  font-weight: 500;
+}
+
+/* Total Row Special Styling */
+.total-row {
+  background: linear-gradient(135deg, var(--accent-blush), #dcc5c0) !important;
+  font-weight: 600;
+  border-top: 2px solid var(--primary-sage);
+}
+
+.total-row:hover {
+  background: linear-gradient(135deg, var(--accent-blush), #dcc5c0) !important;
+}
+
+/* Extra Info Section */
+#extraInfo {
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background: var(--warm-white);
+  border-radius: 16px;
+  box-shadow: 0 4px 16px var(--shadow-light);
+  border-left: 4px solid var(--primary-sage);
+}
+
+#extraInfo p {
+  margin-bottom: 0.8rem;
+  color: var(--text-soft);
+}
+
+#extraInfo p:last-child {
+  margin-bottom: 0;
+  font-weight: 500;
+  color: var(--text-dark);
+}
+
+.footnote {
+  font-size: 0.9rem;
+  font-style: italic;
+}
+
+/* Achievements Section */
+.achievements {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-top: 3rem;
+}
+
+.achievement-card {
+  background: var(--warm-white);
+  padding: 1.5rem;
+  border-radius: 16px;
+  box-shadow: 0 6px 20px var(--shadow-light);
+  border: 1px solid var(--border-gentle);
+  text-align: center;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.achievement-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(168, 181, 160, 0.1), transparent);
+  transition: left 0.5s ease;
+}
+
+.achievement-card:hover::before {
+  left: 100%;
+}
+
+.achievement-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 30px var(--shadow-soft);
+}
+
+.achievement-card h3 {
+  font-size: 1.2rem;
+  margin-bottom: 0.8rem;
+  color: var(--primary-sage);
+  font-weight: 600;
+}
+
+.achievement-card p {
+  color: var(--text-soft);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  font-style: italic;
+}
+
+/* Floating Panda Return Link */
+#pandaReturn {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 1000;
+  transition: all 0.3s ease;
+  animation: gentleFloat 3s ease-in-out infinite;
+}
+
+#pandaReturn img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  box-shadow: 0 6px 20px var(--shadow-soft);
+  background: var(--warm-white);
+  padding: 8px;
+  transition: transform 0.3s ease;
+}
+
+#pandaReturn:hover img {
+  transform: scale(1.1);
+  box-shadow: 0 8px 25px var(--shadow-soft);
+}
+
+/* Floating Letters Animation */
+.floating-letters {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 5;
+  overflow: hidden;
+}
+
+/* Sakura Petals Customization */
+.sakura {
+  pointer-events: none !important;
+  z-index: 999 !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    padding: 1.5rem 1rem;
+  }
+  
+  h1 {
+    font-size: 2rem;
+  }
+  
+  #toggleContainer {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+  
+  #dataTable th,
+  #dataTable td {
+    padding: 0.8rem 0.6rem;
+    font-size: 0.9rem;
+  }
+  
+  .achievements {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  #pandaReturn {
+    bottom: 1rem;
+    right: 1rem;
+  }
+  
+  #pandaReturn img {
+    width: 50px;
+    height: 50px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 1rem 0.8rem;
+  }
+  
+  h1 {
+    font-size: 1.8rem;
+  }
+  
+  .mascot img {
+    max-width: 100px;
+  }
+  
+  #toggleContainer {
+    padding: 1rem;
+    margin: 1.5rem 0 2rem 0;
+  }
+  
+  #dataTable th,
+  #dataTable td {
+    padding: 0.7rem 0.5rem;
+    font-size: 0.85rem;
+  }
+}
+
+/* Additional subtle animations */
+@keyframes shimmer {
+  0% { opacity: 0.8; }
+  50% { opacity: 1; }
+  100% { opacity: 0.8; }
+}
+
+.achievement-card {
+  animation: shimmer 4s ease-in-out infinite;
+  animation-delay: calc(var(--delay, 0) * 0.5s);
+}
+
+/* Ensure sakura petals appear over content */
+body .sakura {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  pointer-events: none !important;
+  z-index: 999 !important;
+}
