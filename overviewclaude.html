@@ -3,8 +3,487 @@
 <head>
   <meta charset="UTF-8">
   <title>Zen Pockets Overview</title>
-  <link rel="stylesheet" href="overviewclaude.css">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet"> 
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    /* Zen Pockets - Refined Serene & Whimsical Design */
+
+    /* CSS Variables for new color scheme */
+    :root {
+      --primary-indigo: #6366f1;
+      --secondary-cream: #faf9f7;
+      --accent-lavender: #e0e7ff;
+      --soft-sky: #e0f2fe;
+      --warm-white: #fefcfa;
+      --gentle-gray: #8a8a8a;
+      --text-dark: #3d4142;
+      --text-soft: #6b7280;
+      --shadow-light: rgba(99, 102, 241, 0.08);
+      --shadow-soft: rgba(99, 102, 241, 0.15);
+      --border-gentle: rgba(99, 102, 241, 0.2);
+      --hover-indigo: #5855eb;
+    }
+
+    /* Global Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Poppins', 'Noto Sans JP', sans-serif;
+      background: linear-gradient(135deg, var(--secondary-cream) 0%, var(--soft-sky) 100%);
+      min-height: 100vh;
+      color: var(--text-dark);
+      line-height: 1.6;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Container */
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+      position: relative;
+      z-index: 10;
+    }
+
+    /* Header Styles */
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 600;
+      text-align: center;
+      color: var(--primary-indigo);
+      margin-bottom: 0.5rem;
+      text-shadow: 0 2px 4px rgba(99, 102, 241, 0.1);
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 1.1rem;
+      color: var(--text-soft);
+      margin-bottom: 2rem;
+      font-weight: 300;
+      font-style: italic;
+    }
+
+    /* Mascot Section - Much Larger & Integrated */
+    .mascot {
+      text-align: center;
+      margin: 2rem 0 3rem 0;
+      position: relative;
+    }
+
+    .mascot img {
+      max-width: 200px;
+      height: auto;
+      animation: gentleFloat 4s ease-in-out infinite;
+      transition: transform 0.3s ease;
+      filter: drop-shadow(0 8px 24px var(--shadow-light));
+    }
+
+    .mascot img:hover {
+      transform: translateY(-5px) scale(1.05);
+    }
+
+    @keyframes gentleFloat {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+    }
+
+    /* Table Container with Toggle */
+    .table-container {
+      position: relative;
+      margin: 2rem 0 1rem 0;
+    }
+
+    /* Toggle Section - Smaller & Right-aligned */
+    #toggleContainer {
+      position: absolute;
+      top: -50px;
+      right: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 0.8rem;
+      background: var(--warm-white);
+      border-radius: 20px;
+      box-shadow: 0 2px 8px var(--shadow-light);
+      border: 1px solid var(--border-gentle);
+      font-size: 0.85rem;
+      z-index: 20;
+    }
+
+    #toggleLabel {
+      font-weight: 400;
+      color: var(--text-soft);
+      font-size: 0.8rem;
+    }
+
+    /* Toggle Switch Styles - Smaller */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 36px;
+      height: 20px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--accent-lavender);
+      border: 1px solid var(--border-gentle);
+      transition: 0.3s ease;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 14px;
+      width: 14px;
+      left: 2px;
+      bottom: 2px;
+      background: white;
+      transition: 0.3s ease;
+      box-shadow: 0 1px 4px var(--shadow-light);
+    }
+
+    input:checked + .slider {
+      background: var(--primary-indigo);
+      border-color: var(--primary-indigo);
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(16px);
+    }
+
+    .slider.round {
+      border-radius: 20px;
+    }
+
+    .slider.round:before {
+      border-radius: 50%;
+    }
+
+    /* Table Styles */
+    #dataTable {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--warm-white);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 8px 32px var(--shadow-light);
+      border: 1px solid var(--border-gentle);
+    }
+
+    #dataTable thead {
+      background: linear-gradient(135deg, var(--primary-indigo), var(--hover-indigo));
+      color: white;
+    }
+
+    #dataTable th {
+      padding: 1.2rem 1rem;
+      text-align: left;
+      font-weight: 500;
+      font-size: 1rem;
+      letter-spacing: 0.5px;
+    }
+
+    #dataTable th:nth-child(2),
+    #dataTable th:nth-child(3) {
+      text-align: center;
+    }
+
+    #dataTable tbody tr {
+      transition: background-color 0.3s ease;
+      border-bottom: 1px solid rgba(99, 102, 241, 0.1);
+    }
+
+    #dataTable tbody tr:nth-child(even) {
+      background: rgba(224, 231, 255, 0.3);
+    }
+
+    #dataTable tbody tr:hover {
+      background: rgba(99, 102, 241, 0.1);
+      transform: translateY(-1px);
+    }
+
+    #dataTable td {
+      padding: 1rem;
+      font-size: 0.95rem;
+    }
+
+    #dataTable td:nth-child(2),
+    #dataTable td:nth-child(3) {
+      text-align: center;
+      font-weight: 500;
+    }
+
+    /* Total Row Special Styling */
+    .total-row {
+      background: linear-gradient(135deg, var(--accent-lavender), #c7d2fe) !important;
+      font-weight: 600;
+      border-top: 2px solid var(--primary-indigo);
+    }
+
+    .total-row:hover {
+      background: linear-gradient(135deg, var(--accent-lavender), #c7d2fe) !important;
+    }
+
+    /* Rounding Buffer Footnote */
+    .rounding-footnote {
+      margin-top: 0.5rem;
+      font-size: 0.8rem;
+      color: var(--text-soft);
+      font-style: italic;
+      text-align: right;
+    }
+
+    /* Momorin Message - Enhanced Styling */
+    #momorinMessage {
+      margin: 2rem 0;
+      padding: 1.8rem;
+      background: linear-gradient(135deg, var(--warm-white), var(--accent-lavender));
+      border-radius: 20px;
+      box-shadow: 0 8px 24px var(--shadow-soft);
+      border: 2px solid var(--primary-indigo);
+      position: relative;
+      overflow: hidden;
+    }
+
+    #momorinMessage::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.1), transparent);
+      transition: left 0.8s ease;
+    }
+
+    #momorinMessage:hover::before {
+      left: 100%;
+    }
+
+    #momorinMessage p {
+      margin: 0;
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: var(--text-dark);
+      text-align: center;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Achievements Section */
+    .achievements {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-top: 3rem;
+    }
+
+    .achievement-card {
+      background: var(--warm-white);
+      padding: 1.5rem;
+      border-radius: 16px;
+      box-shadow: 0 6px 20px var(--shadow-light);
+      border: 1px solid var(--border-gentle);
+      text-align: center;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .achievement-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.1), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .achievement-card:hover::before {
+      left: 100%;
+    }
+
+    .achievement-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 30px var(--shadow-soft);
+    }
+
+    .achievement-card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 0.8rem;
+      color: var(--primary-indigo);
+      font-weight: 600;
+    }
+
+    .achievement-card p {
+      color: var(--text-soft);
+      font-size: 0.9rem;
+      line-height: 1.5;
+      font-style: italic;
+    }
+
+    /* Floating Panda Return Link with Colorful Bubbles */
+    #pandaReturn {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      z-index: 1000;
+      transition: all 0.3s ease;
+      animation: gentleFloat 3s ease-in-out infinite;
+    }
+
+    #pandaReturn img {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      box-shadow: 0 6px 20px var(--shadow-soft);
+      background: var(--warm-white);
+      padding: 8px;
+      transition: transform 0.3s ease;
+    }
+
+    #pandaReturn:hover img {
+      transform: scale(1.1);
+      box-shadow: 0 8px 25px var(--shadow-soft);
+    }
+
+    /* Colorful Bubbles around Panda */
+    .panda-bubbles {
+      position: fixed;
+      bottom: 0;
+      right: 0;
+      width: 200px;
+      height: 200px;
+      pointer-events: none;
+      z-index: 999;
+      overflow: hidden;
+    }
+
+    /* Sakura Canvas Styling */
+    .sakura-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 999;
+      opacity: 0.8;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .container {
+        padding: 1.5rem 1rem;
+      }
+      
+      h1 {
+        font-size: 2rem;
+      }
+
+      .mascot img {
+        max-width: 160px;
+      }
+      
+      #toggleContainer {
+        font-size: 0.75rem;
+        padding: 0.3rem 0.6rem;
+        top: -45px;
+      }
+
+      #toggleLabel {
+        font-size: 0.75rem;
+      }
+      
+      #dataTable th,
+      #dataTable td {
+        padding: 0.8rem 0.6rem;
+        font-size: 0.9rem;
+      }
+      
+      .achievements {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+      
+      #pandaReturn {
+        bottom: 1rem;
+        right: 1rem;
+      }
+      
+      #pandaReturn img {
+        width: 50px;
+        height: 50px;
+      }
+
+      .sakura-canvas {
+        opacity: 0.6;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 1rem 0.8rem;
+      }
+      
+      h1 {
+        font-size: 1.8rem;
+      }
+      
+      .mascot img {
+        max-width: 140px;
+      }
+      
+      #toggleContainer {
+        position: relative;
+        top: 0;
+        right: auto;
+        margin-bottom: 1rem;
+        justify-content: center;
+      }
+      
+      #dataTable th,
+      #dataTable td {
+        padding: 0.7rem 0.5rem;
+        font-size: 0.85rem;
+      }
+    }
+
+    /* Additional subtle animations */
+    @keyframes shimmer {
+      0% { opacity: 0.8; }
+      50% { opacity: 1; }
+      100% { opacity: 0.8; }
+    }
+
+    .achievement-card {
+      animation: shimmer 4s ease-in-out infinite;
+      animation-delay: calc(var(--delay, 0) * 0.5s);
+    }
+  </style>
 </head>
   
 <body>
@@ -12,37 +491,49 @@
     <h1>🐼 Zen Pockets</h1> 
     <p class="subtitle">Momorin reporting for duty!</p>
 
-    <!-- Mascot Section -->
+    <!-- Mascot Section - Much Larger -->
     <div class="mascot"> 
-      <img src="momorin-placeholder.png" alt="Momorin the Mascot"> 
+      <img src="https://via.placeholder.com/200x200/6366f1/ffffff?text=🐼+Momorin" alt="Momorin the Mascot"> 
     </div> 
     
-    <!-- Toggle Switch and Label -->
-    <div id="toggleContainer">
-      <span id="toggleLabel">Monthly View</span>
-      <label class="switch">
-        <input type="checkbox" id="viewToggle">
-        <span class="slider round"></span>
-      </label>
+    <!-- Table Container with Toggle -->
+    <div class="table-container">
+      <!-- Toggle Switch - Smaller & Right-aligned -->
+      <div id="toggleContainer">
+        <span id="toggleLabel">Monthly View</span>
+        <label class="switch">
+          <input type="checkbox" id="viewToggle">
+          <span class="slider round"></span>
+        </label>
+      </div>
+
+      <!-- Data Table -->
+      <table id="dataTable">
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th id="amountHeader">This Month</th>
+            <th>Last Pay</th>
+          </tr>
+        </thead>
+        
+        <tbody id="tableBody">
+          <!-- Data will be populated here -->
+        </tbody>
+      </table>
+
+      <!-- Rounding Buffer Footnote -->
+      <div class="rounding-footnote" id="roundingFootnote">
+        <!-- Will be populated dynamically -->
+      </div>
     </div>
 
-    <!-- Data Table -->
-    <table id="dataTable">
-      <thead>
-        <tr>
-          <th>Category</th>
-          <th id="amountHeader">This Month</th>
-          <th>Last Pay</th>
-        </tr>
-      </thead>
-      
-      <tbody id="tableBody">
-        <!-- Data will be populated here -->
-      </tbody>
-    </table>
-
-    <!-- Extra Info will be added dynamically -->
-    <div id="extraInfo"></div>
+    <!-- Enhanced Momorin Message -->
+    <div id="momorinMessage">
+      <p id="momorinText">
+        <!-- Will be populated dynamically -->
+      </p>
+    </div>
 
     <!-- Achievements Section -->
     <div class="achievements">
@@ -65,15 +556,47 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   
   <script>
-    //For the fetching and table. Do not touch it, it's hanging by a very thin thread
+    // Sample data for demonstration (replace with your Google Sheets fetch)
+    const sampleData = {
+      overview: [{
+        Loan: 25000,
+        Savings: 15000,
+        Charity: 2500,
+        Fond: 8000,
+        FreeUse: 3500,
+        total: 54000,
+        payCount: 3
+      }],
+      totalView: {
+        Loan: 150000,
+        Savings: 85000,
+        Charity: 12000,
+        Fond: 33333,
+        FreeUse: 18500,
+        Total: 298833,
+        roundingBuffer: 167
+      },
+      lastPay: {
+        Loan: 8500,
+        Savings: 5000,
+        Charity: 800,
+        Fond: 2500,
+        FreeUse: 1200,
+        Total: 18000
+      }
+    };
+
     const viewToggle = document.getElementById('viewToggle');
     const toggleLabel = document.getElementById('toggleLabel');
     const tableBody = document.getElementById('tableBody');
     const amountHeader = document.getElementById('amountHeader');
-    const extraInfo = document.getElementById('extraInfo');
+    const roundingFootnote = document.getElementById('roundingFootnote');
+    const momorinText = document.getElementById('momorinText');
 
-    let data = [];
+    let data = sampleData; // Replace with actual fetch
 
+    // Uncomment this for real data fetching:
+    /*
     fetch('https://script.google.com/macros/s/AKfycbwpZk0uPc5wRGvo5qKuE7ZUhUanft_Ax45erylAuvGqoj4B_Dp0YDR6hkKYqYPm-Qzp3g/exec')
       .then(response => response.json())
       .then(json => {
@@ -81,6 +604,11 @@
         populateTable('monthly');
         updateExtraInfo();
       });
+    */
+
+    // Initialize with sample data
+    populateTable('monthly');
+    updateExtraInfo();
 
     viewToggle.addEventListener('change', () => {
       const view = viewToggle.checked ? 'total' : 'monthly';
@@ -138,32 +666,134 @@
     }
 
     function updateExtraInfo() {
-      // Clear previous extras
-      extraInfo.innerHTML = '';
+      // Update rounding buffer footnote
+      roundingFootnote.textContent = `* Rounding buffer is currently ${data.totalView.roundingBuffer} NOK.`;
 
-      // Add rounding buffer
-      const roundingNote = document.createElement('p');
-      roundingNote.className = 'footnote';
-      roundingNote.textContent = `* Rounding buffer is currently ${data.totalView.roundingBuffer} NOK.`;
-      extraInfo.appendChild(roundingNote);
-
-      // Add Momorin message
+      // Update Momorin message
       const paysThisMonth = data.overview[data.overview.length - 1].payCount;
-      const momorinMsg = document.createElement('p');
-      momorinMsg.textContent = `Momorin 🐾: You have in total ${paysThisMonth} pays this month!`;
-      extraInfo.appendChild(momorinMsg);
-    }
-
-    function capitalize(str) {
-      return str.charAt(0).toUpperCase() + str.slice(1);
+      momorinText.textContent = `Momorin 🐾: You have in total ${paysThisMonth} pays this month!`;
     }
   </script>
 
-  <!-- Sakura Canvas Animation -->
+  <!-- Colorful Bubbles around Panda -->
+  <canvas id="panda-bubbles" class="panda-bubbles"></canvas>
+
+  <!-- Sakura Canvas Animation with Realistic Petals -->
   <canvas id="sakura-canvas" class="sakura-canvas"></canvas>
   
   <script>
-    // Custom lightweight sakura animation (adapted from working form page)
+    // Colorful bubbles animation around panda
+    class PandaBubbles {
+      constructor() {
+        this.canvas = document.getElementById('panda-bubbles');
+        this.ctx = this.canvas.getContext('2d');
+        this.bubbles = [];
+        this.init();
+      }
+
+      init() {
+        this.resize();
+        this.createBubbles();
+        this.animate();
+        
+        window.addEventListener('resize', () => this.resize());
+      }
+
+      resize() {
+        this.canvas.width = 200;
+        this.canvas.height = 200;
+      }
+
+      createBubbles() {
+        const bubbleCount = 8;
+        
+        for (let i = 0; i < bubbleCount; i++) {
+          this.bubbles.push({
+            x: Math.random() * 200,
+            y: Math.random() * 200,
+            size: Math.random() * 8 + 3,
+            speedX: (Math.random() - 0.5) * 2,
+            speedY: (Math.random() - 0.5) * 2,
+            opacity: Math.random() * 0.6 + 0.2,
+            color: this.getRandomBubbleColor()
+          });
+        }
+      }
+
+      getRandomBubbleColor() {
+        const colors = [
+          '#ff1744', // Vibrant red
+          '#e91e63', // Deep pink
+          '#9c27b0', // Purple
+          '#673ab7', // Deep purple
+          '#3f51b5', // Indigo
+          '#2196f3', // Blue
+          '#00bcd4', // Cyan
+          '#ff4081'  // Hot pink
+        ];
+        return colors[Math.floor(Math.random() * colors.length)];
+      }
+
+      drawBubble(bubble) {
+        this.ctx.save();
+        this.ctx.globalAlpha = bubble.opacity;
+        
+        // Create radial gradient for bubble effect
+        const gradient = this.ctx.createRadialGradient(
+          bubble.x, bubble.y, 0,
+          bubble.x, bubble.y, bubble.size
+        );
+        gradient.addColorStop(0, bubble.color);
+        gradient.addColorStop(0.7, bubble.color + '80');
+        gradient.addColorStop(1, bubble.color + '20');
+        
+        this.ctx.fillStyle = gradient;
+        this.ctx.beginPath();
+        this.ctx.arc(bubble.x, bubble.y, bubble.size, 0, Math.PI * 2);
+        this.ctx.fill();
+        
+        // Add highlight
+        this.ctx.globalAlpha = bubble.opacity * 0.6;
+        this.ctx.fillStyle = '#ffffff';
+        this.ctx.beginPath();
+        this.ctx.arc(
+          bubble.x - bubble.size * 0.3, 
+          bubble.y - bubble.size * 0.3, 
+          bubble.size * 0.3, 
+          0, Math.PI * 2
+        );
+        this.ctx.fill();
+        
+        this.ctx.restore();
+      }
+
+      animate() {
+        this.ctx.clearRect(0, 0, 200, 200);
+        
+        for (let bubble of this.bubbles) {
+          bubble.x += bubble.speedX;
+          bubble.y += bubble.speedY;
+          
+          // Bounce off edges
+          if (bubble.x <= bubble.size || bubble.x >= 200 - bubble.size) {
+            bubble.speedX *= -1;
+          }
+          if (bubble.y <= bubble.size || bubble.y >= 200 - bubble.size) {
+            bubble.speedY *= -1;
+          }
+          
+          // Keep within bounds
+          bubble.x = Math.max(bubble.size, Math.min(200 - bubble.size, bubble.x));
+          bubble.y = Math.max(bubble.size, Math.min(200 - bubble.size, bubble.y));
+          
+          this.drawBubble(bubble);
+        }
+        
+        requestAnimationFrame(() => this.animate());
+      }
+    }
+
+    // Enhanced sakura animation with realistic petal shapes
     class SakuraAnimation {
       constructor() {
         this.canvas = document.getElementById('sakura-canvas');
@@ -186,18 +816,18 @@
       }
 
       createPetals() {
-        const petalCount = window.innerWidth < 768 ? 20 : 35; // More petals for overview page
+        const petalCount = window.innerWidth < 768 ? 25 : 40;
         
         for (let i = 0; i < petalCount; i++) {
           this.petals.push({
             x: Math.random() * this.canvas.width,
             y: Math.random() * this.canvas.height - this.canvas.height,
-            size: Math.random() * 6 + 3, // Smaller, more delicate petals
-            speedX: (Math.random() - 0.5) * 1.5,
-            speedY: Math.random() * 1.5 + 0.8,
+            size: Math.random() * 7 + 4,
+            speedX: (Math.random() - 0.5) * 1.8,
+            speedY: Math.random() * 1.8 + 1,
             rotation: Math.random() * 360,
-            rotationSpeed: (Math.random() - 0.5) * 3,
-            opacity: Math.random() * 0.4 + 0.2, // More translucent
+            rotationSpeed: (Math.random() - 0.5) * 4,
+            opacity: Math.random() * 0.6 + 0.3,
             color: this.getRandomPetalColor()
           });
         }
@@ -205,11 +835,8 @@
 
       getRandomPetalColor() {
         const colors = [
-          '#e8d5d0', // Soft blush
-          '#e8f4f0', // Gentle mint
-          '#f4e8e8', // Warm pink
-          '#f0f4e8', // Soft sage
-          '#f8f0f4'  // Cream pink
+          '#b8c5ff', // Soft blue
+          '#d4b8ff'  // Soft purple
         ];
         return colors[Math.floor(Math.random() * colors.length)];
       }
@@ -220,17 +847,25 @@
         this.ctx.rotate(petal.rotation * Math.PI / 180);
         this.ctx.globalAlpha = petal.opacity;
         
-        // Delicate petal shape
+        // Draw realistic sakura petal shape
         this.ctx.fillStyle = petal.color;
         this.ctx.beginPath();
-        this.ctx.ellipse(0, 0, petal.size, petal.size * 0.7, 0, 0, Math.PI * 2);
+        
+        // Create sakura petal shape using curves
+        this.ctx.moveTo(0, -petal.size);
+        this.ctx.quadraticCurveTo(petal.size * 0.8, -petal.size * 0.3, petal.size * 0.6, petal.size * 0.2);
+        this.ctx.quadraticCurveTo(petal.size * 0.2, petal.size * 0.8, 0, petal.size * 0.4);
+        this.ctx.quadraticCurveTo(-petal.size * 0.2, petal.size * 0.8, -petal.size * 0.6, petal.size * 0.2);
+        this.ctx.quadraticCurveTo(-petal.size * 0.8, -petal.size * 0.3, 0, -petal.size);
+        this.ctx.closePath();
         this.ctx.fill();
         
-        // Add subtle highlight
+        // Add subtle gradient for depth
         this.ctx.globalAlpha = petal.opacity * 0.3;
-        this.ctx.fillStyle = '#ffffff';
-        this.ctx.beginPath();
-        this.ctx.ellipse(-petal.size * 0.3, -petal.size * 0.2, petal.size * 0.4, petal.size * 0.3, 0, 0, Math.PI * 2);
+        const gradient = this.ctx.createLinearGradient(0, -petal.size, 0, petal.size);
+        gradient.addColorStop(0, '#ffffff');
+        gradient.addColorStop(1, 'transparent');
+        this.ctx.fillStyle = gradient;
         this.ctx.fill();
         
         this.ctx.restore();
@@ -271,11 +906,8 @@
 
   <!-- Floating Panda Link to Reading Pavilion -->
   <a href="form.html" id="pandaReturn" title="Back to Reading Pavilion">
-    <img src="images/panda-writing.png" alt="Return to Reading Pavilion">
+    <img src="https://via.placeholder.com/60x60/6366f1/ffffff?text=🐼" alt="Return to Reading Pavilion">
   </a>
-
-  <!-- Floating Letters Animation Container -->
-  <div class="floating-letters"></div>
 
 </body>
 </html>
