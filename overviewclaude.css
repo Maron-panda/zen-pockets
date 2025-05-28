@@ -351,10 +351,16 @@ input:checked + .slider:before {
   overflow: hidden;
 }
 
-/* Sakura Petals Customization */
-.sakura {
-  pointer-events: none !important;
-  z-index: 999 !important;
+/* Sakura Canvas Styling */
+.sakura-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 999;
+  opacity: 0.8;
 }
 
 /* Responsive Design */
@@ -432,13 +438,9 @@ input:checked + .slider:before {
   animation-delay: calc(var(--delay, 0) * 0.5s);
 }
 
-/* Ensure sakura petals appear over content */
-body .sakura {
-  position: fixed !important;
-  top: 0 !important;
-  left: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
-  pointer-events: none !important;
-  z-index: 999 !important;
+/* Responsive sakura adjustments */
+@media (max-width: 768px) {
+  .sakura-canvas {
+    opacity: 0.6;
+  }
 }
