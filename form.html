@@ -2,93 +2,42 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>Zen Pockets - Budget Input</title>
-  <link rel="stylesheet" href="form.css">
+  
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="jquery-sakura.min.css">
+  <link rel="stylesheet" href="form.css">
 </head>
-
+  
 <body>
   <div class="form-container">
-    <h1> 🐼 Zen Pockets</h1>
+    <h1>🐼 Zen Pockets</h1>
     <p class="subtitle">Sweet savings, Panda Queen! ✨</p>
     <div class="mascot">
       <img src="momorin-placeholder.png" alt="Momorin the Mascot"> 
     </div>    
+    
     <form id="budgetForm">
       <label for="pay">Enter Pay Amount (NOK):</label>
-      <input type="number" id="pay" name="pay" required>
-
+      <input type="number" id="pay" name="pay" step="0.01" required>
       <label for="date">Pick a date (optional):</label>
       <input type="datetime-local" id="date" name="date">
-
       <label for="notes">Internal Notes (optional):</label>
       <textarea id="notes" name="notes"></textarea>
-
       <button type="submit">Budget it!</button>
     </form>
     <div id="statusMessage"></div>
   </div>
 
-  <script>
-    document.getElementById('budgetForm').addEventListener('submit', function (e) {
-      e.preventDefault();
+  <!-- Sakura Animation -->
+  <canvas id="sakura-canvas" class="sakura"></canvas>
 
-      const data = { 
-        pay: document.getElementById('pay').value,
-        notes: document.getElementById('notes').value,
-        date: document.getElementById('date').value
-      };
-
-      fetch('https://script.google.com/macros/s/AKfycbwpZk0uPc5wRGvo5qKuE7ZUhUanft_Ax45erylAuvGqoj4B_Dp0YDR6hkKYqYPm-Qzp3g/exec', {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-      });
-
-      document.getElementById('statusMessage').innerHTML = `
-        <div class="success-message">
-          🌸 Your budget has been submitted, Maron! <br>Time to sip boba and relax! 🫧🫧
-        </div>`;
-      document.getElementById('budgetForm').reset();
-    });
-  </script>
-  
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-  <script src="jquery-sakura.min.js"></script> 
-  <script>
-    $(window).on('load', function () {
-      $('body').sakura();
-    });
-  </script>
-
-  <script> 
-    function createBubble() {
-      const bubble = document.createElement('div');
-      bubble.className = 'bubble';
-      const colors = [
-        'rgba(255, 255, 255, 0.6)',
-        'rgba(200, 220, 255, 0.5)',
-        'rgba(240, 255, 250, 0.4)',
-        'rgba(255, 255, 255, 0.7)'
-      ];
-      const glow = colors[Math.floor(Math.random() * colors.length)];
-      bubble.style.background = glow;
-      bubble.style.boxShadow = `0 0 4px rgba(255, 255, 255, 0.5)`;
-      const size = 8 + Math.random() * 18;
-      bubble.style.left = `${40 + Math.random() * 120}px`;
-      bubble.style.width = bubble.style.height = `${size}px`;
-      const duration = 5 + Math.random() * 5;
-      bubble.style.animationDuration = `${duration}s`;
-      document.body.appendChild(bubble);
-      setTimeout(() => { bubble.remove(); }, duration * 1000 + 1000);
-    }
-    setInterval(createBubble, 700);
-  </script>
-
+  <!-- Float to Lotus Link -->
   <a href="overview.html" class="float-to-lotus-link" aria-label="Go to Lotus Pond"></a>
+
+  <!-- Scripts -->
+  <script src="sakuraform.js"></script>
+  <script src="bubblesform.js"></script>
+  <script src="form.js"></script>
 </body>
 </html>
