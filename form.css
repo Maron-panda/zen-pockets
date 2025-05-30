@@ -3,6 +3,11 @@
   box-sizing: border-box;
 }
 
+html {
+  height: 100%;
+  overflow-x: hidden;
+}
+
 body {
   margin: 0;
   padding: 0;
@@ -13,33 +18,39 @@ body {
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding-top: 60px;
+  padding: 60px 20px 40px;
   overflow-x: hidden;
   position: relative;
+  /* Prevent layout shifts */
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 
-/* Sakura Canvas - Always on top */
+/* Sakura Canvas - In front of everything except bubbles */
 canvas.sakura {
-  position: fixed !important;
+  position: fixed;
   top: 0;
   left: 0;
-  width: 100% !important;
-  height: 100% !important;
+  width: 100vw;
+  height: 100vh;
   pointer-events: none;
-  z-index: 99999 !important;
-  opacity: 0.5 !important;
-  transform: scale(1);
+  z-index: 1000;
+  opacity: 0.6;
 }
 
-/* Main Form Container */
+/* Main Form Container - Enhanced stability */
 .form-container {
   background: #fffefe;
   border-radius: 24px;
   padding: 30px;
   max-width: 420px;
-  width: 90%;
+  width: 100%;
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
   position: relative;
+  z-index: 10;
+  /* Prevent movement on mobile */
+  transform: translate3d(0, 0, 0);
+  will-change: auto;
 }
 
 /* Title */
@@ -160,6 +171,7 @@ button[type="submit"]:hover {
   }
 }
 
+/* Float to Lotus Link */
 .float-to-lotus-link {
   position: fixed;
   bottom: 20px;
@@ -170,11 +182,12 @@ button[type="submit"]:hover {
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
-  z-index: 10000;
+  z-index: 2000;
   cursor: pointer;
   animation: float 3.5s ease-in-out infinite;
 }
 
+/* Bubble Styling */
 .bubble {
   position: fixed;
   bottom: 40px;
@@ -185,7 +198,7 @@ button[type="submit"]:hover {
   border-radius: 50%;
   box-shadow: 0 0 6px rgba(255, 255, 255, 0.6);
   animation: riseBubble 6s ease-in forwards, shimmer 2s infinite linear;
-  z-index: 10001;
+  z-index: 2001;
   pointer-events: none;
 }
 
@@ -209,5 +222,63 @@ button[type="submit"]:hover {
   }
   100% {
     filter: hue-rotate(360deg);
+  }
+}
+
+/* Mobile-specific optimizations */
+@media (max-width: 768px) {
+  body {
+    padding: 40px 10px 40px;
+    /* Prevent bounce scrolling on iOS */
+    -webkit-overflow-scrolling: touch;
+    overflow-x: hidden;
+  }
+
+  .form-container {
+    width: 95%;
+    max-width: 380px;
+    padding: 25px;
+    /* Ensure container stays put */
+    position: relative;
+    top: 0;
+    left: 0;
+    transform: none;
+  }
+
+  h1 {
+    font-size: 1.8rem;
+  }
+
+  .mascot img {
+    width: 150px;
+  }
+
+  /* Keep sakura in front on mobile too */
+  canvas.sakura {
+    opacity: 0.4;
+    z-index: 1000;
+  }
+
+  .float-to-lotus-link {
+    width: 120px;
+    height: 150px;
+    bottom: 15px;
+    left: 15px;
+  }
+}
+
+/* Small mobile screens */
+@media (max-width: 480px) {
+  .form-container {
+    padding: 20px;
+    margin: 10px;
+  }
+
+  h1 {
+    font-size: 1.6rem;
+  }
+
+  .mascot img {
+    width: 120px;
   }
 }
