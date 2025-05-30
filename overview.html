@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Zen Pockets Overview</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="overview.css">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"> 
-  <link rel="stylesheet" href="jquery-sakura.min.css">
 </head>
   
 <body>
@@ -13,169 +13,79 @@
     <h1>🐼 Zen Pockets</h1> 
     <p class="subtitle">Momorin reporting for duty!</p>
 
-    <!-- Change this to random pictures from same folder? Folder called images -->
+    <!-- Mascot Section -->
     <div class="mascot"> 
       <img src="momorin-placeholder.png" alt="Momorin the Mascot"> 
     </div> 
     
+    <!-- Table Container with Toggle -->
+    <div class="table-container">
+      <!-- Toggle Switch -->
+      <div id="toggleContainer">
+        <span id="toggleLabel">Monthly View</span>
+        <label class="switch">
+          <input type="checkbox" id="viewToggle">
+          <span class="slider round"></span>
+        </label>
+      </div>
 
-    <!-- Toggle Switch -->
-    <!-- Toggle Switch and Label Together -->
-    <div id="toggleContainer">
-      <span id="toggleLabel">Monthly View</span>
-      <label class="switch">
-        <input type="checkbox" id="viewToggle">
-        <span class="slider round"></span>
-      </label>
+      <!-- Data Table -->
+      <table id="dataTable">
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th id="amountHeader">This Month</th>
+            <th>Last Pay</th>
+          </tr>
+        </thead>
+        
+        <tbody id="tableBody">
+          <!-- Data will be populated here -->
+        </tbody>
+      </table>
+
+      <!-- Rounding Buffer Footnote -->
+      <div class="rounding-footnote" id="roundingFootnote">
+        <!-- Will be populated dynamically -->
+      </div>
     </div>
 
-
-    <!-- Data Table -->
-    <table id="dataTable">
-      <thead>
-        <tr>
-          <th>Category</th>
-          <th id="amountHeader">This Month</th>
-          <th>Last Pay</th>
-        </tr>
-      </thead>
-      
-      <tbody id="tableBody">
-        <!-- Data will be populated here -->
-      </tbody>
-    </table>
-
-    <!-- Extra Info will be added dynamically -->
-    <div id="extraInfo"></div>
+    <!-- Enhanced Momorin Message -->
+    <div id="momorinMessage">
+      <p id="momorinText">
+        <!-- Will be populated dynamically -->
+      </p>
+    </div>
 
     <!-- Achievements Section -->
     <div class="achievements">
-      <div class="achievement-card">
+      <div class="achievement-card" style="--delay: 1">
         <h3>🦊 Cunning Fox</h3>
         <p>"Got 33333 in fond"</p>
       </div>
-      <div class="achievement-card">
+      <div class="achievement-card" style="--delay: 2">
         <h3>🐰 Burrowing bunny</h3>
         <p>"Some bunnies make good points. You're saving 50000 for the future"</p>
       </div>
-      <div class="achievement-card">
+      <div class="achievement-card" style="--delay: 3">
         <h3>🐼 Free Panda</h3>
         <p>"Payed down 50000 debt"</p>
       </div>
     </div>
   </div>
 
-  <script>
-    //For the fetching and table. Do not touch it, it's hanging by a very thin thread
-    const viewToggle = document.getElementById('viewToggle');
-    const toggleLabel = document.getElementById('toggleLabel');
-    const tableBody = document.getElementById('tableBody');
-    const amountHeader = document.getElementById('amountHeader');
-    const extraInfo = document.getElementById('extraInfo');
-
-    let data = [];
-
-    fetch('https://script.google.com/macros/s/AKfycbwpZk0uPc5wRGvo5qKuE7ZUhUanft_Ax45erylAuvGqoj4B_Dp0YDR6hkKYqYPm-Qzp3g/exec')
-      .then(response => response.json())
-      .then(json => {
-        data = json;
-        populateTable('monthly');
-        updateExtraInfo();
-      });
-
-    viewToggle.addEventListener('change', () => {
-      const view = viewToggle.checked ? 'total' : 'monthly';
-      toggleLabel.textContent = viewToggle.checked ? 'Total View' : 'Monthly View';
-      amountHeader.textContent = viewToggle.checked ? 'Total' : 'This Month';
-      populateTable(view);
-    });
-
-    function populateTable(view) {
-      tableBody.innerHTML = '';
-      const isTotalView = view === 'total';
-      const source = isTotalView ? data.totalView : data.overview[data.overview.length - 1];
-      const categories = [
-        { key: 'Loan', label: 'Loan' },
-        { key: 'Savings', label: 'Savings' },
-        { key: 'Charity', label: 'Charity' },
-        { key: 'Fond', label: 'Fond' },
-        { key: 'FreeUse', label: 'Free Use' }
-      ];
-      
-      categories.forEach(cat => {
-        const row = document.createElement('tr');
-        const categoryCell = document.createElement('td');
-        categoryCell.textContent = cat.label;
-
-        const amountCell = document.createElement('td');
-        const lastPayCell = document.createElement('td');
-
-        amountCell.textContent = ${source[cat.key]} NOK;
-        lastPayCell.textContent = ${data.lastPay[cat.key]} NOK;
-
-        row.appendChild(categoryCell);
-        row.appendChild(amountCell);
-        row.appendChild(lastPayCell);
-        tableBody.appendChild(row);
-      });
-
-      // Total row
-      const totalRow = document.createElement('tr');
-      totalRow.classList.add('total-row');
-
-      const totalLabelCell = document.createElement('td');
-      totalLabelCell.textContent = 'Total';
-
-      const totalAmountCell = document.createElement('td');
-      totalAmountCell.textContent = ${isTotalView ? source.Total : source.total} NOK;
-
-      const totalLastPayCell = document.createElement('td');
-      totalLastPayCell.textContent = ${data.lastPay.Total} NOK;
-
-      totalRow.appendChild(totalLabelCell);
-      totalRow.appendChild(totalAmountCell);
-      totalRow.appendChild(totalLastPayCell);
-      tableBody.appendChild(totalRow);
-    }
-
-    function updateExtraInfo() {
-      // Clear previous extras
-      extraInfo.innerHTML = '';
-
-      // Add rounding buffer
-      const roundingNote = document.createElement('p');
-      roundingNote.className = 'footnote';
-      roundingNote.textContent = * Rounding buffer is currently ${data.totalView.roundingBuffer} NOK.;
-      extraInfo.appendChild(roundingNote);
-
-      // Add Momorin message
-      const paysThisMonth = data.overview[data.overview.length - 1].payCount;
-      const momorinMsg = document.createElement('p');
-      momorinMsg.textContent = Momorin 🐾: You have in total ${paysThisMonth} pays this month!;
-      extraInfo.appendChild(momorinMsg);
-    }
-
-    function capitalize(str) {
-      return str.charAt(0).toUpperCase() + str.slice(1);
-    }
-  </script>
-
-  
-  <!-- Sakura plugin -->
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-  <script src="jquery-sakura.min.js"></script> 
-  <script>
-    $(window).on('load', function () {
-      $('body').sakura(); // ✅ this is the actual usage
-    });
-  </script>
   <!-- Floating Panda Link to Reading Pavilion -->
   <a href="form.html" id="pandaReturn" title="Back to Reading Pavilion">
-    <img src="images/panda-writing.png" alt="Return to Reading Pavilion">
+    <img src="panda-float-to-lotus-pond.png" alt="Return to Reading Pavilion">
   </a>
 
-<!-- Floating Letters Animation -->
-<div class="floating-letters"></div>
+  <!-- Animation Canvases -->
+  <canvas id="panda-bubbles" class="panda-bubbles"></canvas>
+  <canvas id="sakura-canvas" class="sakura-canvas"></canvas>
 
+  <!-- Scripts -->
+  <script src="overview.js"></script>
+  <script src="sakuraoverview.js"></script>
+  <script src="bubbleoverview.js"></script>
 </body>
 </html>
