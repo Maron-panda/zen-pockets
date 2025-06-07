@@ -25,7 +25,12 @@ let data = {
     Fond: 0,
     FreeUse: 0,
     Total: 0
-  }
+  },
+  bufferAlert: {
+    triggered: false,
+    allocatedAmount: 0,
+    remainingBuffer: 0
+  }  
 };
 
 // DOM elements
@@ -43,6 +48,7 @@ function initializePage() {
     .then(() => {
       populateTable('monthly');
       updateExtraInfo();
+      checkBufferAlert();
     })
     .catch(error => {
       console.error('Error initializing page:', error);
@@ -53,6 +59,13 @@ function initializePage() {
 
   // Set up event listeners
   setupEventListeners();
+}
+
+// Check and show buffer alert if triggered
+function checkBufferAlert() {
+  if (data.bufferAlert && data.bufferAlert.triggered) {
+    showBufferAlert(data.bufferAlert.allocatedAmount, data.bufferAlert.remainingBuffer);
+  }
 }
 
 // Fetch data from Google Sheets
@@ -153,6 +166,36 @@ function updateMomorinMessage() {
   const paysThisMonth = data.overview[data.overview.length - 1].payCount;
   momorinText.textContent = `Momorin 🐾: You have in total ${paysThisMonth} pays this month!`;
 }
+// Function to show buffer alert
+function showBufferAlert(allocatedAmount = 20, remainingBuffer = 0) {
+  const alert = document.getElementById('bufferAlert');
+  const textElement = alert.querySelector('.buffer-alert-text p');
+  
+  // Customize message based on amount
+  textElement.textContent = `Momorin's savings pond reached ${allocatedAmount} NOK and gracefully overflowed into your pockets! 💧✨`;
+  
+  // Show the alert
+  alert.classList.remove('hidden');
+  setTimeout(() => {
+    alert.classList.add('show');
+  }, 100);
+  
+  // Auto-dismiss after 6 seconds
+  setTimeout(() => {
+    dismissBufferAlert();
+  }, 6000);
+}
+
+// Function to dismiss buffer alert
+function dismissBufferAlert() {
+  const alert = document.getElementById('bufferAlert');
+  alert.classList.remove('show');
+  
+  setTimeout(() => {
+    alert.classList.add('hidden');
+  }, 500);
+}
+
 
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', initializePage);
