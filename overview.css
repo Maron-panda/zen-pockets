@@ -476,3 +476,165 @@ input:checked + .slider:before {
   animation: shimmer 4s ease-in-out infinite;
   animation-delay: calc(var(--delay, 0) * 0.5s);
 }
+
+/* The buffer stuff -----------------------------------------------------------------------------*/
+
+/* Marquee Buffer Alert Styles */
+.buffer-marquee {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(135deg, #fdf2f8, #fce7f3, #f3e8ff);
+  border-bottom: 2px solid var(--primary-indigo);
+  z-index: 2000;
+  overflow: hidden;
+  height: 0;
+  opacity: 0;
+  transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  box-shadow: 0 4px 20px rgba(236, 72, 153, 0.15);
+}
+
+.buffer-marquee.show {
+  height: 50px;
+  opacity: 1;
+}
+
+.buffer-marquee.hidden {
+  display: none;
+}
+
+.marquee-content {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  white-space: nowrap;
+  animation: marqueeScroll 20s linear infinite;
+  padding-left: 100%;
+  font-weight: 500;
+  color: var(--text-dark);
+}
+
+.marquee-text {
+  padding: 0 2rem;
+  font-size: 1rem;
+  text-shadow: 0 1px 2px rgba(236, 72, 153, 0.1);
+}
+
+.marquee-icon {
+  font-size: 1.2rem;
+  animation: gentleFloat 3s ease-in-out infinite;
+}
+
+.marquee-close {
+  position: absolute;
+  top: 50%;
+  right: 1rem;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(236, 72, 153, 0.3);
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: var(--text-soft);
+  transition: all 0.3s ease;
+  backdrop-filter: blur(4px);
+}
+
+.marquee-close:hover {
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--primary-indigo);
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: 0 2px 8px rgba(236, 72, 153, 0.2);
+}
+
+@keyframes marqueeScroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+/* Adjust your existing container to account for marquee */
+.buffer-marquee.show ~ .container {
+  margin-top: 50px;
+  transition: margin-top 0.6s ease;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .buffer-marquee.show {
+    height: 45px;
+  }
+  
+  .marquee-text {
+    font-size: 0.9rem;
+    padding: 0 1.5rem;
+  }
+  
+  .marquee-icon {
+    font-size: 1rem;
+  }
+  
+  .marquee-close {
+    width: 24px;
+    height: 24px;
+    font-size: 1rem;
+    right: 0.8rem;
+  }
+  
+  .buffer-marquee.show ~ .container {
+    margin-top: 45px;
+  }
+}
+
+@media (max-width: 480px) {
+  .buffer-marquee.show {
+    height: 40px;
+  }
+  
+  .marquee-text {
+    font-size: 0.85rem;
+    padding: 0 1rem;
+  }
+  
+  .marquee-close {
+    width: 22px;
+    height: 22px;
+    font-size: 0.9rem;
+    right: 0.6rem;
+  }
+  
+  .buffer-marquee.show ~ .container {
+    margin-top: 40px;
+  }
+}
+
+/* Pause animation on hover for better readability */
+.buffer-marquee:hover .marquee-content {
+  animation-play-state: paused;
+}
+
+/* Additional pink theme integration */
+.buffer-marquee::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(236, 72, 153, 0.1), transparent);
+  animation: shimmerPink 3s ease-in-out infinite;
+}
+
+@keyframes shimmerPink {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
