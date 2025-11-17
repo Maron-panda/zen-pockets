@@ -18,7 +18,7 @@ document.getElementById('loanForm').addEventListener('submit', function (e) {
     lg: lg
   };
   
-  fetch('https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID_HERE/exec', {
+  fetch('https://script.google.com/macros/s/AKfycbx_EbCS2ZlxxziXlQwlC4r3knwhaOHtdIIlfnbEjP6uRxa29se39Bm1e13ct0tll0wK/exec', {
     method: 'POST',
     mode: 'no-cors',
     headers: {
