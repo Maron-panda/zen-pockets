@@ -5,12 +5,247 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>Zen Pockets - Interaction Tracker</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="form.css">
+  
+  <style>
+    /* Reset & Base Styling */
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      height: 100%;
+      overflow-x: hidden;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to bottom, #fff0f5, #fdf6fb);
+      font-family: 'Poppins', sans-serif;
+      color: #444;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 60px 20px 40px;
+      overflow-x: hidden;
+      position: relative;
+      transform: translateZ(0);
+      backface-visibility: hidden;
+    }
+
+    /* Sakura Canvas - In front of everything */
+    canvas.sakura {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 1000;
+      opacity: 0.6;
+    }
+
+    /* Main Form Container */
+    .form-container {
+      background: #fffefe;
+      border-radius: 24px;
+      padding: 30px;
+      max-width: 420px;
+      width: 100%;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+      position: relative;
+      z-index: 10;
+      transform: translate3d(0, 0, 0);
+      will-change: auto;
+    }
+
+    /* Title */
+    h1 {
+      text-align: center;
+      color: #ec6f9c;
+      font-weight: 600;
+      font-size: 2rem;
+      margin-bottom: 0.2em;
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 1rem;
+      color: #aa5e88;
+      margin-bottom: 1.4em;
+    }
+
+    /* Mascot Styling */
+    .mascot {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .mascot img {
+      width: 200px;
+      height: auto;
+      border-radius: 16px;
+      object-fit: contain;
+      animation: float 4s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+
+    /* Form Elements */
+    form label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 500;
+      color: #7c4c66;
+      font-size: 0.95rem;
+    }
+
+    form input,
+    form textarea,
+    select {
+      width: 100%;
+      padding: 10px 14px;
+      margin-bottom: 20px;
+      border: 2px solid #f1d7e0;
+      border-radius: 12px;
+      background: #fffefe;
+      font-size: 0.95rem;
+      font-family: 'Poppins', sans-serif;
+      color: #444;
+      transition: 0.2s;
+    }
+
+    form input:focus,
+    form textarea:focus,
+    select:focus {
+      border-color: #f7a3c1;
+      outline: none;
+      box-shadow: 0 0 0 3px #fce4ed;
+    }
+
+    textarea {
+      min-height: 70px;
+      resize: vertical;
+    }
+
+    /* Select Dropdown Specifics */
+    select {
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f7a3c1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      background-size: 16px;
+      cursor: pointer;
+    }
+
+    /* Button Group Layout */
+    .button-group {
+      display: flex;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    /* Submit Button */
+    button[type="submit"] {
+      flex: 3;
+      background: linear-gradient(to right, #fca4c1, #e48ccf);
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 20px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      transition: background 0.3s;
+    }
+
+    button[type="submit"]:hover {
+      background: linear-gradient(to right, #f687b3, #d86dd1);
+    }
+
+    /* Secondary Overview Button */
+    .btn-secondary {
+      flex: 2;
+      background: #fffefe;
+      color: #e48ccf;
+      border: 2px solid #e48ccf;
+      border-radius: 20px;
+      padding: 12px 0;
+      font-size: 1rem;
+      font-weight: 600;
+      text-align: center;
+      text-decoration: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: all 0.3s;
+    }
+
+    .btn-secondary:hover {
+      background: #fdf6fb;
+      color: #d86dd1;
+      border-color: #d86dd1;
+    }
+
+    /* Status Message */
+    #statusMessage {
+      margin-top: 15px;
+      text-align: center;
+    }
+
+    .success-message {
+      background-color: #fceef4;
+      color: #b65784;
+      border: 2px dashed #f7a3c1;
+      border-radius: 16px;
+      padding: 14px 20px;
+      font-size: 1rem;
+      line-height: 1.4;
+      box-shadow: 0 4px 10px rgba(252, 174, 212, 0.2);
+      animation: fadeInPop 0.6s ease-out;
+      display: inline-block;
+      margin-top: 10px;
+    }
+
+    @keyframes fadeInPop {
+      0% { transform: scale(0.8); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    /* Mobile-specific optimizations */
+    @media (max-width: 768px) {
+      body {
+        padding: 40px 10px 40px;
+        -webkit-overflow-scrolling: touch;
+      }
+      .form-container {
+        width: 95%;
+        max-width: 380px;
+        padding: 25px;
+      }
+      h1 { font-size: 1.8rem; }
+      .mascot img { width: 150px; }
+      canvas.sakura { opacity: 0.4; }
+    }
+
+    @media (max-width: 480px) {
+      .form-container { padding: 20px; margin: 10px; }
+      h1 { font-size: 1.6rem; }
+      .mascot img { width: 120px; }
+      .button-group { flex-direction: column; }
+    }
+  </style>
 </head>
+
 <body>
   <div class="form-container">
-    <h1>🐼 Canvas Interactions (and procrastination)</h1>
-    <p class="subtitle">Log your interactions!</p>
+    <h1>🐼 Zen Pockets</h1>
+    <p class="subtitle">Log your interactions, Panda Queen! ✨</p>
     
     <div class="mascot">
       <img src="momorin-placeholder.png" alt="Momorin the Mascot"> 
@@ -44,7 +279,7 @@
       <textarea id="solution" name="solution" placeholder="How was it resolved?"></textarea>
       
       <div class="button-group">
-        <button type="submit" id="submitBtn">Save Interaction</button>
+        <button type="submit" id="submitBtn">Save</button>
         <a href="overview.html" class="btn-secondary">Overview</a>
       </div>
     </form>
@@ -53,8 +288,104 @@
   </div>
 
   <canvas id="sakura-canvas" class="sakura"></canvas>
-
   <script src="sakuraform.js"></script>
-  <script src="form.js"></script>
+
+  <script>
+    // ⚠️ REPLACE THIS WITH YOUR NEW GOOGLE APPS SCRIPT WEB APP URL
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbzqpEcAEJPBlZDQT_DKHjrSYLL5hjox2XWd39SC5KzdH6uPOl5SPE2dlnS_D6_InyEw/exec'; 
+
+    const form = document.getElementById('interactionForm');
+    const typeSelect = document.getElementById('type');
+    const newTypeInput = document.getElementById('newType');
+    const dateInput = document.getElementById('date');
+    const statusMessage = document.getElementById('statusMessage');
+    const submitBtn = document.getElementById('submitBtn');
+
+    // 1. Auto-fill the current date and time
+    const now = new Date();
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+    dateInput.value = now.toISOString().slice(0,16);
+
+    // 2. Fetch existing 'Types' from Google Sheets
+    fetch(scriptURL)
+      .then(response => response.json())
+      .then(data => {
+        typeSelect.innerHTML = '<option value="" disabled selected>Select a type...</option>';
+        if (data.types && data.types.length > 0) {
+          data.types.forEach(type => {
+            const option = document.createElement('option');
+            option.value = type;
+            option.textContent = type;
+            typeSelect.appendChild(option);
+          });
+        }
+        const newOption = document.createElement('option');
+        newOption.value = '_new';
+        newOption.textContent = '✨ + Create new...';
+        typeSelect.appendChild(newOption);
+      })
+      .catch(error => {
+        console.error('Error fetching types:', error);
+        typeSelect.innerHTML = '<option value="_new">✨ + Create new...</option>';
+      });
+
+    // 3. Toggle the "New Type" input field
+    typeSelect.addEventListener('change', (e) => {
+      if (e.target.value === '_new') {
+        newTypeInput.style.display = 'block';
+        newTypeInput.required = true;
+      } else {
+        newTypeInput.style.display = 'none';
+        newTypeInput.required = false;
+        newTypeInput.value = '';
+      }
+    });
+
+    // 4. Handle Form Submission
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Saving...';
+      statusMessage.innerHTML = '';
+      
+      const formData = new FormData(form);
+      const dataObject = Object.fromEntries(formData.entries());
+      
+      if (dataObject.type === '_new') {
+        dataObject.type = dataObject.newType;
+      }
+      
+      fetch(scriptURL, {
+        method: 'POST',
+        body: JSON.stringify(dataObject)
+      })
+      .then(response => response.json())
+      .then(data => {
+        statusMessage.innerHTML = '<div class="success-message">Yay! Interaction logged successfully! 🐼💖</div>';
+        
+        form.reset();
+        const refreshDate = new Date();
+        refreshDate.setMinutes(refreshDate.getMinutes() - refreshDate.getTimezoneOffset());
+        dateInput.value = refreshDate.toISOString().slice(0,16);
+        
+        newTypeInput.style.display = 'none';
+        newTypeInput.required = false;
+        
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Save';
+        
+        setTimeout(() => {
+          statusMessage.innerHTML = '';
+        }, 5000);
+      })
+      .catch(error => {
+        console.error('Error!', error.message);
+        statusMessage.innerHTML = '<div style="color: red; margin-top: 10px;">Oops! Something went wrong.</div>';
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Save';
+      });
+    });
+  </script>
 </body>
 </html>
