@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Zen Pockets - Interaction Tracker</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="form.css">
+</head>
+<body>
+  <div class="form-container">
+    <h1>🐼 Canvas Interactions (and procrastination)</h1>
+    <p class="subtitle">Log your interactions!</p>
+    
+    <div class="mascot">
+      <img src="momorin-placeholder.png" alt="Momorin the Mascot"> 
+    </div>
+    
+    <form id="interactionForm">
+      <label for="date">Date & Time:</label>
+      <input type="datetime-local" id="date" name="date" required>
+      
+      <label for="title">Title:</label>
+      <input type="text" id="title" name="title" placeholder="Brief subject" required>
+      
+      <label for="type">Type:</label>
+      <select id="type" name="type" required>
+        <option value="" disabled selected>Loading types...</option>
+        <option value="_new">✨ + Create new...</option>
+      </select>
+      
+      <input type="text" id="newType" name="newType" placeholder="Enter new type name" style="display:none;">
+      
+      <label for="description">Short description:</label>
+      <textarea id="description" name="description" placeholder="What happened?" required></textarea>
+      
+      <label for="status">Status:</label>
+      <select id="status" name="status" required>
+        <option value="TBD">TBD</option>
+        <option value="Resolved">Resolved</option>
+      </select>
+      
+      <label for="solution">Solution (optional):</label>
+      <textarea id="solution" name="solution" placeholder="How was it resolved?"></textarea>
+      
+      <div class="button-group">
+        <button type="submit" id="submitBtn">Save Interaction</button>
+        <a href="overview.html" class="btn-secondary">Overview</a>
+      </div>
+    </form>
+    
+    <div id="statusMessage"></div>
+  </div>
+
+  <canvas id="sakura-canvas" class="sakura"></canvas>
+
+  <script src="sakuraform.js"></script>
+  <script src="form.js"></script>
+</body>
+</html>
