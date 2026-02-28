@@ -37,9 +37,13 @@
       animation: float 6s ease-in-out infinite; z-index: -1; opacity: 0.6;
     }
     .petal {
-      position: absolute; font-size: 1.5rem; color: #f9a8d4; opacity: 0.5;
-      animation: fall linear infinite; z-index: -1;
+      position: fixed; /* Keeps them on screen even if you scroll */
+      font-size: 1.5rem; color: #f9a8d4; opacity: 0.7;
+      animation: fall linear infinite;
+      z-index: 10000; /* Puts them IN FRONT of the login screen */
+      pointer-events: none; /* Ensures you can click through them */
     }
+
     @keyframes float { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-20px) rotate(10deg); } }
     @keyframes fall { 0% { transform: translateY(-10vh) rotate(0deg); } 100% { transform: translateY(110vh) rotate(360deg); } }
 
@@ -281,14 +285,28 @@
         return data;
       } catch (error) {
         document.getElementById('loader').style.display = 'none';
-        return { success: false };
+        // Now returns an actual error message so the UI can tell you it failed
+        return { success: false, message: "Network Error: Is the Google Script URL correct?" }; 
       }
     }
 
     async function attemptLogin() {
       const pwd = document.getElementById('login-pwd').value;
       if (!pwd) return;
+
+      // 1. Give visual loading feedback!
+      const btn = document.querySelector('.login-box button');
+      const originalText = btn.textContent;
+      btn.textContent = '🌸 Checking...';
+      btn.disabled = true;
+      document.getElementById('login-error').style.display = 'none';
+
+      // 2. Make the call
       const res = await apiCall({ action: 'login', password: pwd });
+      
+      // 3. Reset the button
+      btn.textContent = originalText;
+      btn.disabled = false;
       
       if (res.success) {
         currentRole = res.role;
@@ -298,13 +316,14 @@
         if (currentRole === 'panda') {
           document.getElementById('btn-new').textContent = 'Log New Entry';
           document.getElementById('toggle-wrapper').style.display = 'block';
-          switchToggle('Receipt'); // Default for Panda
+          switchToggle('Receipt'); 
         } else {
-          switchToggle('Request'); // Forced for Shark
+          switchToggle('Request'); 
         }
         fetchDashboardData();
       } else {
-        document.getElementById('login-error').textContent = res.message;
+        // 4. Show the specific error if it fails
+        document.getElementById('login-error').textContent = res.message || "Incorrect password!";
         document.getElementById('login-error').style.display = 'block';
       }
     }
