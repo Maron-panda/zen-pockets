@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Panda Bank 🐼🏦</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  
+  <style>
+    /* --- CSS Variables (Serene Theme) --- */
+    :root {
+      --primary-indigo: #6366f1;
+      --secondary-cream: #faf9f7;
+      --accent-lavender: #e0e7ff;
+      --soft-sky: #e0f2fe;
+      --warm-white: #fefcfa;
+      --text-dark: #3d4142;
+      --text-soft: #6b7280;
+      --border-gentle: rgba(99, 102, 241, 0.2);
+      
+      /* Status Colors */
+      --paid-bg: #d1fae5;
+      --paid-text: #059669;
+      --partial-bg: #fef3c7;
+      --partial-text: #d97706;
+      --overdue-bg: #fee2e2;
+      --overdue-text: #dc2626;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, var(--secondary-cream) 0%, var(--soft-sky) 100%);
+      color: var(--text-dark);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* --- App Container & Login Overlay --- */
+    #app-container {
+      width: 100%;
+      max-width: 900px;
+      padding: 30px 20px;
+      display: none; /* Hidden until logged in */
+    }
+
+    #login-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: linear-gradient(135deg, var(--accent-lavender) 0%, var(--soft-sky) 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    .login-box {
+      background: var(--warm-white);
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 10px 30px rgba(99,102,241,0.15);
+      text-align: center;
+      width: 90%;
+      max-width: 400px;
+    }
+
+    .login-box h2 { color: var(--primary-indigo); margin-bottom: 20px; }
+    .login-box input {
+      width: 100%; padding: 12px; margin-bottom: 20px;
+      border: 2px solid var(--border-gentle); border-radius: 12px;
+      font-family: 'Poppins'; text-align: center; font-size: 1.1rem;
+    }
+    .login-box button { width: 100%; }
+
+    /* --- Buttons & Inputs --- */
+    button {
+      background: var(--primary-indigo); color: white;
+      border: none; padding: 12px 20px; border-radius: 16px;
+      font-weight: 600; cursor: pointer; transition: 0.2s;
+      font-family: 'Poppins', sans-serif;
+    }
+    button:hover { background: #5855eb; transform: translateY(-2px); }
+    button:disabled { background: var(--text-soft); cursor: not-allowed; transform: none; }
+    
+    .btn-secondary {
+      background: var(--warm-white); color: var(--primary-indigo);
+      border: 2px solid var(--primary-indigo);
+    }
+    
+    input, select, textarea {
+      width: 100%; padding: 10px 14px; margin-bottom: 15px;
+      border: 2px solid var(--border-gentle); border-radius: 12px;
+      font-family: 'Poppins', sans-serif; font-size: 0.95rem;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none; border-color: var(--primary-indigo);
+    }
+    label { display: block; font-weight: 500; margin-bottom: 5px; font-size: 0.9rem; color: var(--text-soft); }
+
+    /* --- Dashboard Header & Totals --- */
+    .header {
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;
+    }
+    .header h1 { color: var(--primary-indigo); font-size: 2rem; }
+
+    .totals-board {
+      background: var(--warm-white);
+      padding: 20px; border-radius: 20px;
+      box-shadow: 0 8px 24px rgba(99,102,241,0.1);
+      text-align: center; margin-bottom: 25px;
+      border: 1px solid var(--border-gentle);
+    }
+    .totals-board h2 { font-size: 2.5rem; color: var(--primary-indigo); margin-bottom: 5px; }
+    .totals-breakdown { display: flex; justify-content: center; gap: 20px; color: var(--text-soft); font-weight: 500; }
+
+    .action-buttons {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 30px;
+    }
+
+    /* --- Modals --- */
+    .modal {
+      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(61, 65, 66, 0.6); z-index: 1000;
+      justify-content: center; align-items: center; padding: 20px;
+    }
+    .modal-content {
+      background: var(--warm-white); padding: 30px; border-radius: 24px;
+      width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto;
+    }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .close-btn { background: none; color: var(--text-soft); font-size: 1.5rem; padding: 0; border: none; }
+    .close-btn:hover { background: none; color: var(--text-dark); transform: none; }
+
+    /* Quick Buttons */
+    .quick-amount-row { display: flex; gap: 10px; margin-bottom: 15px; }
+    .quick-btn { flex: 1; padding: 8px; font-size: 0.85rem; background: var(--accent-lavender); color: var(--primary-indigo); }
+
+    /* --- Receipt Cards --- */
+    .filters { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px; }
+    .filters button { flex-shrink: 0; font-size: 0.85rem; padding: 8px 15px; border-radius: 20px; }
+    
+    .receipts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+
+    .receipt {
+      background: var(--warm-white);
+      padding: 20px; border-radius: 12px;
+      position: relative;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      border-top: 4px solid var(--border-gentle);
+      border-bottom: 2px dashed #ccc;
+      transition: 0.3s;
+    }
+    
+    .receipt-header { display: flex; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 10px;}
+    .r-title { font-weight: 600; font-size: 1.1rem; color: var(--text-dark); }
+    .r-date { font-size: 0.8rem; color: var(--text-soft); }
+    .r-category { font-size: 0.75rem; font-weight: bold; background: #eee; padding: 3px 8px; border-radius: 8px; }
+    
+    .r-body { margin-bottom: 15px; font-size: 0.9rem; }
+    .r-amount { font-size: 1.4rem; font-weight: 600; color: var(--primary-indigo); text-align: right;}
+    .r-remaining { font-size: 0.85rem; color: var(--text-soft); text-align: right; }
+
+    /* Status Visuals */
+    .receipt.status-paid { background: var(--paid-bg); opacity: 0.8; }
+    .receipt.status-paid .r-amount { text-decoration: line-through; color: var(--paid-text); }
+    .receipt.status-partial { background: var(--partial-bg); }
+    .receipt.status-overdue { border-top: 4px solid var(--overdue-text); animation: pulseRed 2s infinite; }
+    .receipt.status-repayment { background: var(--soft-sky); border-top: 4px solid var(--primary-indigo); }
+    .receipt.status-repayment .r-amount { color: #0369a1; }
+
+    @keyframes pulseRed {
+      0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4); }
+      70% { box-shadow: 0 0 0 10px rgba(220, 38, 38, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
+    }
+
+    .approve-btn { background: #10b981; margin-top: 10px; width: 100%; font-size: 0.9rem;}
+    .approve-btn:hover { background: #059669; }
+    
+    #loader { display: none; position: fixed; top:20px; right:20px; background: var(--warm-white); padding: 10px 20px; border-radius: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); z-index: 9999; font-weight: 600; color: var(--primary-indigo);}
+  </style>
+</head>
+<body>
+
+  <div id="loader">🐼 Loading...</div>
+
+  <div id="login-overlay">
+    <div class="login-box">
+      <h2>🐼 Who goes there?</h2>
+      <p style="margin-bottom: 20px; color: var(--text-soft); font-size: 0.9rem;">Enter the secret word to access the bank.</p>
+      <input type="password" id="login-pwd" placeholder="Password">
+      <button onclick="attemptLogin()">Enter Bank</button>
+      <p id="login-error" style="color: red; margin-top: 10px; font-size: 0.85rem; display: none;"></p>
+    </div>
+  </div>
+
+  <div id="app-container">
+    
+    <div class="header">
+      <h1>🐼 Panda Bank</h1>
+      <button class="btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="location.reload()">Log Out</button>
+    </div>
+
+    <div class="totals-board">
+      <p style="font-weight: 500; color: var(--text-soft);">Total Outstanding Balance</p>
+      <h2 id="total-amount">0 kr</h2>
+      <div class="totals-breakdown">
+        <span id="kg-total">KG: 0 kr</span>
+        <span id="lg-total">LG: 0 kr</span>
+      </div>
+    </div>
+
+    <div class="action-buttons">
+      <button id="btn-new-loan" onclick="openModal('loanModal')">Request Loan</button>
+      <button class="btn-secondary" onclick="openModal('paymentModal')">💸 Pay Now</button>
+    </div>
+
+    <div class="filters">
+      <button onclick="renderReceipts('Active')">Active Debts</button>
+      <button class="btn-secondary" onclick="renderReceipts('All')">Show All</button>
+      <button class="btn-secondary" onclick="renderReceipts('Repayment')">History</button>
+    </div>
+
+    <div class="receipts-grid" id="receipts-container">
+      </div>
+
+  </div>
+
+  <div id="loanModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="loan-modal-title" style="color: var(--primary-indigo);">New Request</h2>
+        <button class="close-btn" onclick="closeModal('loanModal')">&times;</button>
+      </div>
+      
+      <form id="loanForm" onsubmit="submitLoan(event)">
+        
+        <div id="entry-type-container" style="display: none; margin-bottom: 15px;">
+          <label>Entry Type</label>
+          <select id="l-entry-type" onchange="toggleAmountFields()">
+            <option value="Direct Loan">Direct Receipt (Money already sent)</option>
+            <option value="Request">New Request</option>
+          </select>
+        </div>
+
+        <label>Title (What for?)</label>
+        <input type="text" id="l-title" maxlength="50" placeholder="e.g. Weekend Beers" required>
+        
+        <div id="amount-request-container">
+          <label>Amount (kr) - <em>How much do you need?</em></label>
+          <div style="display: flex; gap: 10px;">
+            <input type="number" id="l-amount-min" placeholder="Minimum needed">
+            <input type="number" id="l-amount-ideal" placeholder="Ideal amount">
+          </div>
+        </div>
+
+        <div id="amount-exact-container" style="display: none;">
+          <label>Exact Amount (kr)</label>
+          <input type="number" id="l-amount-exact" placeholder="0">
+        </div>
+
+        <div class="quick-amount-row">
+          <button type="button" class="quick-btn" onclick="addLoanAmount(500)">+500</button>
+          <button type="button" class="quick-btn" onclick="addLoanAmount(1000)">+1k</button>
+          <button type="button" class="quick-btn" onclick="addLoanAmount(5000)">+5k</button>
+          <button type="button" class="quick-btn" onclick="addLoanAmount(10000)">+10k</button>
+        </div>
+        
+        <label>Type</label>
+        <select id="l-type" onchange="toggleDueDate()" required>
+          <option value="KG">KG (Short Term)</option>
+          <option value="LG">LG (Long Term)</option>
+        </select>
+        
+        <div id="dueDateContainer">
+          <label>Due Date</label>
+          <input type="date" id="l-duedate">
+        </div>
+        
+        <label>Source</label>
+        <select id="l-source" required>
+          <option value="Vipps">Vipps</option>
+          <option value="DNB">DNB</option>
+          <option value="Nordea">Nordea</option>
+          <option value="Kontant">Kontant</option>
+        </select>
+        
+        <label>Comment (Optional - Max 3 sentences)</label>
+        <textarea id="l-comment" maxlength="200" rows="3" placeholder="Any extra details..."></textarea>
+        
+        <button type="submit" style="width: 100%; margin-top: 10px;" id="btn-submit-loan">Submit</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="paymentModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 style="color: var(--primary-indigo);">💸 Log a Payment</h2>
+        <button class="close-btn" onclick="closeModal('paymentModal')">&times;</button>
+      </div>
+      
+      <p style="font-size: 0.85rem; color: var(--text-soft); margin-bottom: 15px;">
+        Money paid will automatically cover the most urgent deadlines first!
+      </p>
+
+      <form id="paymentForm" onsubmit="submitPayment(event)">
+        <label>Amount Paid (kr)</label>
+        <div class="quick-amount-row">
+          <button type="button" class="quick-btn" onclick="addPaymentAmount(500)">+500</button>
+          <button type="button" class="quick-btn" onclick="addPaymentAmount(1000)">+1k</button>
+          <button type="button" class="quick-btn" onclick="addPaymentAmount(5000)">+5k</button>
+        </div>
+        <input type="number" id="p-amount" required>
+        
+        <label>Source</label>
+        <select id="p-source" required>
+          <option value="Vipps">Vipps</option>
+          <option value="DNB">DNB</option>
+          <option value="Nordea">Nordea</option>
+          <option value="Kontant">Kontant</option>
+        </select>
+
+        <label>Comment (Optional)</label>
+        <textarea id="p-comment" maxlength="150" rows="2" placeholder="e.g. Paid via Vipps for weekend beers..."></textarea>
+        
+        <button type="submit" style="width: 100%; margin-top: 10px;">Register Payment</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // ⚠️ REPLACE THIS URL WITH YOUR GOOGLE WEB APP DEPLOYMENT URL ⚠️
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbyb-aLJUVoYMyaoBkkYRkysWUxK37ZFxfd7bdbxcLfFfb0kKK4GY9I0krOovzx95VNa/exec';
+    
+    let currentRole = ''; 
+    let allTransactions = [];
+
+    // -- 1. API Helper --
+    async function apiCall(payload) {
+      document.getElementById('loader').style.display = 'block';
+      try {
+        const response = await fetch(scriptURL, {
+          method: 'POST',
+          body: JSON.stringify(payload)
+        });
+        const data = await response.json();
+        document.getElementById('loader').style.display = 'none';
+        return data;
+      } catch (error) {
+        document.getElementById('loader').style.display = 'none';
+        alert("Connection Error. Check the console.");
+        console.error(error);
+        return { success: false };
+      }
+    }
+
+    // -- 2. Login --
+    async function attemptLogin() {
+      const pwd = document.getElementById('login-pwd').value;
+      if (!pwd) return;
+      
+      const res = await apiCall({ action: 'login', password: pwd });
+      
+      if (res.success) {
+        currentRole = res.role;
+        document.getElementById('login-overlay').style.display = 'none';
+        document.getElementById('app-container').style.display = 'block';
+        
+        // Adjust UI based on Role
+        if (currentRole === 'panda') {
+          document.getElementById('btn-new-loan').textContent = 'Log Direct Loan';
+          document.getElementById('loan-modal-title').textContent = 'Log Direct Loan';
+          document.getElementById('btn-submit-loan').textContent = 'Save Transaction';
+        } else {
+          document.getElementById('btn-new-loan').textContent = 'Request Money';
+        }
+        
+        toggleAmountFields(); // Setup the form based on role!
+        fetchDashboardData();
+      } else {
+        const err = document.getElementById('login-error');
+        err.textContent = res.message;
+        err.style.display = 'block';
+      }
+    }
+
+    // -- 3. Fetch Data --
+    async function fetchDashboardData() {
+      const res = await apiCall({ action: 'get_data' });
+      if (res.success) {
+        allTransactions = res.data;
+        updateTotals();
+        renderReceipts('Active');
+      }
+    }
+
+    // -- 4. Update Math --
+    function updateTotals() {
+      let total = 0, kgTotal = 0, lgTotal = 0;
+      allTransactions.forEach(tx => {
+        if (tx['Status'] === 'Active' || tx['Status'] === 'Overdue') {
+          const rem = parseFloat(tx['Remaining Amount']) || 0;
+          total += rem;
+          if (tx['Category'] === 'KG') kgTotal += rem;
+          if (tx['Category'] === 'LG') lgTotal += rem;
+        }
+      });
+      document.getElementById('total-amount').textContent = total.toLocaleString() + ' kr';
+      document.getElementById('kg-total').textContent = 'KG: ' + kgTotal.toLocaleString() + ' kr';
+      document.getElementById('lg-total').textContent = 'LG: ' + lgTotal.toLocaleString() + ' kr';
+    }
+
+    // -- 5. Render Receipts --
+    function renderReceipts(filter) {
+      const container = document.getElementById('receipts-container');
+      container.innerHTML = '';
+      
+      let filtered = allTransactions;
+      if (filter === 'Active') {
+        filtered = allTransactions.filter(t => t['Status'] === 'Active' || t['Status'] === 'Overdue' || t['Status'] === 'Pending');
+      } else if (filter === 'Repayment') {
+        filtered = allTransactions.filter(t => t['Entry Type'] === 'Repayment');
+      }
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<p style="color:var(--text-soft); text-align:center; width: 100%;">No receipts here! 🌸</p>`;
+        return;
+      }
+
+      filtered.forEach(tx => {
+        let statusClass = '';
+        const originalAmt = parseFloat(tx['Original Amount']);
+        const remainingAmt = parseFloat(tx['Remaining Amount']);
+        
+        if (tx['Entry Type'] === 'Repayment') statusClass = 'status-repayment';
+        else if (tx['Status'] === 'Overdue') statusClass = 'status-overdue';
+        else if (tx['Status'] === 'Paid') statusClass = 'status-paid';
+        else if (remainingAmt > 0 && remainingAmt < originalAmt) statusClass = 'status-partial';
+
+        const d = new Date(tx['Date']);
+        const dateStr = d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
+        const card = document.createElement('div');
+        card.className = `receipt ${statusClass}`;
+        
+        let approveBtnHTML = '';
+        if (tx['Status'] === 'Pending' && currentRole === 'panda') {
+          approveBtnHTML = `<button class="approve-btn" onclick="approveLoan('${tx['ID']}')">✅ Approve Request</button>`;
+        }
+
+        let dueHTML = '';
+        if (tx['Category'] === 'KG' && tx['Due Date'] && tx['Entry Type'] !== 'Repayment') {
+          const dueD = new Date(tx['Due Date']);
+          dueHTML = `<p style="font-size: 0.8rem; color: #dc2626; margin-top: 5px;"><strong>Due:</strong> ${dueD.toLocaleDateString()}</p>`;
+        }
+
+        card.innerHTML = `
+          <div class="receipt-header">
+            <div>
+              <span class="r-category">${tx['Category']}</span>
+              <span style="font-size:0.75rem; margin-left: 5px; color:var(--text-soft);">${tx['Status']}</span>
+            </div>
+            <div class="r-date">${dateStr}</div>
+          </div>
+          <div class="r-title">${tx['Title / Purpose']}</div>
+          ${tx['Comment'] ? `<div style="font-size:0.8rem; color:var(--text-soft); margin-bottom:10px; font-style:italic;">"${tx['Comment']}"</div>` : ''}
+          ${dueHTML}
+          <div style="margin-top: 15px; border-top: 1px dashed #ccc; padding-top: 10px;">
+            ${tx['Entry Type'] === 'Repayment' 
+              ? `<div class="r-amount">+ ${originalAmt} kr</div>` 
+              : `<div class="r-amount">${originalAmt} kr</div>
+                 <div class="r-remaining">Remaining: ${remainingAmt} kr</div>`
+            }
+          </div>
+          ${approveBtnHTML}
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // -- 6. Submit Loan Request --
+    async function submitLoan(e) {
+      e.preventDefault();
+      document.getElementById('btn-submit-loan').disabled = true;
+
+      let finalAmount = 0;
+      let finalComment = document.getElementById('l-comment').value;
+      const isRequest = document.getElementById('amount-request-container').style.display !== 'none';
+      
+      if (isRequest) {
+        const min = document.getElementById('l-amount-min').value;
+        const ideal = document.getElementById('l-amount-ideal').value;
+        finalAmount = ideal || min; 
+        finalComment = `(Min requested: ${min}kr | Ideal: ${ideal}kr) ` + finalComment;
+      } else {
+        finalAmount = document.getElementById('l-amount-exact').value;
+      }
+
+      // If Panda chooses to log a "Request" on behalf of the Shark, we pass 'shark' as the role 
+      // so the backend treats it as Pending.
+      const typeOverride = document.getElementById('l-entry-type').value;
+      const finalRole = (currentRole === 'panda' && typeOverride === 'Request') ? 'shark' : currentRole;
+
+      const payload = {
+        action: 'submit_request',
+        role: finalRole,
+        title: document.getElementById('l-title').value,
+        amount: finalAmount,
+        category: document.getElementById('l-type').value,
+        dueDate: document.getElementById('l-duedate').value,
+        source: document.getElementById('l-source').value,
+        comment: finalComment
+      };
+
+      const res = await apiCall(payload);
+      if(res.success) {
+        closeModal('loanModal');
+        document.getElementById('loanForm').reset();
+        toggleAmountFields(); // Reset the view
+        fetchDashboardData();
+      }
+      document.getElementById('btn-submit-loan').disabled = false;
+    }
+
+    // -- 7. Submit Payment --
+    async function submitPayment(e) {
+      e.preventDefault();
+      const btn = e.target.querySelector('button[type="submit"]');
+      btn.disabled = true;
+
+      const payload = {
+        action: 'log_payment',
+        amount: document.getElementById('p-amount').value,
+        source: document.getElementById('p-source').value,
+        comment: document.getElementById('p-comment').value,
+        title: 'Payment Logged'
+      };
+
+      const res = await apiCall(payload);
+      if(res.success) {
+        closeModal('paymentModal');
+        document.getElementById('paymentForm').reset();
+        fetchDashboardData();
+      }
+      btn.disabled = false;
+    }
+
+    // -- 8. Approve Loan (Panda Only) --
+    async function approveLoan(id) {
+      if(!confirm("Are you sure you want to approve this? (This triggers the Calendar invite!)")) return;
+      const res = await apiCall({ action: 'approve_loan', id: id });
+      if(res.success) fetchDashboardData();
+    }
+
+    // -- UI Helpers --
+    function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+    
+    function toggleAmountFields() {
+      if (currentRole === 'panda') {
+        document.getElementById('entry-type-container').style.display = 'block';
+        const type = document.getElementById('l-entry-type').value;
+        
+        if (type === 'Direct Loan') {
+          document.getElementById('amount-request-container').style.display = 'none';
+          document.getElementById('amount-exact-container').style.display = 'block';
+          document.getElementById('l-amount-exact').required = true;
+          document.getElementById('l-amount-min').required = false;
+        } else {
+          document.getElementById('amount-request-container').style.display = 'block';
+          document.getElementById('amount-exact-container').style.display = 'none';
+          document.getElementById('l-amount-exact').required = false;
+          document.getElementById('l-amount-min').required = true;
+        }
+      } else {
+        document.getElementById('entry-type-container').style.display = 'none';
+        document.getElementById('amount-request-container').style.display = 'block';
+        document.getElementById('amount-exact-container').style.display = 'none';
+        document.getElementById('l-amount-min').required = true;
+      }
+    }
+
+    function toggleDueDate() {
+      const type = document.getElementById('l-type').value;
+      const dateContainer = document.getElementById('dueDateContainer');
+      const dateInput = document.getElementById('l-duedate');
+      if (type === 'KG') {
+        dateContainer.style.display = 'block';
+        dateInput.required = true;
+      } else {
+        dateContainer.style.display = 'none';
+        dateInput.required = false;
+        dateInput.value = '';
+      }
+    }
+
+    // Smart Quick Add for the Loan Modal
+    function addLoanAmount(amt) {
+      const isRequest = document.getElementById('amount-request-container').style.display !== 'none';
+      const inputId = isRequest ? 'l-amount-ideal' : 'l-amount-exact';
+      const input = document.getElementById(inputId);
+      let current = parseFloat(input.value) || 0;
+      input.value = current + amt;
+    }
+
+    // Smart Quick Add for the Payment Modal
+    function addPaymentAmount(amt) {
+      const input = document.getElementById('p-amount');
+      let current = parseFloat(input.value) || 0;
+      input.value = current + amt;
+    }
+
+    // Initialize state
+    toggleDueDate();
+
+  </script>
+</body>
+</html>
