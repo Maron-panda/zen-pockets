@@ -6,14 +6,35 @@
   <title>Canvas Project - Overview</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
   
-  <style>
+<style>
+    /* CSS Variables for new Serene & Whimsical color scheme */
+    :root {
+      --primary-indigo: #6366f1;
+      --secondary-cream: #faf9f7;
+      --accent-lavender: #e0e7ff;
+      --soft-sky: #e0f2fe;
+      --warm-white: #fefcfa;
+      --gentle-gray: #8a8a8a;
+      --text-dark: #3d4142;
+      --text-soft: #6b7280;
+      --shadow-light: rgba(99, 102, 241, 0.08);
+      --shadow-soft: rgba(99, 102, 241, 0.15);
+      --border-gentle: rgba(99, 102, 241, 0.2);
+      --hover-indigo: #5855eb;
+      /* Keeping semantic colors for badges but softening them */
+      --success-bg: #d1fae5;
+      --success-text: #059669;
+      --warning-bg: #fef3c7;
+      --warning-text: #d97706;
+    }
+
     /* Reset & Base Styling */
     * { box-sizing: border-box; }
     body {
       margin: 0; padding: 0;
-      background: linear-gradient(to bottom, #fff0f5, #fdf6fb);
+      background: linear-gradient(135deg, var(--secondary-cream) 0%, var(--soft-sky) 100%);
       font-family: 'Poppins', sans-serif;
-      color: #444;
+      color: var(--text-dark);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
@@ -36,25 +57,28 @@
       margin-bottom: 30px;
     }
     h1 {
-      color: #ec6f9c;
+      color: var(--primary-indigo);
       font-weight: 600;
       font-size: 2rem;
       margin: 0;
+      text-shadow: 0 2px 4px rgba(99, 102, 241, 0.1);
     }
     .btn-back {
-      background: #fffefe;
-      color: #e48ccf;
-      border: 2px solid #e48ccf;
+      background: var(--warm-white);
+      color: var(--primary-indigo);
+      border: 2px solid var(--border-gentle);
       border-radius: 20px;
       padding: 8px 16px;
       font-weight: 600;
       text-decoration: none;
       transition: all 0.3s;
+      box-shadow: 0 4px 10px var(--shadow-light);
     }
     .btn-back:hover {
-      background: #fdf6fb;
-      color: #d86dd1;
-      border-color: #d86dd1;
+      background: var(--accent-lavender);
+      color: var(--hover-indigo);
+      border-color: var(--hover-indigo);
+      transform: translateY(-2px);
     }
 
     /* Controls (Search & Filters) */
@@ -62,30 +86,33 @@
       display: grid;
       grid-template-columns: 2fr 1fr 1fr;
       gap: 15px;
-      background: #fffefe;
+      background: var(--warm-white);
       padding: 20px;
       border-radius: 20px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 8px 32px var(--shadow-light);
+      border: 1px solid var(--border-gentle);
       margin-bottom: 30px;
     }
     .controls input, .controls select {
       width: 100%;
       padding: 10px 14px;
-      border: 2px solid #f1d7e0;
+      border: 2px solid var(--border-gentle);
       border-radius: 12px;
       font-family: 'Poppins', sans-serif;
       font-size: 0.95rem;
-      color: #444;
+      color: var(--text-dark);
+      background: var(--warm-white);
       outline: none;
       transition: 0.2s;
     }
     .controls input:focus, .controls select:focus {
-      border-color: #f7a3c1;
-      box-shadow: 0 0 0 3px #fce4ed;
+      border-color: var(--primary-indigo);
+      box-shadow: 0 0 0 3px var(--accent-lavender);
     }
     .controls select {
       appearance: none;
-      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f7a3c1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      /* Updated SVG stroke to match --primary-indigo (%236366f1) */
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236366f1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
       background-repeat: no-repeat;
       background-position: right 14px center;
       background-size: 16px;
@@ -101,17 +128,35 @@
 
     /* Individual Card */
     .card {
-      background: #fffefe;
+      background: var(--warm-white);
       border-radius: 20px;
       padding: 20px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
-      transition: transform 0.2s;
+      box-shadow: 0 8px 32px var(--shadow-light);
+      border: 1px solid var(--border-gentle);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
       display: flex;
       flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    /* Subtle hover shine effect from your CSS */
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.05), transparent);
+      transition: left 0.5s ease;
+    }
+    .card:hover::before {
+      left: 100%;
     }
     .card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1);
+      transform: translateY(-5px);
+      box-shadow: 0 12px 30px var(--shadow-soft);
     }
     
     .card-header {
@@ -119,17 +164,20 @@
       justify-content: space-between;
       align-items: flex-start;
       margin-bottom: 10px;
+      position: relative;
+      z-index: 2;
     }
     .card-title {
       font-size: 1.1rem;
       font-weight: 600;
-      color: #7c4c66;
+      color: var(--primary-indigo);
       margin: 0;
     }
     .card-date {
       font-size: 0.8rem;
-      color: #999;
+      color: var(--text-soft);
       margin-top: 4px;
+      font-style: italic;
     }
 
     /* Badges */
@@ -138,6 +186,8 @@
       gap: 8px;
       margin-bottom: 15px;
       flex-wrap: wrap;
+      position: relative;
+      z-index: 2;
     }
     .badge {
       font-size: 0.75rem;
@@ -145,34 +195,40 @@
       padding: 4px 10px;
       border-radius: 12px;
     }
-    .badge-type { background: #fce4ed; color: #b65784; }
-    .badge-status.resolved { background: #e6f7ec; color: #2e8b57; }
-    .badge-status.tbd { background: #fff0d4; color: #d9822b; }
+    .badge-type { background: var(--accent-lavender); color: var(--hover-indigo); }
+    .badge-status.resolved { background: var(--success-bg); color: var(--success-text); }
+    .badge-status.tbd { background: var(--warning-bg); color: var(--warning-text); }
 
     /* Card Content */
     .card-desc {
       font-size: 0.9rem;
-      line-height: 1.5;
+      line-height: 1.6;
       margin-bottom: 15px;
-      flex-grow: 1; /* Pushes solution to bottom if cards are different heights */
+      flex-grow: 1;
+      color: var(--text-dark);
+      position: relative;
+      z-index: 2;
     }
     .card-solution {
-      background: #fdf6fb;
-      border-left: 3px solid #f7a3c1;
+      background: linear-gradient(135deg, var(--accent-lavender) 0%, var(--soft-sky) 100%);
+      border-left: 3px solid var(--primary-indigo);
       padding: 10px 12px;
       border-radius: 0 8px 8px 0;
       font-size: 0.85rem;
-      color: #666;
+      color: var(--text-dark);
+      position: relative;
+      z-index: 2;
     }
-    .card-solution strong { color: #b65784; }
+    .card-solution strong { color: var(--primary-indigo); }
 
     /* Loading / Empty States */
     .status-msg {
       text-align: center;
-      color: #aa5e88;
+      color: var(--primary-indigo);
       font-size: 1.1rem;
       margin-top: 40px;
       grid-column: 1 / -1;
+      font-style: italic;
     }
 
     /* Mobile adjustments */
@@ -193,7 +249,7 @@
     
     <div class="header">
       <h1>🐼 Interaction Overview</h1>
-      <a href="index.html" class="btn-back">← Log New</a>
+      <a href="canvasindex.html" class="btn-back">← Log New</a>
     </div>
 
     <div class="controls">
