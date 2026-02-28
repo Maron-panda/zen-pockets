@@ -3,366 +3,291 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Panda Bank 🐼🏦</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <title>Panda Bank 🐼🌸</title>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
   
   <style>
-    /* --- CSS Variables (Serene Theme) --- */
     :root {
-      --primary-indigo: #6366f1;
-      --secondary-cream: #faf9f7;
-      --accent-lavender: #e0e7ff;
-      --soft-sky: #e0f2fe;
-      --warm-white: #fefcfa;
-      --text-dark: #3d4142;
-      --text-soft: #6b7280;
-      --border-gentle: rgba(99, 102, 241, 0.2);
-      
-      /* Status Colors */
-      --paid-bg: #d1fae5;
-      --paid-text: #059669;
-      --partial-bg: #fef3c7;
-      --partial-text: #d97706;
-      --overdue-bg: #fee2e2;
-      --overdue-text: #dc2626;
+      --pink-main: #f472b6;
+      --pink-light: #fdf2f8;
+      --pink-hover: #db2777;
+      --text-dark: #4b5563;
+      --text-soft: #9ca3af;
+      --white: #ffffff;
+      --active-tab: #f472b6;
+      --inactive-tab: #fbcfe8;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
     
     body {
-      font-family: 'Poppins', sans-serif;
-      background: linear-gradient(135deg, var(--secondary-cream) 0%, var(--soft-sky) 100%);
+      font-family: 'Quicksand', sans-serif;
+      background-color: var(--pink-light);
+      background-image: radial-gradient(#fbcfe8 2px, transparent 2px);
+      background-size: 30px 30px;
       color: var(--text-dark);
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      display: flex; flex-direction: column; align-items: center;
+      position: relative; overflow-x: hidden;
     }
 
-    /* --- App Container & Login Overlay --- */
-    #app-container {
-      width: 100%;
-      max-width: 900px;
-      padding: 30px 20px;
-      display: none; /* Hidden until logged in */
+    /* Floating Panda & Petals */
+    .floating-panda {
+      position: absolute; top: 10%; right: 5%; font-size: 3rem;
+      animation: float 6s ease-in-out infinite; z-index: -1; opacity: 0.6;
     }
+    .petal {
+      position: absolute; font-size: 1.5rem; color: #f9a8d4; opacity: 0.5;
+      animation: fall linear infinite; z-index: -1;
+    }
+    @keyframes float { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-20px) rotate(10deg); } }
+    @keyframes fall { 0% { transform: translateY(-10vh) rotate(0deg); } 100% { transform: translateY(110vh) rotate(360deg); } }
 
+    #app-container { width: 100%; max-width: 800px; padding: 20px; display: none; }
     #login-overlay {
-      position: fixed;
-      top: 0; left: 0; width: 100vw; height: 100vh;
-      background: linear-gradient(135deg, var(--accent-lavender) 0%, var(--soft-sky) 100%);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: var(--pink-light); display: flex; justify-content: center; align-items: center; z-index: 9999;
     }
 
-    .login-box {
-      background: var(--warm-white);
-      padding: 40px;
-      border-radius: 24px;
-      box-shadow: 0 10px 30px rgba(99,102,241,0.15);
-      text-align: center;
-      width: 90%;
-      max-width: 400px;
-    }
+    .box { background: var(--white); padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(244, 114, 182, 0.2); }
+    .login-box { text-align: center; width: 90%; max-width: 400px; }
 
-    .login-box h2 { color: var(--primary-indigo); margin-bottom: 20px; }
-    .login-box input {
-      width: 100%; padding: 12px; margin-bottom: 20px;
-      border: 2px solid var(--border-gentle); border-radius: 12px;
-      font-family: 'Poppins'; text-align: center; font-size: 1.1rem;
+    /* Forms & Inputs */
+    input, select {
+      width: 100%; padding: 12px; margin-bottom: 15px; border: 2px solid #fbcfe8;
+      border-radius: 12px; font-family: 'Quicksand'; font-size: 1rem; color: var(--text-dark);
     }
-    .login-box button { width: 100%; }
+    input:focus, select:focus { outline: none; border-color: var(--pink-main); }
+    label { display: block; font-weight: 600; margin-bottom: 5px; color: var(--pink-main); }
 
-    /* --- Buttons & Inputs --- */
+    /* Sentence Input for Amount */
+    .sentence-input {
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 15px;
+      background: #fdf2f8; padding: 15px; border-radius: 12px; border: 1px dashed var(--pink-main);
+    }
+    .sentence-input input { width: 80px; margin-bottom: 0; padding: 8px; text-align: center; }
+
+    /* Buttons */
     button {
-      background: var(--primary-indigo); color: white;
-      border: none; padding: 12px 20px; border-radius: 16px;
-      font-weight: 600; cursor: pointer; transition: 0.2s;
-      font-family: 'Poppins', sans-serif;
+      background: var(--pink-main); color: white; border: none; padding: 12px 20px;
+      border-radius: 20px; font-weight: 700; cursor: pointer; transition: 0.2s; font-family: 'Quicksand';
     }
-    button:hover { background: #5855eb; transform: translateY(-2px); }
-    button:disabled { background: var(--text-soft); cursor: not-allowed; transform: none; }
+    button:hover { background: var(--pink-hover); transform: translateY(-2px); }
+    .btn-secondary { background: var(--inactive-tab); color: var(--text-dark); }
+    .btn-secondary:hover { background: #f9a8d4; }
+    .btn-reject { background: #ef4444; } .btn-reject:hover { background: #dc2626; }
     
-    .btn-secondary {
-      background: var(--warm-white); color: var(--primary-indigo);
-      border: 2px solid var(--primary-indigo);
-    }
+    /* Toggle Switch */
+    .toggle-container { display: flex; background: var(--inactive-tab); border-radius: 20px; margin-bottom: 15px; overflow: hidden;}
+    .toggle-btn { flex: 1; padding: 10px; text-align: center; cursor: pointer; font-weight: 600; transition: 0.3s; color: var(--text-soft);}
+    .toggle-btn.active { background: var(--pink-main); color: white; border-radius: 20px;}
+
+    /* Dashboard */
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .header h1 { color: var(--pink-main); }
+    .totals-board { text-align: center; margin-bottom: 25px; }
+    .totals-board h2 { font-size: 2.5rem; color: var(--pink-main); }
+
+    .action-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+
+    /* Tabs */
+    .tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid var(--inactive-tab); padding-bottom: 10px;}
+    .tab-btn { background: none; color: var(--text-soft); padding: 8px 15px; border-radius: 20px; font-weight: 600; }
+    .tab-btn.active { background: var(--pink-main); color: white; }
+
+    /* Cards */
+    .receipts-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
+    .card { background: var(--white); padding: 20px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); position: relative; border-left: 6px solid var(--pink-main);}
+    .card-title { font-size: 1.2rem; font-weight: 700; color: var(--text-dark); margin-bottom: 5px; }
+    .status-pill { position: absolute; top: 20px; right: 20px; font-size: 0.75rem; font-weight: bold; padding: 4px 10px; border-radius: 12px; }
+    .status-Pending { background: #fef08a; color: #854d0e; }
+    .status-Active { background: var(--pink-light); color: var(--pink-hover); }
+    .status-Paid { background: #d1fae5; color: #065f46; }
+    .status-Overdue { background: #fee2e2; color: #991b1b; border-left-color: #ef4444; }
     
-    input, select, textarea {
-      width: 100%; padding: 10px 14px; margin-bottom: 15px;
-      border: 2px solid var(--border-gentle); border-radius: 12px;
-      font-family: 'Poppins', sans-serif; font-size: 0.95rem;
-    }
-    input:focus, select:focus, textarea:focus {
-      outline: none; border-color: var(--primary-indigo);
-    }
-    label { display: block; font-weight: 500; margin-bottom: 5px; font-size: 0.9rem; color: var(--text-soft); }
+    .card-details { font-size: 0.9rem; color: var(--text-soft); margin-bottom: 15px; }
+    .card-amounts { display: flex; justify-content: space-between; align-items: baseline; border-top: 1px dashed #fbcfe8; padding-top: 10px;}
+    .amt-main { font-size: 1.5rem; font-weight: 700; color: var(--pink-main); }
 
-    /* --- Dashboard Header & Totals --- */
-    .header {
-      display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;
-    }
-    .header h1 { color: var(--primary-indigo); font-size: 2rem; }
-
-    .totals-board {
-      background: var(--warm-white);
-      padding: 20px; border-radius: 20px;
-      box-shadow: 0 8px 24px rgba(99,102,241,0.1);
-      text-align: center; margin-bottom: 25px;
-      border: 1px solid var(--border-gentle);
-    }
-    .totals-board h2 { font-size: 2.5rem; color: var(--primary-indigo); margin-bottom: 5px; }
-    .totals-breakdown { display: flex; justify-content: center; gap: 20px; color: var(--text-soft); font-weight: 500; }
-
-    .action-buttons {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 30px;
-    }
-
-    /* --- Modals --- */
-    .modal {
-      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(61, 65, 66, 0.6); z-index: 1000;
-      justify-content: center; align-items: center; padding: 20px;
-    }
-    .modal-content {
-      background: var(--warm-white); padding: 30px; border-radius: 24px;
-      width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto;
-    }
-    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-    .close-btn { background: none; color: var(--text-soft); font-size: 1.5rem; padding: 0; border: none; }
-    .close-btn:hover { background: none; color: var(--text-dark); transform: none; }
-
-    /* Quick Buttons */
-    .quick-amount-row { display: flex; gap: 10px; margin-bottom: 15px; }
-    .quick-btn { flex: 1; padding: 8px; font-size: 0.85rem; background: var(--accent-lavender); color: var(--primary-indigo); }
-
-    /* --- Receipt Cards --- */
-    .filters { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px; }
-    .filters button { flex-shrink: 0; font-size: 0.85rem; padding: 8px 15px; border-radius: 20px; }
+    /* Modals */
+    .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 1000; justify-content: center; align-items: center; padding: 20px; }
+    .modal-content { background: var(--white); padding: 30px; border-radius: 24px; width: 100%; max-width: 400px; }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+    .modal-header h2 { color: var(--pink-main); }
+    .close-btn { background: none; color: var(--text-soft); font-size: 1.5rem; padding: 0; }
     
-    .receipts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
-
-    .receipt {
-      background: var(--warm-white);
-      padding: 20px; border-radius: 12px;
-      position: relative;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-      border-top: 4px solid var(--border-gentle);
-      border-bottom: 2px dashed #ccc;
-      transition: 0.3s;
-    }
-    
-    .receipt-header { display: flex; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 10px;}
-    .r-title { font-weight: 600; font-size: 1.1rem; color: var(--text-dark); }
-    .r-date { font-size: 0.8rem; color: var(--text-soft); }
-    .r-category { font-size: 0.75rem; font-weight: bold; background: #eee; padding: 3px 8px; border-radius: 8px; }
-    
-    .r-body { margin-bottom: 15px; font-size: 0.9rem; }
-    .r-amount { font-size: 1.4rem; font-weight: 600; color: var(--primary-indigo); text-align: right;}
-    .r-remaining { font-size: 0.85rem; color: var(--text-soft); text-align: right; }
-
-    /* Status Visuals */
-    .receipt.status-paid { background: var(--paid-bg); opacity: 0.8; }
-    .receipt.status-paid .r-amount { text-decoration: line-through; color: var(--paid-text); }
-    .receipt.status-partial { background: var(--partial-bg); }
-    .receipt.status-overdue { border-top: 4px solid var(--overdue-text); animation: pulseRed 2s infinite; }
-    .receipt.status-repayment { background: var(--soft-sky); border-top: 4px solid var(--primary-indigo); }
-    .receipt.status-repayment .r-amount { color: #0369a1; }
-
-    @keyframes pulseRed {
-      0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4); }
-      70% { box-shadow: 0 0 0 10px rgba(220, 38, 38, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
-    }
-
-    .approve-btn { background: #10b981; margin-top: 10px; width: 100%; font-size: 0.9rem;}
-    .approve-btn:hover { background: #059669; }
-    
-    #loader { display: none; position: fixed; top:20px; right:20px; background: var(--warm-white); padding: 10px 20px; border-radius: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); z-index: 9999; font-weight: 600; color: var(--primary-indigo);}
+    #loader { display: none; position: fixed; top:20px; right:20px; background: white; padding: 10px 20px; border-radius: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); z-index: 9999; font-weight: 600; color: var(--pink-main);}
   </style>
 </head>
 <body>
 
-  <div id="loader">🐼 Loading...</div>
+  <div class="floating-panda">🐼</div>
+  <div id="loader">🌸 Loading...</div>
 
   <div id="login-overlay">
-    <div class="login-box">
-      <h2>🐼 Who goes there?</h2>
-      <p style="margin-bottom: 20px; color: var(--text-soft); font-size: 0.9rem;">Enter the secret word to access the bank.</p>
-      <input type="password" id="login-pwd" placeholder="Password">
-      <button onclick="attemptLogin()">Enter Bank</button>
-      <p id="login-error" style="color: red; margin-top: 10px; font-size: 0.85rem; display: none;"></p>
+    <div class="box login-box">
+      <h2 style="color: var(--pink-main);">🐼 Welcome</h2>
+      <input type="password" id="login-pwd" placeholder="Enter password">
+      <button onclick="attemptLogin()" style="width: 100%;">Enter Bank</button>
+      <p id="login-error" style="color: red; margin-top: 10px; display: none;"></p>
     </div>
   </div>
 
   <div id="app-container">
-    
     <div class="header">
       <h1>🐼 Panda Bank</h1>
-      <button class="btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="location.reload()">Log Out</button>
+      <button class="btn-secondary" style="padding: 6px 12px;" onclick="location.reload()">Log Out</button>
     </div>
 
-    <div class="totals-board">
-      <p style="font-weight: 500; color: var(--text-soft);">Total Outstanding Balance</p>
+    <div class="box totals-board">
+      <p style="font-weight: 600; color: var(--text-soft);">Outstanding Balance</p>
       <h2 id="total-amount">0 kr</h2>
-      <div class="totals-breakdown">
-        <span id="kg-total">KG: 0 kr</span>
-        <span id="lg-total">LG: 0 kr</span>
-      </div>
     </div>
 
     <div class="action-buttons">
-      <button id="btn-new-loan" onclick="openModal('loanModal')">Request Loan</button>
-      <button class="btn-secondary" onclick="openModal('paymentModal')">💸 Pay Now</button>
+      <button id="btn-new" onclick="openModal('loanModal')">Request Money</button>
+      <button class="btn-secondary" onclick="openPaymentModal()">💸 Pay Back (General)</button>
     </div>
 
-    <div class="filters">
-      <button onclick="renderReceipts('Active')">Active Debts</button>
-      <button class="btn-secondary" onclick="renderReceipts('All')">Show All</button>
-      <button class="btn-secondary" onclick="renderReceipts('Repayment')">History</button>
+    <div class="tabs">
+      <button class="tab-btn active" id="tab-active" onclick="setTab('Active')">Active Debts</button>
+      <button class="tab-btn" id="tab-paid" onclick="setTab('Paid')">Paid stubs</button>
+      <button class="tab-btn" id="tab-all" onclick="setTab('All')">Show all</button>
     </div>
 
-    <div class="receipts-grid" id="receipts-container">
-      </div>
-
+    <div class="receipts-grid" id="receipts-container"></div>
   </div>
 
-  <div id="loanModal" class="modal">
+  <div id="loanModal" class="modal-overlay">
     <div class="modal-content">
       <div class="modal-header">
-        <h2 id="loan-modal-title" style="color: var(--primary-indigo);">New Request</h2>
+        <h2 id="loan-modal-title">New Entry</h2>
         <button class="close-btn" onclick="closeModal('loanModal')">&times;</button>
       </div>
       
       <form id="loanForm" onsubmit="submitLoan(event)">
         
-        <div id="entry-type-container" style="display: none; margin-bottom: 15px;">
-          <label>Entry Type</label>
-          <select id="l-entry-type" onchange="toggleAmountFields()">
-            <option value="Direct Loan">Direct Receipt (Money already sent)</option>
-            <option value="Request">New Request</option>
-          </select>
-        </div>
-
-        <label>Title (What for?)</label>
-        <input type="text" id="l-title" maxlength="50" placeholder="e.g. Weekend Beers" required>
-        
-        <div id="amount-request-container">
-          <label>Amount (kr) - <em>How much do you need?</em></label>
-          <div style="display: flex; gap: 10px;">
-            <input type="number" id="l-amount-min" placeholder="Minimum needed">
-            <input type="number" id="l-amount-ideal" placeholder="Ideal amount">
+        <div id="toggle-wrapper" style="display: none;">
+          <div class="toggle-container">
+            <div class="toggle-btn active" id="tg-receipt" onclick="switchToggle('Receipt')">Receipt</div>
+            <div class="toggle-btn" id="tg-request" onclick="switchToggle('Request')">Request</div>
           </div>
         </div>
 
-        <div id="amount-exact-container" style="display: none;">
-          <label>Exact Amount (kr)</label>
-          <input type="number" id="l-amount-exact" placeholder="0">
+        <label>What for?</label>
+        <input type="text" id="l-title" placeholder="e.g. School loan" required>
+        
+        <div class="sentence-input" id="amt-sentence">
+          <span>I need at least</span>
+          <input type="number" id="l-amount-min" required>
+          <span>kr, but if possible</span>
+          <input type="number" id="l-amount-ideal">
+          <span>kr.</span>
         </div>
 
-        <div class="quick-amount-row">
-          <button type="button" class="quick-btn" onclick="addLoanAmount(500)">+500</button>
-          <button type="button" class="quick-btn" onclick="addLoanAmount(1000)">+1k</button>
-          <button type="button" class="quick-btn" onclick="addLoanAmount(5000)">+5k</button>
-          <button type="button" class="quick-btn" onclick="addLoanAmount(10000)">+10k</button>
+        <div id="amt-exact" style="display: none;">
+          <label>Exact Amount (kr)</label>
+          <input type="number" id="l-amount-exact">
         </div>
         
-        <label>Type</label>
-        <select id="l-type" onchange="toggleDueDate()" required>
-          <option value="KG">KG (Short Term)</option>
-          <option value="LG">LG (Long Term)</option>
-        </select>
-        
-        <div id="dueDateContainer">
-          <label>Due Date</label>
-          <input type="date" id="l-duedate">
-        </div>
+        <label>Due Date? (Optional)</label>
+        <input type="date" id="l-duedate">
         
         <label>Source</label>
         <select id="l-source" required>
           <option value="Vipps">Vipps</option>
-          <option value="DNB">DNB</option>
-          <option value="Nordea">Nordea</option>
-          <option value="Kontant">Kontant</option>
+          <option value="Bank Transfer">Bank Transfer</option>
         </select>
         
-        <label>Comment (Optional - Max 3 sentences)</label>
-        <textarea id="l-comment" maxlength="200" rows="3" placeholder="Any extra details..."></textarea>
-        
-        <button type="submit" style="width: 100%; margin-top: 10px;" id="btn-submit-loan">Submit</button>
+        <button type="submit" style="width: 100%; margin-top: 10px;">Submit</button>
       </form>
     </div>
   </div>
 
-  <div id="paymentModal" class="modal">
+  <div id="paymentModal" class="modal-overlay">
     <div class="modal-content">
       <div class="modal-header">
-        <h2 style="color: var(--primary-indigo);">💸 Log a Payment</h2>
+        <h2 id="pay-title">💸 Pay Back</h2>
         <button class="close-btn" onclick="closeModal('paymentModal')">&times;</button>
       </div>
       
-      <p style="font-size: 0.85rem; color: var(--text-soft); margin-bottom: 15px;">
-        Money paid will automatically cover the most urgent deadlines first!
+      <p id="pay-desc" style="font-size: 0.9rem; color: var(--text-soft); margin-bottom: 15px;">
+        Money paid will cover the oldest debts first.
       </p>
 
       <form id="paymentForm" onsubmit="submitPayment(event)">
+        <input type="hidden" id="p-specific-id">
+        
         <label>Amount Paid (kr)</label>
-        <div class="quick-amount-row">
-          <button type="button" class="quick-btn" onclick="addPaymentAmount(500)">+500</button>
-          <button type="button" class="quick-btn" onclick="addPaymentAmount(1000)">+1k</button>
-          <button type="button" class="quick-btn" onclick="addPaymentAmount(5000)">+5k</button>
-        </div>
         <input type="number" id="p-amount" required>
         
         <label>Source</label>
         <select id="p-source" required>
           <option value="Vipps">Vipps</option>
-          <option value="DNB">DNB</option>
-          <option value="Nordea">Nordea</option>
-          <option value="Kontant">Kontant</option>
+          <option value="Bank Transfer">Bank Transfer</option>
         </select>
 
-        <label>Comment (Optional)</label>
-        <textarea id="p-comment" maxlength="150" rows="2" placeholder="e.g. Paid via Vipps for weekend beers..."></textarea>
-        
         <button type="submit" style="width: 100%; margin-top: 10px;">Register Payment</button>
       </form>
     </div>
   </div>
 
+  <div id="approveModal" class="modal-overlay">
+    <div class="modal-content" style="text-align: center;">
+      <h2>🌸 Approve Request</h2>
+      <p id="app-desc" style="margin: 15px 0; color: var(--text-dark);"></p>
+      
+      <label style="text-align: left;">Final Amount to Send (kr):</label>
+      <input type="number" id="app-final-amount" required>
+      
+      <p style="font-size: 0.8rem; color: var(--text-soft); margin-bottom: 15px;">
+        (Approving this will send a calendar invite!)
+      </p>
+
+      <input type="hidden" id="app-id">
+      
+      <div style="display: flex; gap: 10px;">
+        <button class="btn-reject" style="flex: 1;" onclick="processApproval(false)">Reject</button>
+        <button style="flex: 1;" onclick="processApproval(true)">Approve ✅</button>
+      </div>
+    </div>
+  </div>
+
   <script>
-    // ⚠️ REPLACE THIS URL WITH YOUR GOOGLE WEB APP DEPLOYMENT URL ⚠️
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbyb-aLJUVoYMyaoBkkYRkysWUxK37ZFxfd7bdbxcLfFfb0kKK4GY9I0krOovzx95VNa/exec';
+    // ⚠️ REPLACE THIS URL ⚠️
+    const scriptURL = 'YOUR_GOOGLE_WEB_APP_URL_HERE';
     
     let currentRole = ''; 
     let allTransactions = [];
+    let currentFilter = 'Active'; // Active, Paid, All
+    let currentEntryType = 'Request'; // State for toggle
 
-    // -- 1. API Helper --
+    // Add CSS Petals
+    for(let i=0; i<8; i++) {
+      let petal = document.createElement('div');
+      petal.className = 'petal'; petal.innerHTML = '🌸';
+      petal.style.left = Math.random() * 100 + 'vw';
+      petal.style.animationDuration = (Math.random() * 3 + 4) + 's';
+      petal.style.animationDelay = Math.random() * 5 + 's';
+      document.body.appendChild(petal);
+    }
+
     async function apiCall(payload) {
       document.getElementById('loader').style.display = 'block';
       try {
-        const response = await fetch(scriptURL, {
-          method: 'POST',
-          body: JSON.stringify(payload)
-        });
+        const response = await fetch(scriptURL, { method: 'POST', body: JSON.stringify(payload) });
         const data = await response.json();
         document.getElementById('loader').style.display = 'none';
         return data;
       } catch (error) {
         document.getElementById('loader').style.display = 'none';
-        alert("Connection Error. Check the console.");
-        console.error(error);
         return { success: false };
       }
     }
 
-    // -- 2. Login --
     async function attemptLogin() {
       const pwd = document.getElementById('login-pwd').value;
       if (!pwd) return;
-      
       const res = await apiCall({ action: 'login', password: pwd });
       
       if (res.success) {
@@ -370,253 +295,219 @@
         document.getElementById('login-overlay').style.display = 'none';
         document.getElementById('app-container').style.display = 'block';
         
-        // Adjust UI based on Role
         if (currentRole === 'panda') {
-          document.getElementById('btn-new-loan').textContent = 'Log Direct Loan';
-          document.getElementById('loan-modal-title').textContent = 'Log Direct Loan';
-          document.getElementById('btn-submit-loan').textContent = 'Save Transaction';
+          document.getElementById('btn-new').textContent = 'Log New Entry';
+          document.getElementById('toggle-wrapper').style.display = 'block';
+          switchToggle('Receipt'); // Default for Panda
         } else {
-          document.getElementById('btn-new-loan').textContent = 'Request Money';
+          switchToggle('Request'); // Forced for Shark
         }
-        
-        toggleAmountFields(); // Setup the form based on role!
         fetchDashboardData();
       } else {
-        const err = document.getElementById('login-error');
-        err.textContent = res.message;
-        err.style.display = 'block';
+        document.getElementById('login-error').textContent = res.message;
+        document.getElementById('login-error').style.display = 'block';
       }
     }
 
-    // -- 3. Fetch Data --
+    function switchToggle(type) {
+      currentEntryType = type;
+      if (type === 'Receipt') {
+        document.getElementById('tg-receipt').classList.add('active');
+        document.getElementById('tg-request').classList.remove('active');
+        document.getElementById('amt-sentence').style.display = 'none';
+        document.getElementById('amt-exact').style.display = 'block';
+        document.getElementById('l-amount-exact').required = true;
+        document.getElementById('l-amount-min').required = false;
+      } else {
+        document.getElementById('tg-request').classList.add('active');
+        document.getElementById('tg-receipt').classList.remove('active');
+        document.getElementById('amt-sentence').style.display = 'flex';
+        document.getElementById('amt-exact').style.display = 'none';
+        document.getElementById('l-amount-exact').required = false;
+        document.getElementById('l-amount-min').required = true;
+      }
+    }
+
     async function fetchDashboardData() {
       const res = await apiCall({ action: 'get_data' });
       if (res.success) {
         allTransactions = res.data;
         updateTotals();
-        renderReceipts('Active');
+        renderReceipts();
       }
     }
 
-    // -- 4. Update Math --
     function updateTotals() {
-      let total = 0, kgTotal = 0, lgTotal = 0;
+      let total = 0;
       allTransactions.forEach(tx => {
         if (tx['Status'] === 'Active' || tx['Status'] === 'Overdue') {
-          const rem = parseFloat(tx['Remaining Amount']) || 0;
-          total += rem;
-          if (tx['Category'] === 'KG') kgTotal += rem;
-          if (tx['Category'] === 'LG') lgTotal += rem;
+          total += parseFloat(tx['Remaining Amount']) || 0;
         }
       });
+      // Allow negative formatting for surplus
       document.getElementById('total-amount').textContent = total.toLocaleString() + ' kr';
-      document.getElementById('kg-total').textContent = 'KG: ' + kgTotal.toLocaleString() + ' kr';
-      document.getElementById('lg-total').textContent = 'LG: ' + lgTotal.toLocaleString() + ' kr';
     }
 
-    // -- 5. Render Receipts --
-    function renderReceipts(filter) {
+    function setTab(tabName) {
+      currentFilter = tabName;
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      
+      if(tabName === 'Active') document.getElementById('tab-active').classList.add('active');
+      if(tabName === 'Paid') document.getElementById('tab-paid').classList.add('active');
+      if(tabName === 'All') document.getElementById('tab-all').classList.add('active');
+      
+      renderReceipts();
+    }
+
+    function renderReceipts() {
       const container = document.getElementById('receipts-container');
       container.innerHTML = '';
       
-      let filtered = allTransactions;
-      if (filter === 'Active') {
-        filtered = allTransactions.filter(t => t['Status'] === 'Active' || t['Status'] === 'Overdue' || t['Status'] === 'Pending');
-      } else if (filter === 'Repayment') {
-        filtered = allTransactions.filter(t => t['Entry Type'] === 'Repayment');
+      let filtered = allTransactions.filter(t => t['Entry Type'] !== 'Repayment'); // Hide pure repayment logs from cards
+      
+      if (currentFilter === 'Active') {
+        // Active tab shows Pending, Active, Overdue
+        filtered = filtered.filter(t => ['Active', 'Overdue', 'Pending'].includes(t['Status']));
+      } else if (currentFilter === 'Paid') {
+        filtered = filtered.filter(t => t['Status'] === 'Paid');
       }
 
       if (filtered.length === 0) {
-        container.innerHTML = `<p style="color:var(--text-soft); text-align:center; width: 100%;">No receipts here! 🌸</p>`;
+        container.innerHTML = `<p style="text-align:center; color:var(--text-soft);">No items here! 🌸</p>`;
         return;
       }
 
       filtered.forEach(tx => {
-        let statusClass = '';
+        const card = document.createElement('div');
+        let statusClass = `status-${tx['Status']}`;
+        card.className = `card`;
+        if (tx['Status'] === 'Overdue') card.style.borderLeftColor = '#ef4444';
+        if (tx['Status'] === 'Paid') card.style.borderLeftColor = '#10b981';
+
+        const d = new Date(tx['Date']);
         const originalAmt = parseFloat(tx['Original Amount']);
         const remainingAmt = parseFloat(tx['Remaining Amount']);
         
-        if (tx['Entry Type'] === 'Repayment') statusClass = 'status-repayment';
-        else if (tx['Status'] === 'Overdue') statusClass = 'status-overdue';
-        else if (tx['Status'] === 'Paid') statusClass = 'status-paid';
-        else if (remainingAmt > 0 && remainingAmt < originalAmt) statusClass = 'status-partial';
-
-        const d = new Date(tx['Date']);
-        const dateStr = d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-
-        const card = document.createElement('div');
-        card.className = `receipt ${statusClass}`;
+        let dueHTML = tx['Due Date'] ? `<p><strong>Due:</strong> ${new Date(tx['Due Date']).toLocaleDateString()}</p>` : '';
         
-        let approveBtnHTML = '';
+        let actionHTML = '';
         if (tx['Status'] === 'Pending' && currentRole === 'panda') {
-          approveBtnHTML = `<button class="approve-btn" onclick="approveLoan('${tx['ID']}')">✅ Approve Request</button>`;
-        }
-
-        let dueHTML = '';
-        if (tx['Category'] === 'KG' && tx['Due Date'] && tx['Entry Type'] !== 'Repayment') {
-          const dueD = new Date(tx['Due Date']);
-          dueHTML = `<p style="font-size: 0.8rem; color: #dc2626; margin-top: 5px;"><strong>Due:</strong> ${dueD.toLocaleDateString()}</p>`;
+          // Pass the min/ideal string if it exists in the original amount field so Panda sees it
+          let displayAmt = tx['Original Amount'];
+          actionHTML = `<button style="width:100%; margin-top:10px;" onclick="openApproveModal('${tx['ID']}', '${tx['Title / Purpose']}', '${displayAmt}')">Review Request</button>`;
+        } else if ((tx['Status'] === 'Active' || tx['Status'] === 'Overdue') && currentRole === 'shark') {
+          actionHTML = `<button class="btn-secondary" style="width:100%; margin-top:10px;" onclick="openPaymentModal('${tx['ID']}', ${remainingAmt})">💸 Pay This Specific Stub</button>`;
         }
 
         card.innerHTML = `
-          <div class="receipt-header">
+          <div class="status-pill ${statusClass}">${tx['Status']}</div>
+          <div class="card-title">${tx['Title / Purpose']}</div>
+          <div class="card-details">
+            <p>${d.toLocaleDateString()}</p>
+            ${dueHTML}
+          </div>
+          <div class="card-amounts">
             <div>
-              <span class="r-category">${tx['Category']}</span>
-              <span style="font-size:0.75rem; margin-left: 5px; color:var(--text-soft);">${tx['Status']}</span>
+              <span style="font-size:0.8rem; color:var(--text-soft);">Original: ${originalAmt} kr</span>
             </div>
-            <div class="r-date">${dateStr}</div>
+            <div class="amt-main">${tx['Status'] === 'Paid' ? 'Paid' : remainingAmt + ' kr'}</div>
           </div>
-          <div class="r-title">${tx['Title / Purpose']}</div>
-          ${tx['Comment'] ? `<div style="font-size:0.8rem; color:var(--text-soft); margin-bottom:10px; font-style:italic;">"${tx['Comment']}"</div>` : ''}
-          ${dueHTML}
-          <div style="margin-top: 15px; border-top: 1px dashed #ccc; padding-top: 10px;">
-            ${tx['Entry Type'] === 'Repayment' 
-              ? `<div class="r-amount">+ ${originalAmt} kr</div>` 
-              : `<div class="r-amount">${originalAmt} kr</div>
-                 <div class="r-remaining">Remaining: ${remainingAmt} kr</div>`
-            }
-          </div>
-          ${approveBtnHTML}
+          ${actionHTML}
         `;
         container.appendChild(card);
       });
     }
 
-    // -- 6. Submit Loan Request --
     async function submitLoan(e) {
       e.preventDefault();
-      document.getElementById('btn-submit-loan').disabled = true;
-
       let finalAmount = 0;
-      let finalComment = document.getElementById('l-comment').value;
-      const isRequest = document.getElementById('amount-request-container').style.display !== 'none';
       
-      if (isRequest) {
+      if (currentEntryType === 'Request') {
         const min = document.getElementById('l-amount-min').value;
         const ideal = document.getElementById('l-amount-ideal').value;
-        finalAmount = ideal || min; 
-        finalComment = `(Min requested: ${min}kr | Ideal: ${ideal}kr) ` + finalComment;
+        finalAmount = ideal ? `${min}-${ideal}` : min; // Send as a string for Panda to read
       } else {
         finalAmount = document.getElementById('l-amount-exact').value;
       }
 
-      // If Panda chooses to log a "Request" on behalf of the Shark, we pass 'shark' as the role 
-      // so the backend treats it as Pending.
-      const typeOverride = document.getElementById('l-entry-type').value;
-      const finalRole = (currentRole === 'panda' && typeOverride === 'Request') ? 'shark' : currentRole;
+      const finalRole = (currentRole === 'panda' && currentEntryType === 'Request') ? 'shark' : currentRole;
 
-      const payload = {
-        action: 'submit_request',
-        role: finalRole,
+      const res = await apiCall({
+        action: 'submit_request', role: finalRole,
         title: document.getElementById('l-title').value,
-        amount: finalAmount,
-        category: document.getElementById('l-type').value,
-        dueDate: document.getElementById('l-duedate').value,
-        source: document.getElementById('l-source').value,
-        comment: finalComment
-      };
+        amount: finalAmount, dueDate: document.getElementById('l-duedate').value,
+        source: document.getElementById('l-source').value
+      });
 
-      const res = await apiCall(payload);
       if(res.success) {
         closeModal('loanModal');
         document.getElementById('loanForm').reset();
-        toggleAmountFields(); // Reset the view
         fetchDashboardData();
       }
-      document.getElementById('btn-submit-loan').disabled = false;
     }
 
-    // -- 7. Submit Payment --
+    function openPaymentModal(specificId = null, amountOwed = null) {
+      document.getElementById('p-specific-id').value = specificId || '';
+      
+      if (specificId) {
+        document.getElementById('pay-title').textContent = "💸 Pay Specific Stub";
+        document.getElementById('pay-desc').textContent = "This payment will ONLY apply to this stub.";
+        document.getElementById('p-amount').value = amountOwed;
+      } else {
+        document.getElementById('pay-title').textContent = "💸 Pay Back (General)";
+        document.getElementById('pay-desc').textContent = "Money paid will cover the oldest debts first via waterfall logic.";
+        document.getElementById('p-amount').value = '';
+      }
+      openModal('paymentModal');
+    }
+
     async function submitPayment(e) {
       e.preventDefault();
-      const btn = e.target.querySelector('button[type="submit"]');
-      btn.disabled = true;
-
-      const payload = {
+      const res = await apiCall({
         action: 'log_payment',
         amount: document.getElementById('p-amount').value,
         source: document.getElementById('p-source').value,
-        comment: document.getElementById('p-comment').value,
-        title: 'Payment Logged'
-      };
+        specificId: document.getElementById('p-specific-id').value
+      });
 
-      const res = await apiCall(payload);
       if(res.success) {
         closeModal('paymentModal');
         document.getElementById('paymentForm').reset();
         fetchDashboardData();
       }
-      btn.disabled = false;
     }
 
-    // -- 8. Approve Loan (Panda Only) --
-    async function approveLoan(id) {
-      if(!confirm("Are you sure you want to approve this? (This triggers the Calendar invite!)")) return;
-      const res = await apiCall({ action: 'approve_loan', id: id });
-      if(res.success) fetchDashboardData();
+    function openApproveModal(id, title, reqAmountStr) {
+      document.getElementById('app-id').value = id;
+      document.getElementById('app-desc').textContent = `The Shark requested: ${reqAmountStr} kr for "${title}".`;
+      // If it's a range like "100-500", try to pre-fill the input with the lower number just for ease
+      let suggestedAmt = reqAmountStr.toString().split('-')[0];
+      document.getElementById('app-final-amount').value = suggestedAmt;
+      openModal('approveModal');
     }
 
-    // -- UI Helpers --
+    async function processApproval(isApproved) {
+      const id = document.getElementById('app-id').value;
+      const finalAmt = document.getElementById('app-final-amount').value;
+      
+      let res;
+      if (isApproved) {
+        if (!finalAmt) return alert("Please enter the final amount.");
+        res = await apiCall({ action: 'approve_loan', id: id, finalAmount: finalAmt });
+      } else {
+        if(confirm("Are you sure you want to REJECT this request?")) {
+           res = await apiCall({ action: 'reject_loan', id: id });
+        } else return;
+      }
+
+      if(res.success) {
+        closeModal('approveModal');
+        fetchDashboardData();
+      }
+    }
+
     function openModal(id) { document.getElementById(id).style.display = 'flex'; }
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-    
-    function toggleAmountFields() {
-      if (currentRole === 'panda') {
-        document.getElementById('entry-type-container').style.display = 'block';
-        const type = document.getElementById('l-entry-type').value;
-        
-        if (type === 'Direct Loan') {
-          document.getElementById('amount-request-container').style.display = 'none';
-          document.getElementById('amount-exact-container').style.display = 'block';
-          document.getElementById('l-amount-exact').required = true;
-          document.getElementById('l-amount-min').required = false;
-        } else {
-          document.getElementById('amount-request-container').style.display = 'block';
-          document.getElementById('amount-exact-container').style.display = 'none';
-          document.getElementById('l-amount-exact').required = false;
-          document.getElementById('l-amount-min').required = true;
-        }
-      } else {
-        document.getElementById('entry-type-container').style.display = 'none';
-        document.getElementById('amount-request-container').style.display = 'block';
-        document.getElementById('amount-exact-container').style.display = 'none';
-        document.getElementById('l-amount-min').required = true;
-      }
-    }
-
-    function toggleDueDate() {
-      const type = document.getElementById('l-type').value;
-      const dateContainer = document.getElementById('dueDateContainer');
-      const dateInput = document.getElementById('l-duedate');
-      if (type === 'KG') {
-        dateContainer.style.display = 'block';
-        dateInput.required = true;
-      } else {
-        dateContainer.style.display = 'none';
-        dateInput.required = false;
-        dateInput.value = '';
-      }
-    }
-
-    // Smart Quick Add for the Loan Modal
-    function addLoanAmount(amt) {
-      const isRequest = document.getElementById('amount-request-container').style.display !== 'none';
-      const inputId = isRequest ? 'l-amount-ideal' : 'l-amount-exact';
-      const input = document.getElementById(inputId);
-      let current = parseFloat(input.value) || 0;
-      input.value = current + amt;
-    }
-
-    // Smart Quick Add for the Payment Modal
-    function addPaymentAmount(amt) {
-      const input = document.getElementById('p-amount');
-      let current = parseFloat(input.value) || 0;
-      input.value = current + amt;
-    }
-
-    // Initialize state
-    toggleDueDate();
-
   </script>
 </body>
 </html>
