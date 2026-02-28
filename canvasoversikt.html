@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Canvas Project - Overview</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <style>
+    /* Reset & Base Styling */
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; padding: 0;
+      background: linear-gradient(to bottom, #fff0f5, #fdf6fb);
+      font-family: 'Poppins', sans-serif;
+      color: #444;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+    }
+
+    /* Container */
+    .dashboard-container {
+      max-width: 1000px;
+      width: 100%;
+      z-index: 10;
+    }
+
+    /* Header Area */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+    h1 {
+      color: #ec6f9c;
+      font-weight: 600;
+      font-size: 2rem;
+      margin: 0;
+    }
+    .btn-back {
+      background: #fffefe;
+      color: #e48ccf;
+      border: 2px solid #e48ccf;
+      border-radius: 20px;
+      padding: 8px 16px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+    .btn-back:hover {
+      background: #fdf6fb;
+      color: #d86dd1;
+      border-color: #d86dd1;
+    }
+
+    /* Controls (Search & Filters) */
+    .controls {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 15px;
+      background: #fffefe;
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+      margin-bottom: 30px;
+    }
+    .controls input, .controls select {
+      width: 100%;
+      padding: 10px 14px;
+      border: 2px solid #f1d7e0;
+      border-radius: 12px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.95rem;
+      color: #444;
+      outline: none;
+      transition: 0.2s;
+    }
+    .controls input:focus, .controls select:focus {
+      border-color: #f7a3c1;
+      box-shadow: 0 0 0 3px #fce4ed;
+    }
+    .controls select {
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f7a3c1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      background-size: 16px;
+      cursor: pointer;
+    }
+
+    /* Cards Grid */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    /* Individual Card */
+    .card {
+      background: #fffefe;
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+      transition: transform 0.2s;
+      display: flex;
+      flex-direction: column;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1);
+    }
+    
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 10px;
+    }
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #7c4c66;
+      margin: 0;
+    }
+    .card-date {
+      font-size: 0.8rem;
+      color: #999;
+      margin-top: 4px;
+    }
+
+    /* Badges */
+    .badges {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+    }
+    .badge {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 12px;
+    }
+    .badge-type { background: #fce4ed; color: #b65784; }
+    .badge-status.resolved { background: #e6f7ec; color: #2e8b57; }
+    .badge-status.tbd { background: #fff0d4; color: #d9822b; }
+
+    /* Card Content */
+    .card-desc {
+      font-size: 0.9rem;
+      line-height: 1.5;
+      margin-bottom: 15px;
+      flex-grow: 1; /* Pushes solution to bottom if cards are different heights */
+    }
+    .card-solution {
+      background: #fdf6fb;
+      border-left: 3px solid #f7a3c1;
+      padding: 10px 12px;
+      border-radius: 0 8px 8px 0;
+      font-size: 0.85rem;
+      color: #666;
+    }
+    .card-solution strong { color: #b65784; }
+
+    /* Loading / Empty States */
+    .status-msg {
+      text-align: center;
+      color: #aa5e88;
+      font-size: 1.1rem;
+      margin-top: 40px;
+      grid-column: 1 / -1;
+    }
+
+    /* Mobile adjustments */
+    @media (max-width: 768px) {
+      .controls {
+        grid-template-columns: 1fr;
+      }
+      .header {
+        flex-direction: column;
+        gap: 15px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="dashboard-container">
+    
+    <div class="header">
+      <h1>🐼 Interaction Overview</h1>
+      <a href="index.html" class="btn-back">← Log New</a>
+    </div>
+
+    <div class="controls">
+      <input type="text" id="searchInput" placeholder="Search titles or descriptions...">
+      
+      <select id="typeFilter">
+        <option value="All">All Types</option>
+        </select>
+      
+      <select id="statusFilter">
+        <option value="All">All Statuses</option>
+        <option value="Resolved">Resolved</option>
+        <option value="TBD">TBD</option>
+      </select>
+    </div>
+
+    <div id="cardsContainer" class="cards-grid">
+      <div class="status-msg">Loading ... 🐼⏳</div>
+    </div>
+
+  </div>
+
+  <script>
+    // ⚠️ REPLACE THIS WITH YOUR GOOGLE APPS SCRIPT WEB APP URL
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbzqpEcAEJPBlZDQT_DKHjrSYLL5hjox2XWd39SC5KzdH6uPOl5SPE2dlnS_D6_InyEw/exec';
+    
+    let allInteractions = [];
+
+    // DOM Elements
+    const searchInput = document.getElementById('searchInput');
+    const typeFilter = document.getElementById('typeFilter');
+    const statusFilter = document.getElementById('statusFilter');
+    const cardsContainer = document.getElementById('cardsContainer');
+
+    // 1. Fetch data on page load
+    fetch(scriptURL)
+      .then(response => response.json())
+      .then(data => {
+        allInteractions = data.interactions || [];
+        
+        // Populate Type Filter Dropdown
+        if (data.types) {
+          data.types.forEach(type => {
+            const option = document.createElement('option');
+            option.value = type;
+            option.textContent = type;
+            typeFilter.appendChild(option);
+          });
+        }
+        
+        renderCards(allInteractions);
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+        cardsContainer.innerHTML = `<div class="status-msg" style="color: red;">Oops! Failed to load data.</div>`;
+      });
+
+    // 2. Render Cards Function
+    function renderCards(interactions) {
+      cardsContainer.innerHTML = ''; // Clear current
+
+      if (interactions.length === 0) {
+        cardsContainer.innerHTML = `<div class="status-msg">No interactions found :( </div>`;
+        return;
+      }
+
+      interactions.forEach(item => {
+        // Format the date nicely
+        let dateStr = 'Unknown date';
+        if (item.date) {
+          const d = new Date(item.date);
+          if (!isNaN(d.getTime())) {
+            dateStr = d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+          }
+        }
+
+        const statusClass = item.status === 'Resolved' ? 'resolved' : 'tbd';
+        
+        // Build card HTML
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">${item.title || 'Untitled'}</h3>
+              <div class="card-date">${dateStr}</div>
+            </div>
+          </div>
+          
+          <div class="badges">
+            <span class="badge badge-type">${item.type || 'Uncategorized'}</span>
+            <span class="badge badge-status ${statusClass}">${item.status}</span>
+          </div>
+          
+          <div class="card-desc">${item.description || 'No description provided.'}</div>
+          
+          ${item.solution ? `
+            <div class="card-solution">
+              <strong>Solution:</strong> ${item.solution}
+            </div>
+          ` : ''}
+        `;
+        
+        cardsContainer.appendChild(card);
+      });
+    }
+
+    // 3. Filter Logic
+    function applyFilters() {
+      const searchTerm = searchInput.value.toLowerCase();
+      const selectedType = typeFilter.value;
+      const selectedStatus = statusFilter.value;
+
+      const filtered = allInteractions.filter(item => {
+        // Search checks both title and description
+        const titleMatch = (item.title || '').toLowerCase().includes(searchTerm);
+        const descMatch = (item.description || '').toLowerCase().includes(searchTerm);
+        const matchesSearch = titleMatch || descMatch;
+
+        const matchesType = selectedType === 'All' ? true : item.type === selectedType;
+        const matchesStatus = selectedStatus === 'All' ? true : item.status === selectedStatus;
+
+        return matchesSearch && matchesType && matchesStatus;
+      });
+
+      renderCards(filtered);
+    }
+
+    // 4. Event Listeners for Filters
+    searchInput.addEventListener('input', applyFilters);
+    typeFilter.addEventListener('change', applyFilters);
+    statusFilter.addEventListener('change', applyFilters);
+
+  </script>
+</body>
+</html>
