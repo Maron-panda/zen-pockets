@@ -3,148 +3,184 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Panda Bank 🐼🌸</title>
-  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+  <title>Zen Pockets - Panda Bank</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
   
   <style>
-    :root {
-      --pink-main: #f472b6;
-      --pink-light: #fdf2f8;
-      --pink-hover: #db2777;
-      --text-dark: #4b5563;
-      --text-soft: #9ca3af;
-      --white: #ffffff;
-      --active-tab: #f472b6;
-      --inactive-tab: #fbcfe8;
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    /* Reset & Base Styling (From your original form.css) */
+    * { box-sizing: border-box; }
+    html { height: 100%; overflow-x: hidden; }
     
     body {
-      font-family: 'Quicksand', sans-serif;
-      background-color: var(--pink-light);
-      background-image: radial-gradient(#fbcfe8 2px, transparent 2px);
-      background-size: 30px 30px;
-      color: var(--text-dark);
+      margin: 0; padding: 0;
+      background: linear-gradient(to bottom, #fff0f5, #fdf6fb);
+      font-family: 'Poppins', sans-serif;
+      color: #444;
       min-height: 100vh;
-      display: flex; flex-direction: column; align-items: center;
-      position: relative; overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
     }
 
-    /* Floating Panda & Petals */
-    .floating-panda {
-      position: absolute; top: 10%; right: 5%; font-size: 3rem;
-      animation: float 6s ease-in-out infinite; z-index: -1; opacity: 0.6;
-    }
-    .petal {
-      position: fixed; /* Keeps them on screen even if you scroll */
-      font-size: 1.5rem; color: #f9a8d4; opacity: 0.7;
-      animation: fall linear infinite;
-      z-index: 10000; /* Puts them IN FRONT of the login screen */
-      pointer-events: none; /* Ensures you can click through them */
+    /* Sakura Canvas */
+    canvas.sakura {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      pointer-events: none; z-index: 1000; opacity: 0.6;
     }
 
-    @keyframes float { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-20px) rotate(10deg); } }
-    @keyframes fall { 0% { transform: translateY(-10vh) rotate(0deg); } 100% { transform: translateY(110vh) rotate(360deg); } }
+    /* Mascot Styling */
+    .mascot { text-align: center; margin-top: 20px; margin-bottom: 10px; z-index: 10; position: relative; }
+    .mascot img {
+      width: 160px; height: auto; border-radius: 16px; object-fit: contain;
+      animation: float 4s ease-in-out infinite;
+    }
+    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
 
-    #app-container { width: 100%; max-width: 800px; padding: 20px; display: none; }
+    /* App Containers */
     #login-overlay {
       position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-      background: var(--pink-light); display: flex; justify-content: center; align-items: center; z-index: 9999;
+      background: linear-gradient(to bottom, #fff0f5, #fdf6fb);
+      display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999;
     }
 
-    .box { background: var(--white); padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(244, 114, 182, 0.2); }
-    .login-box { text-align: center; width: 90%; max-width: 400px; }
+    #app-container {
+      width: 100%; max-width: 900px; padding: 20px; display: none; z-index: 10; position: relative;
+    }
 
+    .box-container {
+      background: #fffefe; border-radius: 24px; padding: 30px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08); width: 100%;
+    }
+    .login-box { max-width: 400px; text-align: center; }
+
+    /* Typography */
+    h1, h2 { color: #ec6f9c; font-weight: 600; margin-bottom: 0.5em; text-align: center; }
+    
     /* Forms & Inputs */
+    label { display: block; margin-bottom: 6px; font-weight: 500; color: #7c4c66; font-size: 0.95rem; }
     input, select {
-      width: 100%; padding: 12px; margin-bottom: 15px; border: 2px solid #fbcfe8;
-      border-radius: 12px; font-family: 'Quicksand'; font-size: 1rem; color: var(--text-dark);
+      width: 100%; padding: 10px 14px; margin-bottom: 20px;
+      border: 2px solid #f1d7e0; border-radius: 12px; background: #fffefe;
+      font-size: 0.95rem; font-family: 'Poppins', sans-serif; transition: 0.2s;
     }
-    input:focus, select:focus { outline: none; border-color: var(--pink-main); }
-    label { display: block; font-weight: 600; margin-bottom: 5px; color: var(--pink-main); }
+    input:focus, select:focus { border-color: #f7a3c1; outline: none; box-shadow: 0 0 0 3px #fce4ed; }
 
-    /* Sentence Input for Amount */
-    .sentence-input {
-      display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 15px;
-      background: #fdf2f8; padding: 15px; border-radius: 12px; border: 1px dashed var(--pink-main);
+    /* Select Dropdown Specifics */
+    select {
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f7a3c1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat; background-position: right 14px center; background-size: 16px; cursor: pointer;
     }
-    .sentence-input input { width: 80px; margin-bottom: 0; padding: 8px; text-align: center; }
 
     /* Buttons */
     button {
-      background: var(--pink-main); color: white; border: none; padding: 12px 20px;
-      border-radius: 20px; font-weight: 700; cursor: pointer; transition: 0.2s; font-family: 'Quicksand';
+      background: linear-gradient(to right, #fca4c1, #e48ccf); color: white;
+      padding: 12px 20px; border: none; border-radius: 20px; font-size: 1rem;
+      font-weight: 600; cursor: pointer; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); transition: background 0.3s;
+      font-family: 'Poppins', sans-serif; width: 100%;
     }
-    button:hover { background: var(--pink-hover); transform: translateY(-2px); }
-    .btn-secondary { background: var(--inactive-tab); color: var(--text-dark); }
-    .btn-secondary:hover { background: #f9a8d4; }
-    .btn-reject { background: #ef4444; } .btn-reject:hover { background: #dc2626; }
+    button:hover { background: linear-gradient(to right, #f687b3, #d86dd1); }
+    button:disabled { background: #d1d5db; cursor: not-allowed; box-shadow: none; }
     
+    .btn-secondary {
+      background: #fffefe; color: #e48ccf; border: 2px solid #e48ccf;
+    }
+    .btn-secondary:hover { background: #fdf6fb; color: #d86dd1; border-color: #d86dd1; }
+
+    /* Sentence Form Styling */
+    .sentence-input {
+      display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 20px;
+      color: #7c4c66; font-weight: 500; font-size: 0.95rem; line-height: 2;
+    }
+    .sentence-input input {
+      width: 90px; margin-bottom: 0; padding: 6px 10px; text-align: center;
+    }
+
     /* Toggle Switch */
-    .toggle-container { display: flex; background: var(--inactive-tab); border-radius: 20px; margin-bottom: 15px; overflow: hidden;}
-    .toggle-btn { flex: 1; padding: 10px; text-align: center; cursor: pointer; font-weight: 600; transition: 0.3s; color: var(--text-soft);}
-    .toggle-btn.active { background: var(--pink-main); color: white; border-radius: 20px;}
+    .toggle-container { display: flex; background: #fdf6fb; border-radius: 20px; margin-bottom: 20px; border: 2px solid #f1d7e0; overflow: hidden; }
+    .toggle-btn { flex: 1; padding: 10px; text-align: center; cursor: pointer; font-weight: 600; color: #aa5e88; transition: 0.3s; }
+    .toggle-btn.active { background: linear-gradient(to right, #fca4c1, #e48ccf); color: white; border-radius: 18px; }
 
-    /* Dashboard */
-    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-    .header h1 { color: var(--pink-main); }
-    .totals-board { text-align: center; margin-bottom: 25px; }
-    .totals-board h2 { font-size: 2.5rem; color: var(--pink-main); }
+    /* Dashboard Layout */
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; width: 100%;}
+    .header h1 { margin: 0; font-size: 1.8rem; }
+    
+    .totals-board { text-align: center; margin-bottom: 20px; }
+    .totals-board h2 { font-size: 2.2rem; margin: 5px 0; }
 
-    .action-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+    .action-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
 
     /* Tabs */
-    .tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid var(--inactive-tab); padding-bottom: 10px;}
-    .tab-btn { background: none; color: var(--text-soft); padding: 8px 15px; border-radius: 20px; font-weight: 600; }
-    .tab-btn.active { background: var(--pink-main); color: white; }
+    .tabs { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px; }
+    .tab-btn { background: #fffefe; color: #aa5e88; border: 2px solid #f1d7e0; padding: 8px 16px; border-radius: 20px; font-weight: 600; white-space: nowrap; cursor: pointer; transition: 0.2s;}
+    .tab-btn.active { background: #fce4ed; color: #b65784; border-color: #f7a3c1; }
 
-    /* Cards */
-    .receipts-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
-    .card { background: var(--white); padding: 20px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); position: relative; border-left: 6px solid var(--pink-main);}
-    .card-title { font-size: 1.2rem; font-weight: 700; color: var(--text-dark); margin-bottom: 5px; }
-    .status-pill { position: absolute; top: 20px; right: 20px; font-size: 0.75rem; font-weight: bold; padding: 4px 10px; border-radius: 12px; }
-    .status-Pending { background: #fef08a; color: #854d0e; }
-    .status-Active { background: var(--pink-light); color: var(--pink-hover); }
-    .status-Paid { background: #d1fae5; color: #065f46; }
-    .status-Overdue { background: #fee2e2; color: #991b1b; border-left-color: #ef4444; }
+    /* Cards (Redesigned to match overview.html) */
+    .receipts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+    .card {
+      background: #fffefe; border-radius: 20px; padding: 20px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06); transition: transform 0.2s;
+      display: flex; flex-direction: column; position: relative;
+    }
+    .card:hover { transform: translateY(-4px); box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1); }
     
-    .card-details { font-size: 0.9rem; color: var(--text-soft); margin-bottom: 15px; }
-    .card-amounts { display: flex; justify-content: space-between; align-items: baseline; border-top: 1px dashed #fbcfe8; padding-top: 10px;}
-    .amt-main { font-size: 1.5rem; font-weight: 700; color: var(--pink-main); }
+    .card-title { font-size: 1.2rem; font-weight: 600; color: #ec6f9c; margin: 0 0 10px 0; padding-right: 80px;}
+    .card-date { font-size: 0.85rem; color: #999; margin-bottom: 15px; }
+    
+    /* Badges for cards */
+    .status-pill { position: absolute; top: 20px; right: 20px; font-size: 0.75rem; font-weight: 600; padding: 4px 10px; border-radius: 12px; }
+    .status-Pending { background: #fff0d4; color: #d9822b; }
+    .status-Active { background: #fce4ed; color: #b65784; }
+    .status-Paid { background: #e6f7ec; color: #2e8b57; }
+    .status-Overdue { background: #fee2e2; color: #dc2626; animation: pulseRed 2s infinite;}
+    
+    @keyframes pulseRed {
+      0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4); }
+      70% { box-shadow: 0 0 0 8px rgba(220, 38, 38, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
+    }
+
+    .card-amounts { display: flex; justify-content: space-between; align-items: baseline; border-top: 2px dashed #f1d7e0; padding-top: 15px; margin-top: auto;}
+    .amt-main { font-size: 1.4rem; font-weight: 600; color: #7c4c66; }
 
     /* Modals */
-    .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 1000; justify-content: center; align-items: center; padding: 20px; }
-    .modal-content { background: var(--white); padding: 30px; border-radius: 24px; width: 100%; max-width: 400px; }
-    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-    .modal-header h2 { color: var(--pink-main); }
-    .close-btn { background: none; color: var(--text-soft); font-size: 1.5rem; padding: 0; }
+    .modal-overlay {
+      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(124, 76, 102, 0.6); z-index: 2000; justify-content: center; align-items: center; padding: 20px;
+    }
+    .modal-content { background: #fffefe; padding: 30px; border-radius: 24px; width: 100%; max-width: 450px; position: relative; max-height: 90vh; overflow-y: auto;}
+    .close-btn { position: absolute; top: 20px; right: 20px; background: none; color: #aa5e88; font-size: 1.5rem; border: none; padding: 0; cursor: pointer; width: auto; box-shadow: none;}
     
-    #loader { display: none; position: fixed; top:20px; right:20px; background: white; padding: 10px 20px; border-radius: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); z-index: 9999; font-weight: 600; color: var(--pink-main);}
+    #loader { display: none; position: fixed; top: 20px; right: 20px; background: #fceef4; color: #b65784; padding: 10px 20px; border-radius: 20px; border: 2px dashed #f7a3c1; z-index: 9999; font-weight: 600; box-shadow: 0 4px 10px rgba(252, 174, 212, 0.2); }
   </style>
 </head>
 <body>
 
-  <div class="floating-panda">🐼</div>
-  <div id="loader">🌸 Loading...</div>
+  <canvas id="sakura-canvas" class="sakura"></canvas>
+  <div id="loader">🐼 Loading...</div>
 
   <div id="login-overlay">
-    <div class="box login-box">
-      <h2 style="color: var(--pink-main);">🐼 Welcome</h2>
-      <input type="password" id="login-pwd" placeholder="Enter password">
-      <button onclick="attemptLogin()" style="width: 100%;">Enter Bank</button>
-      <p id="login-error" style="color: red; margin-top: 10px; display: none;"></p>
+    <div class="mascot">
+      <img src="momorin-placeholder.png" alt="Momorin the Mascot"> 
+    </div>
+    <div class="box-container login-box">
+      <h2>🐼 Welcome</h2>
+      <p style="color: #aa5e88; font-size: 0.9rem; margin-bottom: 20px;">Enter the secret word to access the bank.</p>
+      <input type="password" id="login-pwd" placeholder="Password">
+      <button onclick="attemptLogin()" id="btn-login">Enter Bank</button>
+      <p id="login-error" style="color: red; margin-top: 15px; font-size: 0.85rem; display: none;"></p>
     </div>
   </div>
 
   <div id="app-container">
     <div class="header">
       <h1>🐼 Panda Bank</h1>
-      <button class="btn-secondary" style="padding: 6px 12px;" onclick="location.reload()">Log Out</button>
+      <button class="btn-secondary" style="width: auto; padding: 8px 16px; font-size: 0.85rem;" onclick="location.reload()">Log Out</button>
     </div>
 
-    <div class="box totals-board">
-      <p style="font-weight: 600; color: var(--text-soft);">Outstanding Balance</p>
+    <div class="box-container totals-board">
+      <p style="font-weight: 500; color: #aa5e88; margin: 0;">Outstanding Balance</p>
       <h2 id="total-amount">0 kr</h2>
     </div>
 
@@ -155,8 +191,9 @@
 
     <div class="tabs">
       <button class="tab-btn active" id="tab-active" onclick="setTab('Active')">Active Debts</button>
-      <button class="tab-btn" id="tab-paid" onclick="setTab('Paid')">Paid stubs</button>
-      <button class="tab-btn" id="tab-all" onclick="setTab('All')">Show all</button>
+      <button class="tab-btn" id="tab-requests" onclick="setTab('Requests')">Requests</button>
+      <button class="tab-btn" id="tab-paid" onclick="setTab('Paid')">Paid Stubs</button>
+      <button class="tab-btn" id="tab-all" onclick="setTab('All')">Show All</button>
     </div>
 
     <div class="receipts-grid" id="receipts-container"></div>
@@ -164,10 +201,8 @@
 
   <div id="loanModal" class="modal-overlay">
     <div class="modal-content">
-      <div class="modal-header">
-        <h2 id="loan-modal-title">New Entry</h2>
-        <button class="close-btn" onclick="closeModal('loanModal')">&times;</button>
-      </div>
+      <button class="close-btn" onclick="closeModal('loanModal')">&times;</button>
+      <h2 id="loan-modal-title">New Entry</h2>
       
       <form id="loanForm" onsubmit="submitLoan(event)">
         
@@ -182,11 +217,11 @@
         <input type="text" id="l-title" placeholder="e.g. School loan" required>
         
         <div class="sentence-input" id="amt-sentence">
-          <span>I need at least</span>
-          <input type="number" id="l-amount-min" required>
-          <span>kr, but if possible</span>
-          <input type="number" id="l-amount-ideal">
-          <span>kr.</span>
+          I need at least 
+          <input type="number" id="l-amount-min" required> 
+          kr, but if possible 
+          <input type="number" id="l-amount-ideal"> 
+          kr.
         </div>
 
         <div id="amt-exact" style="display: none;">
@@ -200,22 +235,22 @@
         <label>Source</label>
         <select id="l-source" required>
           <option value="Vipps">Vipps</option>
-          <option value="Bank Transfer">Bank Transfer</option>
+          <option value="Kontant">Kontant</option>
+          <option value="Nordea">Nordea</option>
+          <option value="DNB">DNB</option>
         </select>
         
-        <button type="submit" style="width: 100%; margin-top: 10px;">Submit</button>
+        <button type="submit" id="btn-submit-loan" style="margin-top: 10px;">Submit</button>
       </form>
     </div>
   </div>
 
   <div id="paymentModal" class="modal-overlay">
     <div class="modal-content">
-      <div class="modal-header">
-        <h2 id="pay-title">💸 Pay Back</h2>
-        <button class="close-btn" onclick="closeModal('paymentModal')">&times;</button>
-      </div>
+      <button class="close-btn" onclick="closeModal('paymentModal')">&times;</button>
+      <h2 id="pay-title">💸 Pay Back</h2>
       
-      <p id="pay-desc" style="font-size: 0.9rem; color: var(--text-soft); margin-bottom: 15px;">
+      <p id="pay-desc" style="font-size: 0.9rem; color: #aa5e88; margin-bottom: 20px; text-align: center;">
         Money paid will cover the oldest debts first.
       </p>
 
@@ -228,53 +263,47 @@
         <label>Source</label>
         <select id="p-source" required>
           <option value="Vipps">Vipps</option>
-          <option value="Bank Transfer">Bank Transfer</option>
+          <option value="Kontant">Kontant</option>
+          <option value="Nordea">Nordea</option>
+          <option value="DNB">DNB</option>
         </select>
 
-        <button type="submit" style="width: 100%; margin-top: 10px;">Register Payment</button>
+        <button type="submit" id="btn-submit-pay" style="margin-top: 10px;">Register Payment</button>
       </form>
     </div>
   </div>
 
   <div id="approveModal" class="modal-overlay">
     <div class="modal-content" style="text-align: center;">
+      <button class="close-btn" onclick="closeModal('approveModal')">&times;</button>
       <h2>🌸 Approve Request</h2>
-      <p id="app-desc" style="margin: 15px 0; color: var(--text-dark);"></p>
+      <p id="app-desc" style="margin: 15px 0; color: #7c4c66;"></p>
       
       <label style="text-align: left;">Final Amount to Send (kr):</label>
       <input type="number" id="app-final-amount" required>
       
-      <p style="font-size: 0.8rem; color: var(--text-soft); margin-bottom: 15px;">
+      <p style="font-size: 0.8rem; color: #aa5e88; margin-bottom: 20px;">
         (Approving this will send a calendar invite!)
       </p>
 
       <input type="hidden" id="app-id">
       
       <div style="display: flex; gap: 10px;">
-        <button class="btn-reject" style="flex: 1;" onclick="processApproval(false)">Reject</button>
+        <button class="btn-secondary" style="flex: 1;" onclick="processApproval(false)">Reject</button>
         <button style="flex: 1;" onclick="processApproval(true)">Approve ✅</button>
       </div>
     </div>
   </div>
 
+  <script src="sakuraform.js"></script>
   <script>
-    // ⚠️ REPLACE THIS URL ⚠️
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbz_HjbiEnpxGhJ6KMq1zZOzXATtcrWDR3an9zM069rKVVm2gtAboIgH7VW6Ac7Xpp8u/exec';
+    // ⚠️ REPLACE THIS URL WITH YOUR NEW APPS SCRIPT URL ⚠️
+    const scriptURL = 'YOUR_GOOGLE_WEB_APP_URL_HERE';
     
     let currentRole = ''; 
     let allTransactions = [];
-    let currentFilter = 'Active'; // Active, Paid, All
-    let currentEntryType = 'Request'; // State for toggle
-
-    // Add CSS Petals
-    for(let i=0; i<8; i++) {
-      let petal = document.createElement('div');
-      petal.className = 'petal'; petal.innerHTML = '🌸';
-      petal.style.left = Math.random() * 100 + 'vw';
-      petal.style.animationDuration = (Math.random() * 3 + 4) + 's';
-      petal.style.animationDelay = Math.random() * 5 + 's';
-      document.body.appendChild(petal);
-    }
+    let currentFilter = 'Active'; 
+    let currentEntryType = 'Request'; 
 
     async function apiCall(payload) {
       document.getElementById('loader').style.display = 'block';
@@ -285,8 +314,7 @@
         return data;
       } catch (error) {
         document.getElementById('loader').style.display = 'none';
-        // Now returns an actual error message so the UI can tell you it failed
-        return { success: false, message: "Network Error: Is the Google Script URL correct?" }; 
+        return { success: false, message: "Network Error: Is the Google Script URL correct?" };
       }
     }
 
@@ -294,20 +322,17 @@
       const pwd = document.getElementById('login-pwd').value;
       if (!pwd) return;
 
-      // 1. Give visual loading feedback!
-      const btn = document.querySelector('.login-box button');
+      const btn = document.getElementById('btn-login');
       const originalText = btn.textContent;
       btn.textContent = '🌸 Checking...';
       btn.disabled = true;
       document.getElementById('login-error').style.display = 'none';
 
-      // 2. Make the call
       const res = await apiCall({ action: 'login', password: pwd });
       
-      // 3. Reset the button
       btn.textContent = originalText;
       btn.disabled = false;
-      
+
       if (res.success) {
         currentRole = res.role;
         document.getElementById('login-overlay').style.display = 'none';
@@ -322,7 +347,6 @@
         }
         fetchDashboardData();
       } else {
-        // 4. Show the specific error if it fails
         document.getElementById('login-error').textContent = res.message || "Incorrect password!";
         document.getElementById('login-error').style.display = 'block';
       }
@@ -363,7 +387,6 @@
           total += parseFloat(tx['Remaining Amount']) || 0;
         }
       });
-      // Allow negative formatting for surplus
       document.getElementById('total-amount').textContent = total.toLocaleString() + ' kr';
     }
 
@@ -372,63 +395,67 @@
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
       
       if(tabName === 'Active') document.getElementById('tab-active').classList.add('active');
+      if(tabName === 'Requests') document.getElementById('tab-requests').classList.add('active');
       if(tabName === 'Paid') document.getElementById('tab-paid').classList.add('active');
       if(tabName === 'All') document.getElementById('tab-all').classList.add('active');
       
       renderReceipts();
     }
 
+    function formatDate(isoString) {
+      if (!isoString) return '';
+      const d = new Date(isoString);
+      if (isNaN(d.getTime())) return '';
+      return ('0' + d.getDate()).slice(-2) + '.' + ('0' + (d.getMonth() + 1)).slice(-2) + '.' + d.getFullYear();
+    }
+
     function renderReceipts() {
       const container = document.getElementById('receipts-container');
       container.innerHTML = '';
       
-      let filtered = allTransactions.filter(t => t['Entry Type'] !== 'Repayment'); // Hide pure repayment logs from cards
+      // Hide pure repayment logs from cards
+      let filtered = allTransactions.filter(t => t['Entry Type'] !== 'Repayment'); 
       
       if (currentFilter === 'Active') {
-        // Active tab shows Pending, Active, Overdue
-        filtered = filtered.filter(t => ['Active', 'Overdue', 'Pending'].includes(t['Status']));
+        filtered = filtered.filter(t => t['Status'] === 'Active' || t['Status'] === 'Overdue');
+      } else if (currentFilter === 'Requests') {
+        filtered = filtered.filter(t => t['Status'] === 'Pending');
       } else if (currentFilter === 'Paid') {
         filtered = filtered.filter(t => t['Status'] === 'Paid');
       }
 
       if (filtered.length === 0) {
-        container.innerHTML = `<p style="text-align:center; color:var(--text-soft);">No items here! 🌸</p>`;
+        container.innerHTML = `<p style="text-align:center; color:#aa5e88; width: 100%;">No items here! 🌸</p>`;
         return;
       }
 
       filtered.forEach(tx => {
         const card = document.createElement('div');
-        let statusClass = `status-${tx['Status']}`;
         card.className = `card`;
-        if (tx['Status'] === 'Overdue') card.style.borderLeftColor = '#ef4444';
-        if (tx['Status'] === 'Paid') card.style.borderLeftColor = '#10b981';
-
-        const d = new Date(tx['Date']);
+        
+        let statusClass = `status-${tx['Status']}`;
         const originalAmt = parseFloat(tx['Original Amount']);
         const remainingAmt = parseFloat(tx['Remaining Amount']);
+        const dateStr = formatDate(tx['Date']);
+        const dueStr = tx['Due Date'] ? formatDate(tx['Due Date']) : '';
         
-        let dueHTML = tx['Due Date'] ? `<p><strong>Due:</strong> ${new Date(tx['Due Date']).toLocaleDateString()}</p>` : '';
+        let dueHTML = dueStr ? `<p style="margin: 0; color: #dc2626;"><strong>Due:</strong> ${dueStr}</p>` : '';
         
         let actionHTML = '';
         if (tx['Status'] === 'Pending' && currentRole === 'panda') {
-          // Pass the min/ideal string if it exists in the original amount field so Panda sees it
           let displayAmt = tx['Original Amount'];
-          actionHTML = `<button style="width:100%; margin-top:10px;" onclick="openApproveModal('${tx['ID']}', '${tx['Title / Purpose']}', '${displayAmt}')">Review Request</button>`;
+          actionHTML = `<button style="margin-top:15px;" onclick="openApproveModal('${tx['ID']}', '${tx['Title / Purpose']}', '${displayAmt}')">Review Request</button>`;
         } else if ((tx['Status'] === 'Active' || tx['Status'] === 'Overdue') && currentRole === 'shark') {
-          actionHTML = `<button class="btn-secondary" style="width:100%; margin-top:10px;" onclick="openPaymentModal('${tx['ID']}', ${remainingAmt})">💸 Pay This Specific Stub</button>`;
+          actionHTML = `<button class="btn-secondary" style="margin-top:15px;" onclick="openPaymentModal('${tx['ID']}', ${remainingAmt})">💸 Pay This Specific Stub</button>`;
         }
 
         card.innerHTML = `
-          <div class="status-pill ${statusClass}">${tx['Status']}</div>
           <div class="card-title">${tx['Title / Purpose']}</div>
-          <div class="card-details">
-            <p>${d.toLocaleDateString()}</p>
-            ${dueHTML}
-          </div>
+          <div class="status-pill ${statusClass}">${tx['Status']}</div>
+          <div class="card-date">${dateStr}</div>
+          ${dueHTML}
           <div class="card-amounts">
-            <div>
-              <span style="font-size:0.8rem; color:var(--text-soft);">Original: ${originalAmt} kr</span>
-            </div>
+            <div><span style="font-size:0.85rem; color:#999;">Original: ${originalAmt} kr</span></div>
             <div class="amt-main">${tx['Status'] === 'Paid' ? 'Paid' : remainingAmt + ' kr'}</div>
           </div>
           ${actionHTML}
@@ -439,12 +466,13 @@
 
     async function submitLoan(e) {
       e.preventDefault();
+      document.getElementById('btn-submit-loan').disabled = true;
       let finalAmount = 0;
       
       if (currentEntryType === 'Request') {
         const min = document.getElementById('l-amount-min').value;
         const ideal = document.getElementById('l-amount-ideal').value;
-        finalAmount = ideal ? `${min}-${ideal}` : min; // Send as a string for Panda to read
+        finalAmount = ideal ? `${min}-${ideal}` : min; 
       } else {
         finalAmount = document.getElementById('l-amount-exact').value;
       }
@@ -463,11 +491,11 @@
         document.getElementById('loanForm').reset();
         fetchDashboardData();
       }
+      document.getElementById('btn-submit-loan').disabled = false;
     }
 
     function openPaymentModal(specificId = null, amountOwed = null) {
       document.getElementById('p-specific-id').value = specificId || '';
-      
       if (specificId) {
         document.getElementById('pay-title').textContent = "💸 Pay Specific Stub";
         document.getElementById('pay-desc').textContent = "This payment will ONLY apply to this stub.";
@@ -482,6 +510,7 @@
 
     async function submitPayment(e) {
       e.preventDefault();
+      document.getElementById('btn-submit-pay').disabled = true;
       const res = await apiCall({
         action: 'log_payment',
         amount: document.getElementById('p-amount').value,
@@ -494,12 +523,12 @@
         document.getElementById('paymentForm').reset();
         fetchDashboardData();
       }
+      document.getElementById('btn-submit-pay').disabled = false;
     }
 
     function openApproveModal(id, title, reqAmountStr) {
       document.getElementById('app-id').value = id;
       document.getElementById('app-desc').textContent = `The Shark requested: ${reqAmountStr} kr for "${title}".`;
-      // If it's a range like "100-500", try to pre-fill the input with the lower number just for ease
       let suggestedAmt = reqAmountStr.toString().split('-')[0];
       document.getElementById('app-final-amount').value = suggestedAmt;
       openModal('approveModal');
@@ -514,9 +543,7 @@
         if (!finalAmt) return alert("Please enter the final amount.");
         res = await apiCall({ action: 'approve_loan', id: id, finalAmount: finalAmt });
       } else {
-        if(confirm("Are you sure you want to REJECT this request?")) {
-           res = await apiCall({ action: 'reject_loan', id: id });
-        } else return;
+        res = await apiCall({ action: 'reject_loan', id: id });
       }
 
       if(res.success) {
