@@ -244,8 +244,8 @@
 
 <body>
   <div class="form-container">
-    <h1>🐼 Zen Pockets</h1>
-    <p class="subtitle">Log your interactions, Panda Queen! ✨</p>
+    <h1>🐼 Canvas Support</h1>
+    <p class="subtitle">Log your interactions!</p>
     
     <div class="mascot">
       <img src="momorin-placeholder.png" alt="Momorin the Mascot"> 
@@ -258,10 +258,10 @@
       <label for="title">Title:</label>
       <input type="text" id="title" name="title" placeholder="Brief subject" required>
       
-      <label for="type">Type:</label>
+      <label for="type">Service Type:</label>
       <select id="type" name="type" required>
         <option value="" disabled selected>Loading types...</option>
-        <option value="_new">✨ + Create new...</option>
+        <option value="_new">+ Create new...</option>
       </select>
       
       <input type="text" id="newType" name="newType" placeholder="Enter new type name" style="display:none;">
@@ -276,7 +276,7 @@
       </select>
       
       <label for="solution">Solution (optional):</label>
-      <textarea id="solution" name="solution" placeholder="How was it resolved?"></textarea>
+      <textarea id="solution" name="solution" placeholder="How was it resolved? If the answer is already on casnvas, then skip this step :)"></textarea>
       
       <div class="button-group">
         <button type="submit" id="submitBtn">Save</button>
@@ -321,12 +321,12 @@
         }
         const newOption = document.createElement('option');
         newOption.value = '_new';
-        newOption.textContent = '✨ + Create new...';
+        newOption.textContent = '+ Create new...';
         typeSelect.appendChild(newOption);
       })
       .catch(error => {
         console.error('Error fetching types:', error);
-        typeSelect.innerHTML = '<option value="_new">✨ + Create new...</option>';
+        typeSelect.innerHTML = '<option value="_new">+ Create new...</option>';
       });
 
     // 3. Toggle the "New Type" input field
