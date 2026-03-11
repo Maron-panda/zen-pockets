@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Foodtruck Event Tracker 🚚🌸</title>
+  <title>Food Market Tracker 🚚🌸</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   
   <style>
@@ -94,10 +94,10 @@
       <div class="progress-text" id="truck-text">0 / 4500 Revenue</div>
     </div>
     
-    <label>Friend / Extra Revenue</label>
+    <label>Friend's Total Revenue (Overrides previous)</label>
     <div class="flex-row">
-      <input type="number" id="friend-rev" placeholder="Amount (e.g. 500)">
-      <button onclick="addFriendRevenue()" style="flex: 0.5;">Add</button>
+      <input type="number" id="friend-rev" placeholder="e.g. 1070">
+      <button onclick="updateFriendRevenue()" style="flex: 0.5;">Update</button>
     </div>
     
     <button onclick="nextTruck()" class="btn-small" style="background: #fffefe; color: #ec6f9c; border: 2px solid #ec6f9c;">⏭️ Finish & Move to Next Truck</button>
@@ -148,13 +148,14 @@
   // Game State
   let state = JSON.parse(localStorage.getItem('hcFoodtruckState'));
   
-  // If no state or old format, initialize fresh
-  if (!state || !state.truckDataRef) {
+  // Clean slate for the new tracking method (v3)
+  if (!state || state.truckDataRef !== "v3") {
     state = {
       truckIndex: 0,
-      truckRevenues: [0, 0, 0, 0],
+      truckRevenues: [0, 0, 0, 0],   // Just your revenue
+      friendRevenues: [0, 0, 0, 0],  // Just friend's total
       orders: [],
-      truckDataRef: "v2" // Version tracking
+      truckDataRef: "v3" 
     };
   }
 
@@ -163,10 +164,10 @@
     render();
   }
 
-  function addFriendRevenue() {
+  function updateFriendRevenue() {
     const amt = parseInt(document.getElementById('friend-rev').value);
-    if(amt && amt > 0) {
-      state.truckRevenues[state.truckIndex] += amt;
+    if(!isNaN(amt) && amt >= 0) {
+      state.friendRevenues[state.truckIndex] = amt; // Overwrites instead of adding
       document.getElementById('friend-rev').value = '';
       saveData();
     }
@@ -175,10 +176,6 @@
   function nextTruck() {
     if(state.truckIndex < 3) {
       if(confirm("Move to the next truck? This will clear your current order board.")) {
-        // Cap the current truck at 4500 just for clean visuals if they overshot
-        if(state.truckRevenues[state.truckIndex] > TARGET) {
-            state.truckRevenues[state.truckIndex] = TARGET;
-        }
         state.truckIndex++;
         state.orders = []; // Clear orders for new truck
         saveData();
@@ -257,7 +254,7 @@
   }
 
   function sortOrders() {
-    const currentRev = state.truckRevenues[state.truckIndex];
+    const combinedRev = state.truckRevenues[state.truckIndex] + state.friendRevenues[state.truckIndex];
     
     state.orders.sort((a, b) => {
       // 1. Pretty Card always wins
@@ -265,8 +262,8 @@
       if(!a.card && b.card) return 1;
 
       // 2. Finish Line Logic (Prioritize CHEAPEST token cost if it finishes the truck)
-      const aFinishes = (currentRev + a.revenue) >= TARGET;
-      const bFinishes = (currentRev + b.revenue) >= TARGET;
+      const aFinishes = (combinedRev + a.revenue) >= TARGET;
+      const bFinishes = (combinedRev + b.revenue) >= TARGET;
       
       if (aFinishes && !bFinishes) return -1; 
       if (!aFinishes && bFinishes) return 1;  
@@ -283,15 +280,23 @@
     renderItemInputs();
 
     // 1. Update Truck Tracker
-    const curRev = state.truckRevenues[state.truckIndex];
-    document.getElementById('truck-name').innerText = `${state.truckIndex + 1}. ${TRUCK_DATA[state.truckIndex].name}`;
+    const myRev = state.truckRevenues[state.truckIndex];
+    const friendRev = state.friendRevenues[state.truckIndex];
+    const combinedRev = myRev + friendRev;
     
-    let pct = Math.min((curRev / TARGET) * 100, 100);
+    document.getElementById('truck-name').innerText = `${state.truckIndex + 1}. ${TRUCK_DATA[state.truckIndex].name}`;
+    document.getElementById('friend-rev').placeholder = `Current: ${friendRev}`;
+    
+    let pct = Math.min((combinedRev / TARGET) * 100, 100);
     document.getElementById('truck-fill').style.width = pct + '%';
-    document.getElementById('truck-text').innerText = `${curRev} / ${TARGET} Rev`;
+    document.getElementById('truck-text').innerText = `${combinedRev} / ${TARGET} Rev`;
 
     // 2. Update Grand Progress
-    const totalRev = state.truckRevenues.reduce((sum, val) => sum + Math.min(val, TARGET), 0);
+    const totalRev = state.truckRevenues.reduce((sum, myVal, idx) => {
+      const truckCombined = myVal + state.friendRevenues[idx];
+      return sum + Math.min(truckCombined, TARGET);
+    }, 0);
+    
     let grandPct = Math.min((totalRev / GRAND_TARGET) * 100, 100);
     document.getElementById('grand-fill').style.width = grandPct + '%';
     document.getElementById('grand-text').innerText = `${totalRev} / ${GRAND_TARGET} Total`;
@@ -304,7 +309,7 @@
     if(state.orders.length > 0) {
       const topOrder = state.orders[0];
       let reason = topOrder.card ? "(Has rare reward!)" : 
-                   ((curRev + topOrder.revenue) >= TARGET ? "(Finishes Truck!)" : "(Best ROI Ratio)");
+                   ((combinedRev + topOrder.revenue) >= TARGET ? "(Finishes Truck!)" : "(Best ROI Ratio)");
       focusEl.innerHTML = `Save up <strong>${topOrder.tokens} Tokens</strong>! <br><span style="font-size: 0.9rem; font-weight: 500; color: #7c4c66;">${reason}</span>`;
     } else {
       focusEl.innerText = "Add orders to see what to focus on!";
