@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Foodtruck Event Tracker 🚚🌸</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: linear-gradient(to bottom, #fff0f5, #fdf6fb);
+      font-family: 'Poppins', sans-serif;
+      color: #444; min-height: 100vh; padding: 20px;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .container { width: 100%; max-width: 600px; }
+
+    h1, h2, h3 { color: #ec6f9c; text-align: center; margin-bottom: 10px; }
+    
+    .card {
+      background: #fffefe; border-radius: 20px; padding: 20px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06); margin-bottom: 20px;
+      position: relative; overflow: hidden;
+    }
+
+    /* Progress Bars */
+    .progress-wrapper { background: #fce4ed; border-radius: 15px; height: 24px; width: 100%; margin: 10px 0; overflow: hidden; position: relative;}
+    .progress-fill { background: linear-gradient(to right, #fca4c1, #e48ccf); height: 100%; width: 0%; transition: width 0.4s ease; }
+    .progress-fill-grand { background: linear-gradient(to right, #a78bfa, #c084fc); }
+    .progress-text { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 600; color: #7c4c66; }
+    .progress-text-white { color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+
+    /* Inputs & Buttons */
+    label { font-size: 0.85rem; font-weight: 600; color: #7c4c66; margin-bottom: 4px; display: block;}
+    input[type="number"] {
+      width: 100%; padding: 10px; margin-bottom: 15px; border: 2px solid #f1d7e0;
+      border-radius: 12px; font-family: 'Poppins'; font-size: 1rem;
+    }
+    input:focus { outline: none; border-color: #f7a3c1; }
+    
+    .checkbox-wrapper { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; color: #7c4c66; font-weight: 600; background: #fff0f5; padding: 10px; border-radius: 12px; border: 1px solid #f1d7e0;}
+    .checkbox-wrapper input { width: 20px; height: 20px; accent-color: #ec6f9c;}
+
+    button {
+      background: linear-gradient(to right, #fca4c1, #e48ccf); color: white;
+      padding: 12px; border: none; border-radius: 15px; font-weight: 600;
+      width: 100%; cursor: pointer; font-family: 'Poppins'; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    button:hover { background: linear-gradient(to right, #f687b3, #d86dd1); }
+    .btn-small { padding: 8px; font-size: 0.9rem; border-radius: 10px; margin-top: 10px; }
+    .btn-complete { background: #e6f7ec; color: #2e8b57; box-shadow: none; border: 2px solid #bbf7d0; }
+    .btn-complete:hover { background: #bbf7d0; }
+    .btn-delete { background: #fee2e2; color: #dc2626; box-shadow: none; border: 2px solid #fecaca; }
+
+    /* Order Items */
+    .order-item {
+      border: 2px solid #f1d7e0; border-radius: 15px; padding: 15px; margin-bottom: 15px;
+      display: flex; flex-direction: column; gap: 5px;
+    }
+    .priority-1 { border-color: #fca4c1; background: #fff0f5; border-width: 3px;}
+    .badge { display: inline-block; padding: 3px 8px; border-radius: 10px; font-size: 0.75rem; font-weight: bold; background: #fce4ed; color: #b65784; width: fit-content;}
+    .badge-card { background: #fef08a; color: #854d0e; }
+    
+    .stats-row { display: flex; justify-content: space-between; font-size: 0.9rem; color: #444; font-weight: 500;}
+    .stats-row span { color: #ec6f9c; font-weight: 700; }
+    .item-list { font-size: 0.8rem; color: #777; margin: 4px 0; background: #fdf6fb; padding: 8px; border-radius: 8px;}
+
+    .target-highlight { text-align: center; color: #d86dd1; font-size: 1.1rem; font-weight: 700; margin-bottom: 10px;}
+    
+    .flex-row { display: flex; gap: 10px; }
+    .flex-row > * { flex: 1; }
+    
+    .item-input-group { background: #fdf6fb; padding: 10px; border-radius: 12px; margin-bottom: 10px; border: 1px dashed #f1d7e0;}
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>🚚 Food Market Tracker</h1>
+  
+  <div class="card" style="padding: 15px;">
+    <h3 style="font-size: 1rem; color: #8b5cf6;">Grand Prize Progress 🎁</h3>
+    <div class="progress-wrapper">
+      <div class="progress-fill progress-fill-grand" id="grand-fill"></div>
+      <div class="progress-text progress-text-white" id="grand-text">0 / 18000</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2 id="truck-name">1. Artisan Bread 🥖</h2>
+    <div class="progress-wrapper">
+      <div class="progress-fill" id="truck-fill"></div>
+      <div class="progress-text" id="truck-text">0 / 4500 Revenue</div>
+    </div>
+    
+    <label>Friend / Extra Revenue</label>
+    <div class="flex-row">
+      <input type="number" id="friend-rev" placeholder="Amount (e.g. 500)">
+      <button onclick="addFriendRevenue()" style="flex: 0.5;">Add</button>
+    </div>
+    
+    <button onclick="nextTruck()" class="btn-small" style="background: #fffefe; color: #ec6f9c; border: 2px solid #ec6f9c;">⏭️ Finish & Move to Next Truck</button>
+  </div>
+
+  <div class="card" style="border: 3px dashed #fca4c1;">
+    <h3>🎯 Strategy Focus</h3>
+    <div class="target-highlight" id="strategy-focus">Add orders to see what to focus on!</div>
+  </div>
+
+  <div class="card">
+    <h3>📝 Add New Order</h3>
+    <p style="font-size:0.8rem; color:#999; text-align:center; margin-bottom:10px;">Input quantities (0 is default)</p>
+    
+    <div class="item-input-group" id="dynamic-items">
+      </div>
+
+    <div style="margin-top: 15px;">
+      <label>Revenue Reward (Total)</label>
+      <input type="number" id="new-rev" placeholder="e.g. 240">
+    </div>
+    
+    <div class="checkbox-wrapper">
+      <input type="checkbox" id="new-card">
+      <label for="new-card" style="margin:0;">✨ Order includes Diamond/Cash reward?</label>
+    </div>
+    <button onclick="addOrder()">Add to List</button>
+  </div>
+
+  <div class="card">
+    <h3>📋 Sorted Orders</h3>
+    <div id="orders-container"></div>
+  </div>
+</div>
+
+<script>
+  // Truck Data with exact prices
+  const TRUCK_DATA = [
+    { name: "Artisan Bread 🥖", items: [{name: "Cupcake", cost: 8}, {name: "Cake Piece", cost: 12}, {name: "Tiered Cake", cost: 25}] },
+    { name: "Pizza Power 🍕", items: [{name: "Pizza Piece", cost: 8}, {name: "Whole Pizza", cost: 12}, {name: "Burger Menu", cost: 25}] },
+    { name: "Coffee Mania ☕", items: [{name: "Espresso", cost: 8}, {name: "Iced Coffee", cost: 12}, {name: "Hot Cocoa", cost: 25}] },
+    { name: "Juice Booster 🧃", items: [{name: "Orange Juice", cost: 8}, {name: "Pineapple Juice", cost: 12}, {name: "Pina Colada", cost: 25}] }
+  ];
+
+  const TARGET = 4500;
+  const GRAND_TARGET = 18000;
+
+  // Game State
+  let state = JSON.parse(localStorage.getItem('hcFoodtruckState'));
+  
+  // If no state or old format, initialize fresh
+  if (!state || !state.truckDataRef) {
+    state = {
+      truckIndex: 0,
+      truckRevenues: [0, 0, 0, 0],
+      orders: [],
+      truckDataRef: "v2" // Version tracking
+    };
+  }
+
+  function saveData() {
+    localStorage.setItem('hcFoodtruckState', JSON.stringify(state));
+    render();
+  }
+
+  function addFriendRevenue() {
+    const amt = parseInt(document.getElementById('friend-rev').value);
+    if(amt && amt > 0) {
+      state.truckRevenues[state.truckIndex] += amt;
+      document.getElementById('friend-rev').value = '';
+      saveData();
+    }
+  }
+
+  function nextTruck() {
+    if(state.truckIndex < 3) {
+      if(confirm("Move to the next truck? This will clear your current order board.")) {
+        // Cap the current truck at 4500 just for clean visuals if they overshot
+        if(state.truckRevenues[state.truckIndex] > TARGET) {
+            state.truckRevenues[state.truckIndex] = TARGET;
+        }
+        state.truckIndex++;
+        state.orders = []; // Clear orders for new truck
+        saveData();
+      }
+    } else {
+      alert("You are on the last truck!");
+    }
+  }
+
+  function renderItemInputs() {
+    const container = document.getElementById('dynamic-items');
+    const currentTruck = TRUCK_DATA[state.truckIndex];
+    
+    let html = `<div class="flex-row">`;
+    currentTruck.items.forEach((item, idx) => {
+      html += `
+        <div>
+          <label style="font-size:0.75rem;">${item.name}<br><span style="color:#e48ccf;">(${item.cost} tk)</span></label>
+          <input type="number" id="qty-${idx}" placeholder="0" min="0">
+        </div>
+      `;
+    });
+    html += `</div>`;
+    container.innerHTML = html;
+  }
+
+  function addOrder() {
+    if(state.orders.length >= 3) return alert("You already have 3 active orders! Complete or delete one first.");
+    
+    const currentTruck = TRUCK_DATA[state.truckIndex];
+    let totalTokens = 0;
+    let itemsSummary = [];
+
+    // Calculate tokens based on quantities
+    currentTruck.items.forEach((item, idx) => {
+      const qty = parseInt(document.getElementById(`qty-${idx}`).value) || 0;
+      if (qty > 0) {
+        totalTokens += (qty * item.cost);
+        itemsSummary.push(`${qty}x ${item.name}`);
+      }
+    });
+
+    const r = parseInt(document.getElementById('new-rev').value);
+    const c = document.getElementById('new-card').checked;
+
+    if(totalTokens === 0) return alert("Please enter quantities for the food items!");
+    if(!r) return alert("Please enter the revenue reward!");
+
+    state.orders.push({ 
+      id: Date.now(), 
+      tokens: totalTokens, 
+      revenue: r, 
+      card: c,
+      details: itemsSummary.join(", ")
+    });
+    
+    // Reset inputs
+    currentTruck.items.forEach((_, idx) => document.getElementById(`qty-${idx}`).value = '');
+    document.getElementById('new-rev').value = '';
+    document.getElementById('new-card').checked = false;
+    saveData();
+  }
+
+  function completeOrder(id) {
+    const order = state.orders.find(o => o.id === id);
+    if(order) {
+      state.truckRevenues[state.truckIndex] += order.revenue;
+      state.orders = state.orders.filter(o => o.id !== id);
+      saveData();
+    }
+  }
+
+  function deleteOrder(id) {
+    state.orders = state.orders.filter(o => o.id !== id);
+    saveData();
+  }
+
+  function sortOrders() {
+    const currentRev = state.truckRevenues[state.truckIndex];
+    
+    state.orders.sort((a, b) => {
+      // 1. Pretty Card always wins
+      if(a.card && !b.card) return -1;
+      if(!a.card && b.card) return 1;
+
+      // 2. Finish Line Logic (Prioritize CHEAPEST token cost if it finishes the truck)
+      const aFinishes = (currentRev + a.revenue) >= TARGET;
+      const bFinishes = (currentRev + b.revenue) >= TARGET;
+      
+      if (aFinishes && !bFinishes) return -1; 
+      if (!aFinishes && bFinishes) return 1;  
+      if (aFinishes && bFinishes) return a.tokens - b.tokens; 
+
+      // 3. Ratio Logic (Revenue per Token)
+      const ratioA = a.revenue / a.tokens;
+      const ratioB = b.revenue / b.tokens;
+      return ratioB - ratioA;
+    });
+  }
+
+  function render() {
+    renderItemInputs();
+
+    // 1. Update Truck Tracker
+    const curRev = state.truckRevenues[state.truckIndex];
+    document.getElementById('truck-name').innerText = `${state.truckIndex + 1}. ${TRUCK_DATA[state.truckIndex].name}`;
+    
+    let pct = Math.min((curRev / TARGET) * 100, 100);
+    document.getElementById('truck-fill').style.width = pct + '%';
+    document.getElementById('truck-text').innerText = `${curRev} / ${TARGET} Rev`;
+
+    // 2. Update Grand Progress
+    const totalRev = state.truckRevenues.reduce((sum, val) => sum + Math.min(val, TARGET), 0);
+    let grandPct = Math.min((totalRev / GRAND_TARGET) * 100, 100);
+    document.getElementById('grand-fill').style.width = grandPct + '%';
+    document.getElementById('grand-text').innerText = `${totalRev} / ${GRAND_TARGET} Total`;
+
+    // 3. Sort Orders
+    sortOrders();
+
+    // 4. Render Strategy Focus
+    const focusEl = document.getElementById('strategy-focus');
+    if(state.orders.length > 0) {
+      const topOrder = state.orders[0];
+      let reason = topOrder.card ? "(Has rare reward!)" : 
+                   ((curRev + topOrder.revenue) >= TARGET ? "(Finishes Truck!)" : "(Best ROI Ratio)");
+      focusEl.innerHTML = `Save up <strong>${topOrder.tokens} Tokens</strong>! <br><span style="font-size: 0.9rem; font-weight: 500; color: #7c4c66;">${reason}</span>`;
+    } else {
+      focusEl.innerText = "Add orders to see what to focus on!";
+    }
+
+    // 5. Render Orders List
+    const container = document.getElementById('orders-container');
+    container.innerHTML = '';
+    
+    if(state.orders.length === 0) {
+      container.innerHTML = '<p style="text-align:center; color:#999; font-size: 0.9rem;">No active orders.</p>';
+    }
+
+    state.orders.forEach((o, index) => {
+      const ratio = (o.revenue / o.tokens).toFixed(1);
+      const isTop = index === 0;
+      
+      let html = `
+        <div class="order-item ${isTop ? 'priority-1' : ''}">
+          <div class="flex-row" style="justify-content: space-between; align-items: center; margin-bottom: 5px;">
+            <div class="badge ${isTop ? '' : 'badge-inactive'}">#${index + 1} Priority</div>
+            ${o.card ? '<div class="badge badge-card">✨ Reward included</div>' : ''}
+          </div>
+          
+          <div class="item-list">${o.details}</div>
+
+          <div class="stats-row">Cost: <span>${o.tokens} Tokens</span></div>
+          <div class="stats-row">Reward: <span>+${o.revenue} Rev</span></div>
+          <div class="stats-row" style="font-size: 0.8rem; color: #999;">Ratio: ${ratio} rev/token</div>
+          
+          <div class="flex-row">
+            <button class="btn-small btn-complete" onclick="completeOrder(${o.id})">✅ Fulfill</button>
+            <button class="btn-small btn-delete" style="flex: 0.3;" onclick="deleteOrder(${o.id})">🗑️</button>
+          </div>
+        </div>
+      `;
+      container.innerHTML += html;
+    });
+  }
+
+  // Initial Render
+  render();
+</script>
+</body>
+</html>
