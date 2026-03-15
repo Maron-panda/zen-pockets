@@ -100,27 +100,31 @@
     
     .panda-avatar { position: absolute; width: 35px; height: 35px; z-index: 5; transition: left 0.8s ease-in-out, top 0.8s ease-in-out; transform: translate(-50%, -50%); filter: drop-shadow(0 0 8px rgba(236,111,156,0.8)); }
 
-    /* Written Log Area */
-    .log-container { max-height: 250px; overflow-y: auto; padding-right: 5px; margin-top: 15px; }
+    /* Written Log Area (Optimized for Mobile) */
+    .log-container { max-height: 250px; overflow-y: auto; padding-right: 5px; margin-top: 15px; overflow-x: hidden; }
     
     .log-item { 
-      display: grid; grid-template-columns: 80px 80px 1fr 60px; gap: 10px; 
+      display: grid; grid-template-columns: 75px 65px 1fr 45px; gap: 6px; 
       align-items: center; padding: 12px 0; border-bottom: 1px dashed rgba(255,255,255,0.1); 
     }
-    .session-badge { background: var(--bar-bg); color: #fff; padding: 2px 6px; border-radius: 6px; font-size: 0.7rem; text-align: center; font-weight: bold;}
-    .log-date { font-size: 0.75rem; color: #DDA0DD; }
-    .log-text { font-size: 0.8rem; color: white; line-height: 1.3; font-weight: 500;}
-    .log-pct { font-size: 0.85rem; color: var(--accent-glow); font-weight: bold; text-align: right;}
+    .session-badge { background: var(--bar-bg); color: #fff; padding: 2px 4px; border-radius: 6px; font-size: 0.65rem; text-align: center; font-weight: bold; white-space: nowrap;}
+    .log-date { font-size: 0.7rem; color: #DDA0DD; white-space: nowrap;}
+    .log-text { font-size: 0.75rem; color: white; line-height: 1.3; font-weight: 500; word-wrap: break-word;}
+    .log-pct { font-size: 0.8rem; color: var(--accent-glow); font-weight: bold; text-align: right;}
 
-    /* Smart Charts (TALLER HEIGHT) */
-    .chart-container { display: flex; align-items: flex-end; justify-content: flex-end; height: 220px; margin-top: 10px; padding-bottom: 5px; position: relative; overflow-x: auto; gap: 6px;}
-    .chart-container::before { content: ''; position: absolute; bottom: 25px; left: 0; width: 100%; height: 1px; background: rgba(255,255,255,0.1); z-index: 0; }
+    /* Smart Charts (Fluid & Adaptive) */
+    .chart-container { display: flex; align-items: flex-end; justify-content: space-around; height: 220px; margin-top: 10px; padding-bottom: 5px; position: relative; gap: 4px; overflow: hidden;}
+    .chart-container::before { content: ''; position: absolute; bottom: 40px; left: 0; width: 100%; height: 1px; background: rgba(255,255,255,0.1); z-index: 0; }
     
-    .bar-wrapper { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; position: relative; height: 100%; z-index: 1; min-width: 25px;}
+    .bar-wrapper { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; position: relative; height: 100%; z-index: 1; min-width: 0;}
     .bar { background: linear-gradient(to top, rgba(236,111,156,0.3), var(--accent-pink)); min-height: 2px; transition: height 0.5s; width: 100%; max-width: 25px; border-radius: 4px 4px 0 0;}
     
     .bar-tooltip { position: absolute; top: 0; font-size: 0.7rem; background: rgba(0,0,0,0.8); padding: 4px 8px; border-radius: 6px; opacity: 0; transition: 0.2s; white-space: nowrap; pointer-events: none; z-index: 10;}
     .bar-wrapper:hover .bar-tooltip { opacity: 1; transform: translateY(-20px); }
+
+    .date-label { font-size: 0.6rem; color: #DDA0DD; margin-top: 4px; display: flex; justify-content: center; align-items: flex-start; height: 35px; width: 100%; }
+    /* Rotated dates specifically for the tightly packed Show All chart */
+    .date-label.rotated { writing-mode: vertical-rl; transform: rotate(180deg); font-size: 0.55rem; letter-spacing: 0.5px;}
 
     #login-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: var(--bg-dark); display: flex; justify-content: center; align-items: center; z-index: 9999; }
     #loader { display: none; position: fixed; top: 20px; right: 20px; background: rgba(0,0,0,0.8); color: var(--accent-glow); padding: 10px 20px; border-radius: 20px; border: 1px solid var(--accent-pink); z-index: 9999; font-weight: 600; }
@@ -187,7 +191,7 @@
         <div>
           <div style="font-size: 1.3rem; color: #FFD700; font-weight: 700;" id="stat-streak">0 🔥</div>
           <div style="font-size: 0.75rem; color: #DDA0DD;">Active Streak</div>
-          <div style="font-size: 0.7rem; color: transparent; padding: 2px 6px; display: inline-block; margin-top: 4px;">-</div>
+          <div style="font-size: 0.7rem; color: white; background: var(--bar-bg); border-radius: 8px; padding: 2px 6px; display: inline-block; margin-top: 4px;" id="stat-max-streak">Best: 0</div>
         </div>
       </div>
     </div>
@@ -223,7 +227,7 @@
     const scriptURL = 'https://script.google.com/macros/s/AKfycbzv35XYj_2RqPXL8CYLHnpi-XfQ5ChN0YiC-_0Ae-PBTV7Yb61XiSbbHM7pXizAWDn2/exec';
     
     const QURAN_DATA = [
-      { name: "Al-Fatihah", count: 7 }, { name: "Al-Baqarah", count: 286 }, { name: "Al-Imran", count: 200 }, { name: "An-Nisa", count: 176 },
+      { name: "Al-Fatihah", count: 7 }, { name: "Al-Baqarah", count: 286 }, { name: "Aali-Imran", count: 200 }, { name: "An-Nisa", count: 176 },
       { name: "Al-Ma'idah", count: 120 }, { name: "Al-An'am", count: 165 }, { name: "Al-A'raf", count: 206 }, { name: "Al-Anfal", count: 75 },
       { name: "At-Tawbah", count: 129 }, { name: "Yunus", count: 109 }, { name: "Hud", count: 123 }, { name: "Yusuf", count: 111 },
       { name: "Ar-Ra'd", count: 43 }, { name: "Ibrahim", count: 52 }, { name: "Al-Hijr", count: 99 }, { name: "An-Nahl", count: 128 },
@@ -303,9 +307,13 @@
     }
     createStarfield(); setInterval(createShootingStar, 2500);
 
-    // Dynamic Map resize
+    // --- BUG 1 FIX: Only trigger map redraw if WIDTH actually changes (stops scroll snapping on phones) ---
+    let lastWidth = window.innerWidth;
     window.addEventListener('resize', () => {
-      if (document.getElementById('app-container').style.display === 'block') renderMap();
+      if (window.innerWidth !== lastWidth) {
+        lastWidth = window.innerWidth;
+        if (document.getElementById('app-container').style.display === 'block') renderMap();
+      }
     });
 
     // API & Logic
@@ -344,7 +352,7 @@
     function processCurrentState() {
       const currentJourney = state.history.filter(h => parseInt(h['Run ID']) === state.currentRun);
       
-      // We must sort chronologically to find the TRUE "Last" log
+      // Sort chronologically to find the TRUE "Last" log
       currentJourney.sort((a, b) => {
         const dA = new Date(a.Timestamp);
         const dB = new Date(b.Timestamp);
@@ -434,46 +442,61 @@
         return parseInt(a['Total Ayahs Read']) - parseInt(b['Total Ayahs Read']);
       });
 
-      // Daily Stats + Streaks
+      // Daily Stats + Streaks + Best Streak Logic
       let dailyTotals = {};
       currentJourney.forEach(entry => {
         let dStr = getLocalYMD(entry.Timestamp);
         dailyTotals[dStr] = (dailyTotals[dStr] || 0) + parseInt(entry['Ayahs Read Today']);
       });
-      const uniqueDates = Object.keys(dailyTotals).sort((a,b) => new Date(b) - new Date(a)); // Descending for Streak checking
+      const uniqueDates = Object.keys(dailyTotals).sort((a,b) => new Date(b) - new Date(a)); // Descending
       
-      let avg = 0; let streak = 0;
+      let avg = 0; let activeStreak = 0; let maxStreak = 0;
       if (uniqueDates.length > 0) {
         const totalSum = Object.values(dailyTotals).reduce((sum, val) => sum + val, 0);
         avg = Math.round(totalSum / uniqueDates.length);
         
+        // --- Calculate Best (Max) Streak ---
+        let ascDates = [...uniqueDates].reverse(); // Oldest first
+        let currentRunCount = 1;
+        maxStreak = 1;
+        for (let i = 1; i < ascDates.length; i++) {
+          let prevD = new Date(ascDates[i-1]); prevD.setHours(0,0,0,0);
+          let currD = new Date(ascDates[i]); currD.setHours(0,0,0,0);
+          if ((currD - prevD) / 86400000 === 1) {
+            currentRunCount++;
+            maxStreak = Math.max(maxStreak, currentRunCount);
+          } else {
+            currentRunCount = 1;
+          }
+        }
+        
+        // --- Calculate Active Streak ---
         let checkDate = new Date(); checkDate.setHours(0,0,0,0);
         let firstLog = new Date(uniqueDates[0]); firstLog.setHours(0,0,0,0);
         let diff = (checkDate - firstLog) / 86400000;
         
         if (diff === 0 || diff === 1) {
-          streak = 1;
+          activeStreak = 1;
           for (let i = 1; i < uniqueDates.length; i++) {
             let prevD = new Date(uniqueDates[i-1]); prevD.setHours(0,0,0,0);
             let currD = new Date(uniqueDates[i]); currD.setHours(0,0,0,0);
-            if ((prevD - currD) / 86400000 === 1) streak++; else break;
+            if ((prevD - currD) / 86400000 === 1) activeStreak++; else break;
           }
         }
       }
+      
       document.getElementById('stat-avg').innerText = avg;
       const avgPct = ((avg / 6236) * 100).toFixed(2);
       document.getElementById('stat-avg-pct').innerText = `${avgPct}% per day`;
-      document.getElementById('stat-streak').innerText = `${streak} 🔥`;
+      document.getElementById('stat-streak').innerText = `${activeStreak} 🔥`;
+      document.getElementById('stat-max-streak').innerText = `Best: ${maxStreak}`;
 
       // Written Log (Chronological Session assignment)
       const logBox = document.getElementById('written-log');
       logBox.innerHTML = currentJourney.length === 0 ? '<div style="text-align:center; color:#999; padding: 20px;">No reading logged yet.</div>' : '';
       
-      // Assign session numbers starting from oldest to newest
       let chronoJourney = [...currentJourney];
       chronoJourney.forEach((entry, i) => { entry.sessionNum = i + 1; });
-      
-      // Flip for text log so newest session is at the top
       let displayJourney = [...chronoJourney].reverse(); 
 
       displayJourney.forEach(entry => {
@@ -496,7 +519,6 @@
       const chartBox = document.getElementById('chart-box');
       chartBox.innerHTML = '';
       
-      // Get chronological journey
       let currentJourney = state.history.filter(h => parseInt(h['Run ID']) === state.currentRun && parseInt(h['Ayahs Read Today']) > 0);
       currentJourney.sort((a, b) => {
         const dA = new Date(a.Timestamp);
@@ -508,9 +530,7 @@
       chronoJourney.forEach((entry, i) => { entry.sessionNum = i + 1; });
       
       if (state.chartView === '14') {
-        // --- 14 DAY HEARTBEAT CHART (Includes skipped days) ---
-        chartBox.style.justifyContent = 'flex-end';
-        
+        // --- 14 DAY HEARTBEAT CHART ---
         let days14 = [];
         let today = new Date();
         for(let i=13; i>=0; i--) {
@@ -539,13 +559,11 @@
             <div class="bar-wrapper">
               ${val > 0 ? `<div class="bar-tooltip">${val} Ayahs</div>` : ''}
               <div class="bar" style="height: ${pct}%; background: ${val===0 ? 'transparent' : ''}; border: ${val===0 ? 'none' : ''}"></div>
-              <div style="font-size:0.6rem; color:#DDA0DD; margin-top:4px;">${niceDate}</div>
+              <div class="date-label">${niceDate}</div>
             </div>`;
         });
       } else {
-        // --- SHOW ALL STAIRCASE CHART (Cumulative Progress) ---
-        chartBox.style.justifyContent = 'flex-start'; // Start from left and scroll right if many sessions
-        
+        // --- SHOW ALL STAIRCASE CHART (Adaptive sizing) ---
         if(chronoJourney.length === 0) {
            chartBox.innerHTML = '<p style="width:100%; text-align:center; color:#999; font-size:0.8rem; margin-bottom:20px;">No reading logged yet.</p>';
            return;
@@ -553,14 +571,14 @@
 
         chronoJourney.forEach((entry) => {
           const total = parseInt(entry['Total Ayahs Read']);
-          const pct = Math.max((total / TOTAL_QURAN_AYAHS) * 100, 2); // At least 2% so step is visible
+          const pct = Math.max((total / TOTAL_QURAN_AYAHS) * 100, 2); 
           let niceDate = formatEUDate(entry.Timestamp).substring(0, 5); // dd.mm
           
           chartBox.innerHTML += `
             <div class="bar-wrapper">
               <div class="bar-tooltip" style="top: -35px;">Session ${entry.sessionNum}<br>${total} / 6236</div>
-              <div class="bar" style="height: ${pct}%;"></div>
-              <div style="font-size:0.6rem; color:#DDA0DD; margin-top:4px;">${niceDate}</div>
+              <div class="bar" style="height: ${pct}%; border-radius: 2px 2px 0 0;"></div>
+              <div class="date-label rotated">${niceDate}</div>
             </div>`;
         });
       }
