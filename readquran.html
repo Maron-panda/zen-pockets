@@ -100,7 +100,7 @@
     
     .panda-avatar { position: absolute; width: 35px; height: 35px; z-index: 5; transition: left 0.8s ease-in-out, top 0.8s ease-in-out; transform: translate(-50%, -50%); filter: drop-shadow(0 0 8px rgba(236,111,156,0.8)); }
 
-    /* Written Log Area (Optimized for Mobile) */
+    /* Written Log Area */
     .log-container { max-height: 250px; overflow-y: auto; padding-right: 5px; margin-top: 15px; overflow-x: hidden; }
     
     .log-item { 
@@ -112,19 +112,23 @@
     .log-text { font-size: 0.75rem; color: white; line-height: 1.3; font-weight: 500; word-wrap: break-word;}
     .log-pct { font-size: 0.8rem; color: var(--accent-glow); font-weight: bold; text-align: right;}
 
-    /* Smart Charts (Fluid & Adaptive) */
-    .chart-container { display: flex; align-items: flex-end; justify-content: space-around; height: 220px; margin-top: 10px; padding-bottom: 5px; position: relative; gap: 4px; overflow: hidden;}
+    /* Smart Charts Base */
+    .chart-container { display: flex; align-items: flex-end; height: 220px; margin-top: 10px; padding-bottom: 5px; position: relative; overflow-x: auto; }
     .chart-container::before { content: ''; position: absolute; bottom: 40px; left: 0; width: 100%; height: 1px; background: rgba(255,255,255,0.1); z-index: 0; }
-    
     .bar-wrapper { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; position: relative; height: 100%; z-index: 1; min-width: 0;}
-    .bar { background: linear-gradient(to top, rgba(236,111,156,0.3), var(--accent-pink)); min-height: 2px; transition: height 0.5s; width: 100%; max-width: 25px; border-radius: 4px 4px 0 0;}
-    
+    .bar { background: linear-gradient(to top, rgba(236,111,156,0.3), var(--accent-pink)); min-height: 2px; transition: height 0.5s; width: 100%; }
+    .date-label { color: #DDA0DD; margin-top: 4px; display: flex; justify-content: center; align-items: center; }
     .bar-tooltip { position: absolute; top: 0; font-size: 0.7rem; background: rgba(0,0,0,0.8); padding: 4px 8px; border-radius: 6px; opacity: 0; transition: 0.2s; white-space: nowrap; pointer-events: none; z-index: 10;}
     .bar-wrapper:hover .bar-tooltip { opacity: 1; transform: translateY(-20px); }
 
-    .date-label { font-size: 0.6rem; color: #DDA0DD; margin-top: 4px; display: flex; justify-content: center; align-items: flex-start; height: 35px; width: 100%; }
-    /* Rotated dates specifically for the tightly packed Show All chart */
-    .date-label.rotated { writing-mode: vertical-rl; transform: rotate(180deg); font-size: 0.55rem; letter-spacing: 0.5px;}
+    /* Smart Chart Modes */
+    .chart-14 { justify-content: flex-end; gap: 6px; }
+    .chart-14 .bar { max-width: 25px; border-radius: 4px 4px 0 0; }
+    .chart-14 .date-label { font-size: 0.6rem; height: auto; writing-mode: horizontal-tb; transform: none; }
+
+    .chart-all { justify-content: flex-start; gap: 2px; }
+    .chart-all .bar { max-width: none; border-radius: 2px 2px 0 0; }
+    .chart-all .date-label { font-size: 0.55rem; height: 35px; writing-mode: vertical-rl; transform: rotate(180deg); letter-spacing: 0.5px; margin-top: 8px;}
 
     #login-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: var(--bg-dark); display: flex; justify-content: center; align-items: center; z-index: 9999; }
     #loader { display: none; position: fixed; top: 20px; right: 20px; background: rgba(0,0,0,0.8); color: var(--accent-glow); padding: 10px 20px; border-radius: 20px; border: 1px solid var(--accent-pink); z-index: 9999; font-weight: 600; }
@@ -215,7 +219,7 @@
         📊 Reading History
         <button class="btn-secondary" id="btn-chart-toggle" onclick="toggleChart()">Show All</button>
       </h3>
-      <div class="chart-container" id="chart-box"></div>
+      <div id="chart-box" class="chart-container chart-14"></div>
     </div>
     
     <button class="btn-secondary" style="width: 100%; border: 1px dashed #DDA0DD; margin-bottom: 40px;" onclick="resetJourney()">🔄 Start New Journey (Reset Tracker)</button>
@@ -261,18 +265,17 @@
     const TOTAL_QURAN_AYAHS = 6236;
     let state = { history: [], currentRun: 1, currentTotalRead: 0, currentSurahIndex: 0, currentAyah: 0, chartView: '14' };
 
-    // --- DATE FIX: Translates UTC safely back to local timezone before extracting YYYY-MM-DD ---
+    // --- DATE FIX: Safely parse YYYY-MM-DD from Google without timezone shifts ---
     function getLocalYMD(dateStr) {
       if (!dateStr) return "";
       let d = new Date(dateStr);
-      if (isNaN(d)) return dateStr.split('T')[0]; // Fallback
+      if (isNaN(d)) return dateStr.split('T')[0]; 
       let yyyy = d.getFullYear();
       let mm = String(d.getMonth() + 1).padStart(2, '0');
       let dd = String(d.getDate()).padStart(2, '0');
       return `${yyyy}-${mm}-${dd}`;
     }
 
-    // Format YYYY-MM-DD to EU dd.mm.yyyy safely
     function formatEUDate(dateStr) {
       const ymd = getLocalYMD(dateStr);
       const parts = ymd.split('-');
@@ -307,16 +310,17 @@
     }
     createStarfield(); setInterval(createShootingStar, 2500);
 
-    // --- BUG 1 FIX: Only trigger map redraw if WIDTH actually changes (stops scroll snapping on phones) ---
+    // --- FIX 1: NO DOM DESTRUCTION ON RESIZE (Stops scroll snapping) ---
     let lastWidth = window.innerWidth;
     window.addEventListener('resize', () => {
       if (window.innerWidth !== lastWidth) {
         lastWidth = window.innerWidth;
-        if (document.getElementById('app-container').style.display === 'block') renderMap();
+        if (document.getElementById('app-container').style.display === 'block') {
+          positionPanda(); // Only move the panda, don't rebuild map
+        }
       }
     });
 
-    // API & Logic
     async function apiCall(payload) {
       document.getElementById('loader').style.display = 'block';
       try {
@@ -352,7 +356,6 @@
     function processCurrentState() {
       const currentJourney = state.history.filter(h => parseInt(h['Run ID']) === state.currentRun);
       
-      // Sort chronologically to find the TRUE "Last" log
       currentJourney.sort((a, b) => {
         const dA = new Date(a.Timestamp);
         const dB = new Date(b.Timestamp);
@@ -409,7 +412,6 @@
     }
 
     function render() {
-      // Top Banner
       const sName = QURAN_DATA[state.currentSurahIndex].name;
       document.getElementById('status-surah').innerText = `Surah ${sName}, Ayah ${state.currentAyah}`;
       let nextText = "You finished the Quran! 🎉";
@@ -419,7 +421,6 @@
       }
       document.getElementById('status-next').innerText = nextText;
 
-      // Progress Bars
       const sTotal = QURAN_DATA[state.currentSurahIndex].count;
       const sPct = ((state.currentAyah / sTotal) * 100).toFixed(1);
       document.getElementById('fill-surah').style.width = `${sPct}%`;
@@ -431,10 +432,8 @@
       document.getElementById('txt-total').innerText = `${state.currentTotalRead} / 6236`;
       document.getElementById('lbl-total-pct').innerText = `${tPct}%`;
 
-      // Filter Current Run
       let currentJourney = state.history.filter(h => parseInt(h['Run ID']) === state.currentRun && parseInt(h['Ayahs Read Today']) > 0);
       
-      // Explicitly Sort Chronologically
       currentJourney.sort((a, b) => {
         const dA = new Date(a.Timestamp);
         const dB = new Date(b.Timestamp);
@@ -442,21 +441,19 @@
         return parseInt(a['Total Ayahs Read']) - parseInt(b['Total Ayahs Read']);
       });
 
-      // Daily Stats + Streaks + Best Streak Logic
       let dailyTotals = {};
       currentJourney.forEach(entry => {
         let dStr = getLocalYMD(entry.Timestamp);
         dailyTotals[dStr] = (dailyTotals[dStr] || 0) + parseInt(entry['Ayahs Read Today']);
       });
-      const uniqueDates = Object.keys(dailyTotals).sort((a,b) => new Date(b) - new Date(a)); // Descending
+      const uniqueDates = Object.keys(dailyTotals).sort((a,b) => new Date(b) - new Date(a)); 
       
       let avg = 0; let activeStreak = 0; let maxStreak = 0;
       if (uniqueDates.length > 0) {
         const totalSum = Object.values(dailyTotals).reduce((sum, val) => sum + val, 0);
         avg = Math.round(totalSum / uniqueDates.length);
         
-        // --- Calculate Best (Max) Streak ---
-        let ascDates = [...uniqueDates].reverse(); // Oldest first
+        let ascDates = [...uniqueDates].reverse(); 
         let currentRunCount = 1;
         maxStreak = 1;
         for (let i = 1; i < ascDates.length; i++) {
@@ -470,7 +467,6 @@
           }
         }
         
-        // --- Calculate Active Streak ---
         let checkDate = new Date(); checkDate.setHours(0,0,0,0);
         let firstLog = new Date(uniqueDates[0]); firstLog.setHours(0,0,0,0);
         let diff = (checkDate - firstLog) / 86400000;
@@ -491,7 +487,6 @@
       document.getElementById('stat-streak').innerText = `${activeStreak} 🔥`;
       document.getElementById('stat-max-streak').innerText = `Best: ${maxStreak}`;
 
-      // Written Log (Chronological Session assignment)
       const logBox = document.getElementById('written-log');
       logBox.innerHTML = currentJourney.length === 0 ? '<div style="text-align:center; color:#999; padding: 20px;">No reading logged yet.</div>' : '';
       
@@ -512,7 +507,7 @@
       });
 
       renderChart();
-      renderMap();
+      buildMap(); 
     }
 
     function renderChart() {
@@ -530,7 +525,8 @@
       chronoJourney.forEach((entry, i) => { entry.sessionNum = i + 1; });
       
       if (state.chartView === '14') {
-        // --- 14 DAY HEARTBEAT CHART ---
+        chartBox.className = 'chart-container chart-14';
+        
         let days14 = [];
         let today = new Date();
         for(let i=13; i>=0; i--) {
@@ -563,7 +559,7 @@
             </div>`;
         });
       } else {
-        // --- SHOW ALL STAIRCASE CHART (Adaptive sizing) ---
+        chartBox.className = 'chart-container chart-all';
         if(chronoJourney.length === 0) {
            chartBox.innerHTML = '<p style="width:100%; text-align:center; color:#999; font-size:0.8rem; margin-bottom:20px;">No reading logged yet.</p>';
            return;
@@ -577,56 +573,72 @@
           chartBox.innerHTML += `
             <div class="bar-wrapper">
               <div class="bar-tooltip" style="top: -35px;">Session ${entry.sessionNum}<br>${total} / 6236</div>
-              <div class="bar" style="height: ${pct}%; border-radius: 2px 2px 0 0;"></div>
+              <div class="bar" style="height: ${pct}%;"></div>
               <div class="date-label rotated">${niceDate}</div>
             </div>`;
         });
       }
     }
 
-    function renderMap() {
+    function buildMap() {
       const mapEl = document.getElementById('hizb-map');
-      Array.from(mapEl.children).forEach(c => { if(c.id !== 'panda-avatar') c.remove(); });
       
-      const dotsPerRow = 10; const rows = 6; 
-      const hizbProgress = (state.currentTotalRead / TOTAL_QURAN_AYAHS) * 60;
-      
-      for(let r = 0; r < rows; r++) {
-        let rowDiv = document.createElement('div');
-        rowDiv.className = 'road-row';
-        for(let d = 0; d < dotsPerRow; d++) {
-          let dotIndex = (r * dotsPerRow) + d;
-          let dot = document.createElement('div');
-          dot.className = `dot ${hizbProgress >= dotIndex ? 'active' : ''}`;
-          dot.id = `dot-${dotIndex}`;
-          rowDiv.appendChild(dot);
+      // ONLY build the map nodes if they don't exist
+      if (mapEl.querySelectorAll('.road-row').length === 0) {
+        const dotsPerRow = 10; const rows = 6; 
+        for(let r = 0; r < rows; r++) {
+          let rowDiv = document.createElement('div');
+          rowDiv.className = 'road-row';
+          for(let d = 0; d < dotsPerRow; d++) {
+            let dotIndex = (r * dotsPerRow) + d;
+            let dot = document.createElement('div');
+            dot.className = 'dot';
+            dot.id = `dot-${dotIndex}`;
+            rowDiv.appendChild(dot);
+          }
+          mapEl.appendChild(rowDiv);
         }
-        mapEl.appendChild(rowDiv);
       }
 
-      setTimeout(() => {
-        let activeIndex = Math.floor(hizbProgress);
-        if (activeIndex > 59) activeIndex = 59;
-        
-        const currentDot = document.getElementById(`dot-${activeIndex}`);
-        const nextDot = document.getElementById(`dot-${Math.min(activeIndex + 1, 59)}`);
-        
-        if (currentDot && nextDot) {
-          const remainder = hizbProgress % 1;
-          const rectC = currentDot.getBoundingClientRect();
-          const rectN = nextDot.getBoundingClientRect();
-          const mapRect = mapEl.getBoundingClientRect();
-          
-          const startX = rectC.left - mapRect.left + (rectC.width/2);
-          const startY = rectC.top - mapRect.top + (rectC.height/2);
-          const endX = rectN.left - mapRect.left + (rectN.width/2);
-          const endY = rectN.top - mapRect.top + (rectN.height/2);
-          
-          const panda = document.getElementById('panda-avatar');
-          panda.style.left = `${startX + ((endX - startX) * remainder)}px`;
-          panda.style.top = `${startY + ((endY - startY) * remainder)}px`;
+      // Update active state of dots
+      const hizbProgress = (state.currentTotalRead / TOTAL_QURAN_AYAHS) * 60;
+      for(let i = 0; i < 60; i++) {
+        let dot = document.getElementById(`dot-${i}`);
+        if (dot) {
+          if (hizbProgress >= i) dot.classList.add('active');
+          else dot.classList.remove('active');
         }
-      }, 100); 
+      }
+
+      setTimeout(positionPanda, 100); // Allow DOM to settle, then position Panda
+    }
+
+    function positionPanda() {
+      const mapEl = document.getElementById('hizb-map');
+      if (!mapEl) return;
+      
+      const hizbProgress = (state.currentTotalRead / TOTAL_QURAN_AYAHS) * 60;
+      let activeIndex = Math.floor(hizbProgress);
+      if (activeIndex > 59) activeIndex = 59;
+      
+      const currentDot = document.getElementById(`dot-${activeIndex}`);
+      const nextDot = document.getElementById(`dot-${Math.min(activeIndex + 1, 59)}`);
+      
+      if (currentDot && nextDot) {
+        const remainder = hizbProgress % 1;
+        const rectC = currentDot.getBoundingClientRect();
+        const rectN = nextDot.getBoundingClientRect();
+        const mapRect = mapEl.getBoundingClientRect();
+        
+        const startX = rectC.left - mapRect.left + (rectC.width/2);
+        const startY = rectC.top - mapRect.top + (rectC.height/2);
+        const endX = rectN.left - mapRect.left + (rectN.width/2);
+        const endY = rectN.top - mapRect.top + (rectN.height/2);
+        
+        const panda = document.getElementById('panda-avatar');
+        panda.style.left = `${startX + ((endX - startX) * remainder)}px`;
+        panda.style.top = `${startY + ((endY - startY) * remainder)}px`;
+      }
     }
   </script>
 </body>
