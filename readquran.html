@@ -103,7 +103,6 @@
     /* Written Log Area */
     .log-container { max-height: 250px; overflow-y: auto; padding-right: 5px; margin-top: 15px; }
     
-    /* Clean Grid for the Log */
     .log-item { 
       display: grid; grid-template-columns: 80px 80px 1fr 60px; gap: 10px; 
       align-items: center; padding: 12px 0; border-bottom: 1px dashed rgba(255,255,255,0.1); 
@@ -113,11 +112,11 @@
     .log-text { font-size: 0.8rem; color: white; line-height: 1.3; font-weight: 500;}
     .log-pct { font-size: 0.85rem; color: var(--accent-glow); font-weight: bold; text-align: right;}
 
-    /* Smart Charts */
-    .chart-container { display: flex; align-items: flex-end; justify-content: space-between; height: 160px; margin-top: 10px; padding-bottom: 5px; position: relative;}
+    /* Smart Charts (Scrollable) */
+    .chart-container { display: flex; align-items: flex-end; justify-content: flex-end; height: 160px; margin-top: 10px; padding-bottom: 5px; position: relative; overflow-x: auto; gap: 6px;}
     .chart-container::before { content: ''; position: absolute; bottom: 25px; left: 0; width: 100%; height: 1px; background: rgba(255,255,255,0.1); z-index: 0; }
     
-    .bar-wrapper { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; position: relative; height: 100%; z-index: 1;}
+    .bar-wrapper { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; position: relative; height: 100%; z-index: 1; min-width: 25px;}
     .bar { background: linear-gradient(to top, rgba(236,111,156,0.3), var(--accent-pink)); min-height: 2px; transition: height 0.5s; width: 100%; max-width: 25px; border-radius: 4px 4px 0 0;}
     
     .bar-tooltip { position: absolute; top: 0; font-size: 0.7rem; background: rgba(0,0,0,0.8); padding: 4px 8px; border-radius: 6px; opacity: 0; transition: 0.2s; white-space: nowrap; pointer-events: none; z-index: 10;}
@@ -258,7 +257,7 @@
     const TOTAL_QURAN_AYAHS = 6236;
     let state = { history: [], currentRun: 1, currentTotalRead: 0, currentSurahIndex: 0, currentAyah: 0, chartView: '14' };
 
-    // Format raw YYYY-MM-DD string to EU dd.mm.yyyy safely
+    // Safely output dd.mm.yyyy format
     function formatEUDate(dateStr) {
       if (!dateStr) return "";
       const parts = dateStr.split('T')[0].split('-');
@@ -266,7 +265,7 @@
       return dateStr;
     }
 
-    // Default to today's date in local time
+    // Default to today's local date
     const todayLocal = new Date();
     const tzOffset = todayLocal.getTimezoneOffset() * 60000;
     const localISOTime = (new Date(todayLocal - tzOffset)).toISOString().split('T')[0];
@@ -334,7 +333,7 @@
     function processCurrentState() {
       const currentJourney = state.history.filter(h => parseInt(h['Run ID']) === state.currentRun);
       if (currentJourney.length > 0) {
-        const lastLog = currentJourney[0]; 
+        const lastLog = currentJourney[0]; // (It's raw descending from Google Sheet)
         state.currentSurahIndex = parseInt(lastLog['Surah Number']) - 1 || 0;
         state.currentAyah = parseInt(lastLog['Ayah Number']) || 0;
         state.currentTotalRead = parseInt(lastLog['Total Ayahs Read']) || 0;
@@ -349,6 +348,10 @@
       const sData = QURAN_DATA[selectedIdx];
 
       if (!dStr) return alert("Please select a date!");
+      
+      // Prevent future time-travel
+      if (dStr > localISOTime) return alert("You cannot log progress for a future date!");
+      
       if (!inputAyah || inputAyah < 1 || inputAyah > sData.count) return alert(`Enter a valid Ayah (1-${sData.count})`);
 
       let newAbsoluteTotal = 0;
@@ -403,15 +406,23 @@
       document.getElementById('lbl-total-pct').innerText = `${tPct}%`;
 
       // Filter Current Run
-      const currentJourney = state.history.filter(h => parseInt(h['Run ID']) === state.currentRun && parseInt(h['Ayahs Read Today']) > 0);
+      let currentJourney = state.history.filter(h => parseInt(h['Run ID']) === state.currentRun && parseInt(h['Ayahs Read Today']) > 0);
       
+      // Explicitly Sort Chronologically (Ascending by Date, then by Total Ayahs if same day)
+      currentJourney.sort((a, b) => {
+        const dA = new Date(a.Timestamp.split('T')[0]);
+        const dB = new Date(b.Timestamp.split('T')[0]);
+        if (dA - dB !== 0) return dA - dB;
+        return parseInt(a['Total Ayahs Read']) - parseInt(b['Total Ayahs Read']);
+      });
+
       // Daily Stats + Streaks
       let dailyTotals = {};
       currentJourney.forEach(entry => {
         let dStr = entry.Timestamp.split('T')[0];
         dailyTotals[dStr] = (dailyTotals[dStr] || 0) + parseInt(entry['Ayahs Read Today']);
       });
-      const uniqueDates = Object.keys(dailyTotals).sort((a,b) => new Date(b) - new Date(a)); // Descending
+      const uniqueDates = Object.keys(dailyTotals).sort((a,b) => new Date(b) - new Date(a)); // Descending for Streak checking
       
       let avg = 0; let streak = 0;
       if (uniqueDates.length > 0) {
@@ -440,9 +451,12 @@
       const logBox = document.getElementById('written-log');
       logBox.innerHTML = currentJourney.length === 0 ? '<div style="text-align:center; color:#999; padding: 20px;">No reading logged yet.</div>' : '';
       
-      let chronoJourney = [...currentJourney].reverse();
+      // Assign session numbers starting from oldest to newest
+      let chronoJourney = [...currentJourney];
       chronoJourney.forEach((entry, i) => { entry.sessionNum = i + 1; });
-      let displayJourney = chronoJourney.reverse(); // Back to newest first
+      
+      // Flip for text log so newest session is at the top
+      let displayJourney = [...chronoJourney].reverse(); 
 
       displayJourney.forEach(entry => {
         let pctDone = ((entry['Total Ayahs Read'] / 6236) * 100).toFixed(2);
@@ -464,14 +478,21 @@
       const chartBox = document.getElementById('chart-box');
       chartBox.innerHTML = '';
       
-      const currentJourney = state.history.filter(h => parseInt(h['Run ID']) === state.currentRun && parseInt(h['Ayahs Read Today']) > 0);
-      let chronoJourney = [...currentJourney].reverse(); // Oldest first (Left to Right)
+      // Get chronological journey
+      let currentJourney = state.history.filter(h => parseInt(h['Run ID']) === state.currentRun && parseInt(h['Ayahs Read Today']) > 0);
+      currentJourney.sort((a, b) => {
+        const dA = new Date(a.Timestamp.split('T')[0]);
+        const dB = new Date(b.Timestamp.split('T')[0]);
+        if (dA - dB !== 0) return dA - dB;
+        return parseInt(a['Total Ayahs Read']) - parseInt(b['Total Ayahs Read']);
+      });
+      let chronoJourney = [...currentJourney];
+      chronoJourney.forEach((entry, i) => { entry.sessionNum = i + 1; });
       
       if (state.chartView === '14') {
         // --- 14 DAY HEARTBEAT CHART (Includes skipped days) ---
-        chartBox.style.gap = '6px';
+        chartBox.style.justifyContent = 'flex-end';
         
-        // Generate array of last 14 dates ending today
         let days14 = [];
         let today = new Date();
         for(let i=13; i>=0; i--) {
@@ -504,22 +525,24 @@
             </div>`;
         });
       } else {
-        // --- SHOW ALL STAIRCASE CHART (Total Progress per Session) ---
-        chartBox.style.gap = '1px'; // Tightly packed
+        // --- SHOW ALL STAIRCASE CHART (Cumulative Progress) ---
+        chartBox.style.justifyContent = 'flex-start'; // Start from left and scroll right if many sessions
         
         if(chronoJourney.length === 0) {
            chartBox.innerHTML = '<p style="width:100%; text-align:center; color:#999; font-size:0.8rem; margin-bottom:20px;">No reading logged yet.</p>';
            return;
         }
 
-        chronoJourney.forEach((entry, i) => {
+        chronoJourney.forEach((entry) => {
           const total = parseInt(entry['Total Ayahs Read']);
-          const pct = (total / TOTAL_QURAN_AYAHS) * 100;
+          const pct = Math.max((total / TOTAL_QURAN_AYAHS) * 100, 2); // At least 2% so step is visible
+          let niceDate = formatEUDate(entry.Timestamp).substring(0, 5); // dd.mm
           
           chartBox.innerHTML += `
             <div class="bar-wrapper">
-              <div class="bar-tooltip" style="top: -35px;">Session ${i+1}<br>${total} / 6236</div>
-              <div class="bar" style="height: ${pct}%; width: 100%; max-width: none; border-radius: 0;"></div>
+              <div class="bar-tooltip" style="top: -35px;">Session ${entry.sessionNum}<br>${total} / 6236</div>
+              <div class="bar" style="height: ${pct}%;"></div>
+              <div style="font-size:0.6rem; color:#DDA0DD; margin-top:4px;">${niceDate}</div>
             </div>`;
         });
       }
