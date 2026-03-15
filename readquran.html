@@ -19,7 +19,6 @@
     
     body {
       font-family: 'Poppins', sans-serif;
-      /* Restored the deep blue gradient */
       background: radial-gradient(ellipse at bottom, var(--bg-light) 0%, var(--bg-dark) 100%);
       color: white; min-height: 100vh; overflow-x: hidden; position: relative;
       display: flex; flex-direction: column; align-items: center; padding: 20px;
@@ -104,23 +103,22 @@
     /* Written Log Area */
     .log-container { max-height: 250px; overflow-y: auto; padding-right: 5px; margin-top: 15px; }
     
-    /* Fixed Grid layout to prevent overlap */
+    /* Clean Grid for the Log */
     .log-item { 
-      display: grid; grid-template-columns: 80px 1fr 60px; gap: 10px; 
-      align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); 
+      display: grid; grid-template-columns: 80px 80px 1fr 60px; gap: 10px; 
+      align-items: center; padding: 12px 0; border-bottom: 1px dashed rgba(255,255,255,0.1); 
     }
-    .log-meta { font-size: 0.75rem; color: #DDA0DD; display: flex; flex-direction: column; gap: 2px;}
-    .session-badge { background: var(--bar-bg); color: #fff; padding: 2px 6px; border-radius: 6px; font-size: 0.65rem; width: fit-content; font-weight: bold;}
-    .log-text { font-size: 0.85rem; color: white; line-height: 1.3;}
+    .session-badge { background: var(--bar-bg); color: #fff; padding: 2px 6px; border-radius: 6px; font-size: 0.7rem; text-align: center; font-weight: bold;}
+    .log-date { font-size: 0.75rem; color: #DDA0DD; }
+    .log-text { font-size: 0.8rem; color: white; line-height: 1.3; font-weight: 500;}
     .log-pct { font-size: 0.85rem; color: var(--accent-glow); font-weight: bold; text-align: right;}
 
-    /* True Bar Chart */
-    .chart-container { display: flex; align-items: flex-end; justify-content: space-between; height: 140px; gap: 6px; margin-top: 10px; padding-bottom: 5px; position: relative;}
+    /* Smart Charts */
+    .chart-container { display: flex; align-items: flex-end; justify-content: space-between; height: 160px; margin-top: 10px; padding-bottom: 5px; position: relative;}
     .chart-container::before { content: ''; position: absolute; bottom: 25px; left: 0; width: 100%; height: 1px; background: rgba(255,255,255,0.1); z-index: 0; }
-    .bar-wrapper { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; position: relative; height: 100%; z-index: 1;}
     
-    /* Bars now have defined width so they aren't lines */
-    .bar { width: 100%; max-width: 25px; background: linear-gradient(to top, rgba(236,111,156,0.3), var(--accent-pink)); border-radius: 4px 4px 0 0; min-height: 2px; transition: height 0.5s; }
+    .bar-wrapper { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; position: relative; height: 100%; z-index: 1;}
+    .bar { background: linear-gradient(to top, rgba(236,111,156,0.3), var(--accent-pink)); min-height: 2px; transition: height 0.5s; width: 100%; max-width: 25px; border-radius: 4px 4px 0 0;}
     
     .bar-tooltip { position: absolute; top: 0; font-size: 0.7rem; background: rgba(0,0,0,0.8); padding: 4px 8px; border-radius: 6px; opacity: 0; transition: 0.2s; white-space: nowrap; pointer-events: none; z-index: 10;}
     .bar-wrapper:hover .bar-tooltip { opacity: 1; transform: translateY(-20px); }
@@ -190,7 +188,8 @@
         <div>
           <div style="font-size: 1.3rem; color: #FFD700; font-weight: 700;" id="stat-streak">0 🔥</div>
           <div style="font-size: 0.75rem; color: #DDA0DD;">Active Streak</div>
-          <div style="font-size: 0.7rem; color: transparent; padding: 2px 6px; display: inline-block; margin-top: 4px;">-</div> </div>
+          <div style="font-size: 0.7rem; color: transparent; padding: 2px 6px; display: inline-block; margin-top: 4px;">-</div>
+        </div>
       </div>
     </div>
 
@@ -259,16 +258,19 @@
     const TOTAL_QURAN_AYAHS = 6236;
     let state = { history: [], currentRun: 1, currentTotalRead: 0, currentSurahIndex: 0, currentAyah: 0, chartView: '14' };
 
-    // Format ISO Date to European dd.mm.yyyy
-    function formatEUDate(isoStr) {
-      if (!isoStr) return "";
-      let d = new Date(isoStr);
-      if (isNaN(d)) return isoStr; // Fallback
-      return ('0' + d.getDate()).slice(-2) + '.' + ('0' + (d.getMonth() + 1)).slice(-2) + '.' + d.getFullYear();
+    // Format raw YYYY-MM-DD string to EU dd.mm.yyyy safely
+    function formatEUDate(dateStr) {
+      if (!dateStr) return "";
+      const parts = dateStr.split('T')[0].split('-');
+      if (parts.length === 3) return `${parts[2]}.${parts[1]}.${parts[0]}`;
+      return dateStr;
     }
 
-    // Cosmetic Initializations
-    document.getElementById('input-date').valueAsDate = new Date();
+    // Default to today's date in local time
+    const todayLocal = new Date();
+    const tzOffset = todayLocal.getTimezoneOffset() * 60000;
+    const localISOTime = (new Date(todayLocal - tzOffset)).toISOString().split('T')[0];
+    document.getElementById('input-date').value = localISOTime;
     
     const selectEl = document.getElementById('input-surah');
     QURAN_DATA.forEach((s, i) => { selectEl.appendChild(new Option(`${i+1}. ${s.name} (${s.count})`, i)); });
@@ -291,11 +293,9 @@
     }
     createStarfield(); setInterval(createShootingStar, 2500);
 
-    // Responsive Map Update
+    // Dynamic Map resize
     window.addEventListener('resize', () => {
-      if (document.getElementById('app-container').style.display === 'block') {
-        renderMap(); // Recalculate Panda position
-      }
+      if (document.getElementById('app-container').style.display === 'block') renderMap();
     });
 
     // API & Logic
@@ -366,7 +366,7 @@
     }
 
     async function resetJourney() {
-      const dStr = document.getElementById('input-date').value || new Date().toISOString().split('T')[0];
+      const dStr = document.getElementById('input-date').value || localISOTime;
       if(confirm("Are you sure? This starts a fresh tracker!")) {
         await apiCall({ action: 'reset_run', dateStr: dStr, newRunId: state.currentRun + 1 });
         fetchData();
@@ -402,15 +402,16 @@
       document.getElementById('txt-total').innerText = `${state.currentTotalRead} / 6236`;
       document.getElementById('lbl-total-pct').innerText = `${tPct}%`;
 
-      // Stats Logic (Grouped by Date)
+      // Filter Current Run
       const currentJourney = state.history.filter(h => parseInt(h['Run ID']) === state.currentRun && parseInt(h['Ayahs Read Today']) > 0);
       
+      // Daily Stats + Streaks
       let dailyTotals = {};
       currentJourney.forEach(entry => {
-        let d = entry.Timestamp.substring(0, 10); // Grab YYYY-MM-DD
-        dailyTotals[d] = (dailyTotals[d] || 0) + parseInt(entry['Ayahs Read Today']);
+        let dStr = entry.Timestamp.split('T')[0];
+        dailyTotals[dStr] = (dailyTotals[dStr] || 0) + parseInt(entry['Ayahs Read Today']);
       });
-      const uniqueDates = Object.keys(dailyTotals).sort((a,b) => new Date(b) - new Date(a));
+      const uniqueDates = Object.keys(dailyTotals).sort((a,b) => new Date(b) - new Date(a)); // Descending
       
       let avg = 0; let streak = 0;
       if (uniqueDates.length > 0) {
@@ -435,26 +436,23 @@
       document.getElementById('stat-avg-pct').innerText = `${avgPct}% per day`;
       document.getElementById('stat-streak').innerText = `${streak} 🔥`;
 
-      // Written Log (With Session Assignment)
+      // Written Log (Chronological Session assignment)
       const logBox = document.getElementById('written-log');
       logBox.innerHTML = currentJourney.length === 0 ? '<div style="text-align:center; color:#999; padding: 20px;">No reading logged yet.</div>' : '';
       
-      // We assign sessions in chronological order, so reverse it, map, reverse back
       let chronoJourney = [...currentJourney].reverse();
       chronoJourney.forEach((entry, i) => { entry.sessionNum = i + 1; });
-      let displayJourney = chronoJourney.reverse();
+      let displayJourney = chronoJourney.reverse(); // Back to newest first
 
       displayJourney.forEach(entry => {
         let pctDone = ((entry['Total Ayahs Read'] / 6236) * 100).toFixed(2);
         let niceDate = formatEUDate(entry.Timestamp);
         logBox.innerHTML += `
           <div class="log-item">
-            <div class="log-meta">
-              <span class="session-badge">Session ${entry.sessionNum}</span>
-              ${niceDate}
-            </div>
-            <div class="log-text">${entry['Surah Name']}, Ayah ${entry['Ayah Number']}</div>
-            <div class="log-pct">${pctDone}%</div>
+            <span class="session-badge">Session ${entry.sessionNum}</span>
+            <span class="log-date">${niceDate}</span>
+            <span class="log-text">${entry['Surah Name']}, Ayah ${entry['Ayah Number']}</span>
+            <span class="log-pct">${pctDone}%</span>
           </div>`;
       });
 
@@ -463,35 +461,68 @@
     }
 
     function renderChart() {
-      const currentJourney = state.history.filter(h => parseInt(h['Run ID']) === state.currentRun && parseInt(h['Ayahs Read Today']) > 0);
-      let dailyTotals = {};
-      currentJourney.forEach(entry => {
-        let d = entry.Timestamp.substring(0, 10);
-        dailyTotals[d] = (dailyTotals[d] || 0) + parseInt(entry['Ayahs Read Today']);
-      });
-      const uniqueDates = Object.keys(dailyTotals).sort((a,b) => new Date(a) - new Date(b)); // Chronological for Chart
-
       const chartBox = document.getElementById('chart-box');
       chartBox.innerHTML = '';
       
-      let chartData = uniqueDates;
-      if (state.chartView === '14') chartData = uniqueDates.slice(-14); // Only last 14 if toggled
+      const currentJourney = state.history.filter(h => parseInt(h['Run ID']) === state.currentRun && parseInt(h['Ayahs Read Today']) > 0);
+      let chronoJourney = [...currentJourney].reverse(); // Oldest first (Left to Right)
       
-      let maxRead = Math.max(...chartData.map(d => dailyTotals[d]), 10); // Minimum scale of 10
-      
-      chartData.forEach(date => {
-        const val = dailyTotals[date];
-        const pct = Math.max((val / maxRead) * 100, 5); // Ensure tiny entries still have a visible 5% bar
+      if (state.chartView === '14') {
+        // --- 14 DAY HEARTBEAT CHART (Includes skipped days) ---
+        chartBox.style.gap = '6px';
         
-        let niceDate = formatEUDate(date).substring(0, 5); // Just DD.MM for chart
+        // Generate array of last 14 dates ending today
+        let days14 = [];
+        let today = new Date();
+        for(let i=13; i>=0; i--) {
+          let d = new Date(today);
+          d.setDate(d.getDate() - i);
+          let yyyy = d.getFullYear();
+          let mm = String(d.getMonth() + 1).padStart(2, '0');
+          let dd = String(d.getDate()).padStart(2, '0');
+          days14.push(`${yyyy}-${mm}-${dd}`);
+        }
         
-        chartBox.innerHTML += `
-          <div class="bar-wrapper">
-            <div class="bar-tooltip">${val} Ayahs</div>
-            <div class="bar" style="height: ${pct}%"></div>
-            <div style="font-size:0.6rem; color:#DDA0DD; margin-top:4px;">${niceDate}</div>
-          </div>`;
-      });
+        let dailySums = {};
+        chronoJourney.forEach(entry => {
+          let dStr = entry.Timestamp.split('T')[0];
+          dailySums[dStr] = (dailySums[dStr] || 0) + parseInt(entry['Ayahs Read Today']);
+        });
+        
+        let maxRead = Math.max(...days14.map(d => dailySums[d] || 0), 10);
+        
+        days14.forEach(date => {
+          const val = dailySums[date] || 0;
+          const pct = val === 0 ? 0 : Math.max((val / maxRead) * 100, 5); 
+          let niceDate = formatEUDate(date).substring(0, 5); // dd.mm
+          
+          chartBox.innerHTML += `
+            <div class="bar-wrapper">
+              ${val > 0 ? `<div class="bar-tooltip">${val} Ayahs</div>` : ''}
+              <div class="bar" style="height: ${pct}%; background: ${val===0 ? 'transparent' : ''}; border: ${val===0 ? 'none' : ''}"></div>
+              <div style="font-size:0.6rem; color:#DDA0DD; margin-top:4px;">${niceDate}</div>
+            </div>`;
+        });
+      } else {
+        // --- SHOW ALL STAIRCASE CHART (Total Progress per Session) ---
+        chartBox.style.gap = '1px'; // Tightly packed
+        
+        if(chronoJourney.length === 0) {
+           chartBox.innerHTML = '<p style="width:100%; text-align:center; color:#999; font-size:0.8rem; margin-bottom:20px;">No reading logged yet.</p>';
+           return;
+        }
+
+        chronoJourney.forEach((entry, i) => {
+          const total = parseInt(entry['Total Ayahs Read']);
+          const pct = (total / TOTAL_QURAN_AYAHS) * 100;
+          
+          chartBox.innerHTML += `
+            <div class="bar-wrapper">
+              <div class="bar-tooltip" style="top: -35px;">Session ${i+1}<br>${total} / 6236</div>
+              <div class="bar" style="height: ${pct}%; width: 100%; max-width: none; border-radius: 0;"></div>
+            </div>`;
+        });
+      }
     }
 
     function renderMap() {
