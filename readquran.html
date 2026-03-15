@@ -8,16 +8,19 @@
   
   <style>
     :root {
-      --accent-pink: #FF69B4;
-      --accent-glow: #FFB6C1;
-      --bar-bg: rgba(255, 105, 180, 0.2);
+      --bg-dark: #0b0f19;
+      --bg-light: #1a1a3a;
+      --accent-pink: #ec6f9c;
+      --accent-glow: #fca4c1;
+      --bar-bg: rgba(236, 111, 156, 0.2);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
     
     body {
       font-family: 'Poppins', sans-serif;
-      background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+      /* Restored the deep blue gradient */
+      background: radial-gradient(ellipse at bottom, var(--bg-light) 0%, var(--bg-dark) 100%);
       color: white; min-height: 100vh; overflow-x: hidden; position: relative;
       display: flex; flex-direction: column; align-items: center; padding: 20px;
     }
@@ -29,12 +32,12 @@
     
     .shooting-star {
       position: absolute; width: 2px; height: 2px; border-radius: 50%;
-      background: linear-gradient(45deg, #FFB6C1, #FF69B4, #FF1493);
-      box-shadow: 0 0 10px #FF69B4; animation: shoot 3s linear infinite; z-index: 0;
+      background: linear-gradient(45deg, var(--accent-glow), var(--accent-pink), #FF1493);
+      box-shadow: 0 0 10px var(--accent-pink); animation: shoot 3s linear infinite; z-index: 0;
     }
     .shooting-star::after {
       content: ''; position: absolute; top: 0; left: 0; width: 50px; height: 2px;
-      background: linear-gradient(to right, transparent, #FF69B4, transparent); transform: translateX(-50px);
+      background: linear-gradient(to right, transparent, var(--accent-pink), transparent); transform: translateX(-50px);
     }
     @keyframes shoot {
       0% { transform: translateX(-100px) translateY(100px); opacity: 1; }
@@ -48,20 +51,20 @@
     
     /* Glassmorphism Cards */
     .card { 
-      background: rgba(20, 25, 40, 0.6); backdrop-filter: blur(10px); border: 1px solid rgba(255,105,180, 0.1);
+      background: rgba(20, 25, 40, 0.6); backdrop-filter: blur(10px); border: 1px solid rgba(236, 111, 156, 0.15);
       border-radius: 20px; padding: 25px; margin-bottom: 25px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); 
     }
-    .card h3 { color: var(--accent-glow); margin-bottom: 15px; font-size: 1.2rem; display: flex; justify-content: space-between; align-items: center; text-shadow: 0 0 10px rgba(255,105,180,0.3);}
+    .card h3 { color: var(--accent-glow); margin-bottom: 15px; font-size: 1.2rem; display: flex; justify-content: space-between; align-items: center; text-shadow: 0 0 10px rgba(236,111,156,0.3);}
 
     /* Top Status Banner */
-    .status-banner { text-align: center; margin-bottom: 25px; padding: 20px; border-radius: 20px; background: rgba(255, 105, 180, 0.05); border: 1px solid var(--bar-bg); }
+    .status-banner { text-align: center; margin-bottom: 25px; padding: 20px; border-radius: 20px; background: rgba(236, 111, 156, 0.05); border: 1px solid var(--bar-bg); }
     .status-banner h2 { font-size: 1rem; font-weight: 500; color: #DDA0DD; margin-bottom: 5px;}
-    .status-banner h1 { font-size: 1.4rem; color: #fff; margin: 5px 0; text-shadow: 0 0 15px rgba(255,105,180,0.5);}
+    .status-banner h1 { font-size: 1.4rem; color: #fff; margin: 5px 0; text-shadow: 0 0 15px rgba(236,111,156,0.5);}
 
     /* Progress Bars */
     .progress-label { display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 600; color: #DDA0DD; margin-bottom: 5px; margin-top: 15px;}
     .progress-wrapper { background: rgba(0,0,0,0.4); border-radius: 12px; height: 22px; width: 100%; overflow: hidden; position: relative; border: 1px solid var(--bar-bg);}
-    .progress-fill { background: linear-gradient(to right, #FFB6C1, #FF1493); height: 100%; width: 0%; transition: width 0.8s ease; }
+    .progress-fill { background: linear-gradient(to right, #fca4c1, #ec6f9c); height: 100%; width: 0%; transition: width 0.8s ease; }
     .progress-text { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
 
     /* Inputs & Buttons */
@@ -71,59 +74,58 @@
       border: 1px solid var(--bar-bg); border-radius: 12px; color: white;
       font-family: 'Poppins'; font-size: 1rem;
     }
-    select:focus, input:focus { outline: none; border-color: var(--accent-pink); box-shadow: 0 0 10px rgba(255,105,180,0.2); }
+    select:focus, input:focus { outline: none; border-color: var(--accent-pink); box-shadow: 0 0 10px rgba(236,111,156,0.2); }
     
     .flex-row { display: flex; gap: 10px; }
     .flex-row > * { flex: 1; }
 
     button {
-      background: linear-gradient(45deg, #FF69B4, #FF1493); color: white;
+      background: linear-gradient(45deg, #ec6f9c, #d86dd1); color: white;
       padding: 14px; border: none; border-radius: 15px; font-weight: 600;
       width: 100%; cursor: pointer; font-family: 'Poppins'; font-size: 1rem;
-      transition: 0.3s; box-shadow: 0 4px 15px rgba(255, 105, 180, 0.3);
+      transition: 0.3s; box-shadow: 0 4px 15px rgba(236, 111, 156, 0.3);
     }
-    button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255, 105, 180, 0.5); }
-    .btn-secondary { background: rgba(255,105,180,0.1); border: 1px solid var(--bar-bg); color: white; box-shadow: none; padding: 8px 15px; width: auto; font-size: 0.85rem;}
+    button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(236, 111, 156, 0.5); }
+    .btn-secondary { background: rgba(236,111,156,0.1); border: 1px solid var(--bar-bg); color: white; box-shadow: none; padding: 8px 15px; width: auto; font-size: 0.85rem;}
 
     /* 60-Hizb Winding Road Map */
     .map-container { position: relative; width: 100%; padding: 20px 15px; display: flex; flex-direction: column; align-items: center; overflow: hidden;}
     .road-row { height: 24px; margin-bottom: 36px; position: relative; width: 100%; display: flex; justify-content: space-between; align-items: center; }
-    
-    /* Horizontal paved line */
     .road-row::before { content: ''; position: absolute; left: 0; right: 0; top: 11px; height: 2px; background: var(--bar-bg); z-index: 1; }
-    
-    /* Connecting S-Curves */
-    .road-row:nth-child(odd):not(:last-child)::after {
-      content: ''; position: absolute; right: -15px; top: 11px; width: 30px; height: 60px;
-      border: 2px solid var(--bar-bg); border-left: none; border-radius: 0 20px 20px 0; z-index: 1;
-    }
-    .road-row:nth-child(even):not(:last-child)::after {
-      content: ''; position: absolute; left: -15px; top: 11px; width: 30px; height: 60px;
-      border: 2px solid var(--bar-bg); border-right: none; border-radius: 20px 0 0 20px; z-index: 1;
-    }
-    
+    .road-row:nth-child(odd):not(:last-child)::after { content: ''; position: absolute; right: -15px; top: 11px; width: 30px; height: 60px; border: 2px solid var(--bar-bg); border-left: none; border-radius: 0 20px 20px 0; z-index: 1; }
+    .road-row:nth-child(even):not(:last-child)::after { content: ''; position: absolute; left: -15px; top: 11px; width: 30px; height: 60px; border: 2px solid var(--bar-bg); border-right: none; border-radius: 20px 0 0 20px; z-index: 1; }
     .road-row:nth-child(even) { flex-direction: row-reverse; } 
     
     .dot { width: 16px; height: 16px; background: rgba(0,0,0,0.8); border: 2px solid #DDA0DD; border-radius: 50%; z-index: 2; position: relative; transition: 0.5s; }
     .dot.active { background: var(--accent-glow); border-color: #fff; box-shadow: 0 0 12px var(--accent-glow); }
     
-    .panda-avatar { position: absolute; width: 35px; height: 35px; z-index: 5; transition: all 1s ease-in-out; transform: translate(-50%, -50%); filter: drop-shadow(0 0 8px rgba(255,105,180,0.8)); }
+    .panda-avatar { position: absolute; width: 35px; height: 35px; z-index: 5; transition: left 0.8s ease-in-out, top 0.8s ease-in-out; transform: translate(-50%, -50%); filter: drop-shadow(0 0 8px rgba(236,111,156,0.8)); }
 
     /* Written Log Area */
     .log-container { max-height: 250px; overflow-y: auto; padding-right: 5px; margin-top: 15px; }
-    .log-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.85rem;}
-    .log-date { color: #DDA0DD; width: 85px; font-weight: 500;}
-    .log-text { flex: 1; color: white; padding: 0 10px; }
-    .log-pct { color: var(--accent-glow); font-weight: bold; }
+    
+    /* Fixed Grid layout to prevent overlap */
+    .log-item { 
+      display: grid; grid-template-columns: 80px 1fr 60px; gap: 10px; 
+      align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); 
+    }
+    .log-meta { font-size: 0.75rem; color: #DDA0DD; display: flex; flex-direction: column; gap: 2px;}
+    .session-badge { background: var(--bar-bg); color: #fff; padding: 2px 6px; border-radius: 6px; font-size: 0.65rem; width: fit-content; font-weight: bold;}
+    .log-text { font-size: 0.85rem; color: white; line-height: 1.3;}
+    .log-pct { font-size: 0.85rem; color: var(--accent-glow); font-weight: bold; text-align: right;}
 
-    /* Bar Chart */
-    .chart-container { display: flex; align-items: flex-end; justify-content: space-between; height: 120px; gap: 4px; margin-top: 10px; padding-bottom: 5px;}
-    .bar-wrapper { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; position: relative; }
-    .bar { width: 100%; background: linear-gradient(to top, rgba(255,105,180,0.2), #FF69B4); border-radius: 4px 4px 0 0; min-height: 2px; transition: height 0.5s; }
-    .bar-tooltip { position: absolute; top: -25px; font-size: 0.7rem; background: rgba(0,0,0,0.8); padding: 2px 6px; border-radius: 4px; opacity: 0; transition: 0.2s; white-space: nowrap; pointer-events: none;}
-    .bar-wrapper:hover .bar-tooltip { opacity: 1; }
+    /* True Bar Chart */
+    .chart-container { display: flex; align-items: flex-end; justify-content: space-between; height: 140px; gap: 6px; margin-top: 10px; padding-bottom: 5px; position: relative;}
+    .chart-container::before { content: ''; position: absolute; bottom: 25px; left: 0; width: 100%; height: 1px; background: rgba(255,255,255,0.1); z-index: 0; }
+    .bar-wrapper { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; position: relative; height: 100%; z-index: 1;}
+    
+    /* Bars now have defined width so they aren't lines */
+    .bar { width: 100%; max-width: 25px; background: linear-gradient(to top, rgba(236,111,156,0.3), var(--accent-pink)); border-radius: 4px 4px 0 0; min-height: 2px; transition: height 0.5s; }
+    
+    .bar-tooltip { position: absolute; top: 0; font-size: 0.7rem; background: rgba(0,0,0,0.8); padding: 4px 8px; border-radius: 6px; opacity: 0; transition: 0.2s; white-space: nowrap; pointer-events: none; z-index: 10;}
+    .bar-wrapper:hover .bar-tooltip { opacity: 1; transform: translateY(-20px); }
 
-    #login-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #090A0F; display: flex; justify-content: center; align-items: center; z-index: 9999; }
+    #login-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: var(--bg-dark); display: flex; justify-content: center; align-items: center; z-index: 9999; }
     #loader { display: none; position: fixed; top: 20px; right: 20px; background: rgba(0,0,0,0.8); color: var(--accent-glow); padding: 10px 20px; border-radius: 20px; border: 1px solid var(--accent-pink); z-index: 9999; font-weight: 600; }
   </style>
 </head>
@@ -177,11 +179,18 @@
       <div class="progress-wrapper"><div class="progress-fill" id="fill-surah"></div><div class="progress-text" id="txt-surah">0 / 0 Ayahs</div></div>
 
       <div class="progress-label"><span>Whole Quran</span><span id="lbl-total-pct">0%</span></div>
-      <div class="progress-wrapper"><div class="progress-fill" id="fill-total" style="background: linear-gradient(to right, #9370DB, #DDA0DD);"></div><div class="progress-text" id="txt-total">0 / 6236 Ayahs</div></div>
+      <div class="progress-wrapper"><div class="progress-fill" id="fill-total" style="background: linear-gradient(to right, #9370DB, #d86dd1);"></div><div class="progress-text" id="txt-total">0 / 6236 Ayahs</div></div>
 
       <div class="flex-row" style="margin-top: 25px; text-align: center; border-top: 1px dashed var(--bar-bg); padding-top: 15px;">
-        <div><div style="font-size: 1.3rem; color: var(--accent-glow); font-weight: 700;" id="stat-avg">0</div><div style="font-size: 0.75rem; color: #DDA0DD;">Avg / Day</div></div>
-        <div><div style="font-size: 1.3rem; color: #FFD700; font-weight: 700;" id="stat-streak">0 🔥</div><div style="font-size: 0.75rem; color: #DDA0DD;">Active Streak</div></div>
+        <div>
+          <div style="font-size: 1.3rem; color: var(--accent-glow); font-weight: 700;" id="stat-avg">0</div>
+          <div style="font-size: 0.75rem; color: #DDA0DD;">Avg / Day</div>
+          <div style="font-size: 0.7rem; color: white; background: var(--bar-bg); border-radius: 8px; padding: 2px 6px; display: inline-block; margin-top: 4px;" id="stat-avg-pct">0%</div>
+        </div>
+        <div>
+          <div style="font-size: 1.3rem; color: #FFD700; font-weight: 700;" id="stat-streak">0 🔥</div>
+          <div style="font-size: 0.75rem; color: #DDA0DD;">Active Streak</div>
+          <div style="font-size: 0.7rem; color: transparent; padding: 2px 6px; display: inline-block; margin-top: 4px;">-</div> </div>
       </div>
     </div>
 
@@ -200,7 +209,10 @@
     </div>
 
     <div class="card">
-      <h3>📊 Daily History</h3>
+      <h3>
+        📊 Reading History
+        <button class="btn-secondary" id="btn-chart-toggle" onclick="toggleChart()">Show All</button>
+      </h3>
       <div class="chart-container" id="chart-box"></div>
     </div>
     
@@ -245,7 +257,15 @@
     ];
 
     const TOTAL_QURAN_AYAHS = 6236;
-    let state = { history: [], currentRun: 1, currentTotalRead: 0, currentSurahIndex: 0, currentAyah: 0 };
+    let state = { history: [], currentRun: 1, currentTotalRead: 0, currentSurahIndex: 0, currentAyah: 0, chartView: '14' };
+
+    // Format ISO Date to European dd.mm.yyyy
+    function formatEUDate(isoStr) {
+      if (!isoStr) return "";
+      let d = new Date(isoStr);
+      if (isNaN(d)) return isoStr; // Fallback
+      return ('0' + d.getDate()).slice(-2) + '.' + ('0' + (d.getMonth() + 1)).slice(-2) + '.' + d.getFullYear();
+    }
 
     // Cosmetic Initializations
     document.getElementById('input-date').valueAsDate = new Date();
@@ -270,6 +290,13 @@
       document.body.appendChild(s); setTimeout(() => s.remove(), 3000);
     }
     createStarfield(); setInterval(createShootingStar, 2500);
+
+    // Responsive Map Update
+    window.addEventListener('resize', () => {
+      if (document.getElementById('app-container').style.display === 'block') {
+        renderMap(); // Recalculate Panda position
+      }
+    });
 
     // API & Logic
     async function apiCall(payload) {
@@ -346,6 +373,12 @@
       }
     }
 
+    function toggleChart() {
+      state.chartView = state.chartView === '14' ? 'all' : '14';
+      document.getElementById('btn-chart-toggle').innerText = state.chartView === '14' ? "Show All" : "Show Last 14 Days";
+      renderChart();
+    }
+
     function render() {
       // Top Banner
       const sName = QURAN_DATA[state.currentSurahIndex].name;
@@ -374,7 +407,7 @@
       
       let dailyTotals = {};
       currentJourney.forEach(entry => {
-        let d = entry.Timestamp;
+        let d = entry.Timestamp.substring(0, 10); // Grab YYYY-MM-DD
         dailyTotals[d] = (dailyTotals[d] || 0) + parseInt(entry['Ayahs Read Today']);
       });
       const uniqueDates = Object.keys(dailyTotals).sort((a,b) => new Date(b) - new Date(a));
@@ -384,7 +417,6 @@
         const totalSum = Object.values(dailyTotals).reduce((sum, val) => sum + val, 0);
         avg = Math.round(totalSum / uniqueDates.length);
         
-        // Streak calculation
         let checkDate = new Date(); checkDate.setHours(0,0,0,0);
         let firstLog = new Date(uniqueDates[0]); firstLog.setHours(0,0,0,0);
         let diff = (checkDate - firstLog) / 86400000;
@@ -399,39 +431,67 @@
         }
       }
       document.getElementById('stat-avg').innerText = avg;
+      const avgPct = ((avg / 6236) * 100).toFixed(2);
+      document.getElementById('stat-avg-pct').innerText = `${avgPct}% per day`;
       document.getElementById('stat-streak').innerText = `${streak} 🔥`;
 
-      // Written Log
+      // Written Log (With Session Assignment)
       const logBox = document.getElementById('written-log');
       logBox.innerHTML = currentJourney.length === 0 ? '<div style="text-align:center; color:#999; padding: 20px;">No reading logged yet.</div>' : '';
-      currentJourney.forEach(entry => {
+      
+      // We assign sessions in chronological order, so reverse it, map, reverse back
+      let chronoJourney = [...currentJourney].reverse();
+      chronoJourney.forEach((entry, i) => { entry.sessionNum = i + 1; });
+      let displayJourney = chronoJourney.reverse();
+
+      displayJourney.forEach(entry => {
         let pctDone = ((entry['Total Ayahs Read'] / 6236) * 100).toFixed(2);
+        let niceDate = formatEUDate(entry.Timestamp);
         logBox.innerHTML += `
           <div class="log-item">
-            <span class="log-date">${entry.Timestamp.substring(5)}</span>
-            <span class="log-text">${entry['Surah Name']}, Ayah ${entry['Ayah Number']}</span>
-            <span class="log-pct">${pctDone}%</span>
+            <div class="log-meta">
+              <span class="session-badge">Session ${entry.sessionNum}</span>
+              ${niceDate}
+            </div>
+            <div class="log-text">${entry['Surah Name']}, Ayah ${entry['Ayah Number']}</div>
+            <div class="log-pct">${pctDone}%</div>
           </div>`;
       });
 
-      // Chart
+      renderChart();
+      renderMap();
+    }
+
+    function renderChart() {
+      const currentJourney = state.history.filter(h => parseInt(h['Run ID']) === state.currentRun && parseInt(h['Ayahs Read Today']) > 0);
+      let dailyTotals = {};
+      currentJourney.forEach(entry => {
+        let d = entry.Timestamp.substring(0, 10);
+        dailyTotals[d] = (dailyTotals[d] || 0) + parseInt(entry['Ayahs Read Today']);
+      });
+      const uniqueDates = Object.keys(dailyTotals).sort((a,b) => new Date(a) - new Date(b)); // Chronological for Chart
+
       const chartBox = document.getElementById('chart-box');
       chartBox.innerHTML = '';
-      let chartData = uniqueDates.slice(0, 14).reverse(); // Last 14 days
-      let maxRead = Math.max(...chartData.map(d => dailyTotals[d]), 1);
+      
+      let chartData = uniqueDates;
+      if (state.chartView === '14') chartData = uniqueDates.slice(-14); // Only last 14 if toggled
+      
+      let maxRead = Math.max(...chartData.map(d => dailyTotals[d]), 10); // Minimum scale of 10
       
       chartData.forEach(date => {
         const val = dailyTotals[date];
-        const pct = Math.max((val / maxRead) * 100, 5);
+        const pct = Math.max((val / maxRead) * 100, 5); // Ensure tiny entries still have a visible 5% bar
+        
+        let niceDate = formatEUDate(date).substring(0, 5); // Just DD.MM for chart
+        
         chartBox.innerHTML += `
           <div class="bar-wrapper">
             <div class="bar-tooltip">${val} Ayahs</div>
             <div class="bar" style="height: ${pct}%"></div>
-            <div style="font-size:0.6rem; color:#DDA0DD; margin-top:4px;">${date.substring(5)}</div>
+            <div style="font-size:0.6rem; color:#DDA0DD; margin-top:4px;">${niceDate}</div>
           </div>`;
       });
-
-      renderMap();
     }
 
     function renderMap() {
