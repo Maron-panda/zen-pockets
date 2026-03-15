@@ -112,8 +112,8 @@
     .log-text { font-size: 0.8rem; color: white; line-height: 1.3; font-weight: 500;}
     .log-pct { font-size: 0.85rem; color: var(--accent-glow); font-weight: bold; text-align: right;}
 
-    /* Smart Charts (Scrollable) */
-    .chart-container { display: flex; align-items: flex-end; justify-content: flex-end; height: 160px; margin-top: 10px; padding-bottom: 5px; position: relative; overflow-x: auto; gap: 6px;}
+    /* Smart Charts (TALLER HEIGHT) */
+    .chart-container { display: flex; align-items: flex-end; justify-content: flex-end; height: 220px; margin-top: 10px; padding-bottom: 5px; position: relative; overflow-x: auto; gap: 6px;}
     .chart-container::before { content: ''; position: absolute; bottom: 25px; left: 0; width: 100%; height: 1px; background: rgba(255,255,255,0.1); z-index: 0; }
     
     .bar-wrapper { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; position: relative; height: 100%; z-index: 1; min-width: 25px;}
@@ -257,15 +257,26 @@
     const TOTAL_QURAN_AYAHS = 6236;
     let state = { history: [], currentRun: 1, currentTotalRead: 0, currentSurahIndex: 0, currentAyah: 0, chartView: '14' };
 
-    // Safely output dd.mm.yyyy format
-    function formatEUDate(dateStr) {
+    // --- DATE FIX: Translates UTC safely back to local timezone before extracting YYYY-MM-DD ---
+    function getLocalYMD(dateStr) {
       if (!dateStr) return "";
-      const parts = dateStr.split('T')[0].split('-');
+      let d = new Date(dateStr);
+      if (isNaN(d)) return dateStr.split('T')[0]; // Fallback
+      let yyyy = d.getFullYear();
+      let mm = String(d.getMonth() + 1).padStart(2, '0');
+      let dd = String(d.getDate()).padStart(2, '0');
+      return `${yyyy}-${mm}-${dd}`;
+    }
+
+    // Format YYYY-MM-DD to EU dd.mm.yyyy safely
+    function formatEUDate(dateStr) {
+      const ymd = getLocalYMD(dateStr);
+      const parts = ymd.split('-');
       if (parts.length === 3) return `${parts[2]}.${parts[1]}.${parts[0]}`;
       return dateStr;
     }
 
-    // Default to today's local date
+    // Default to today's local date in the input
     const todayLocal = new Date();
     const tzOffset = todayLocal.getTimezoneOffset() * 60000;
     const localISOTime = (new Date(todayLocal - tzOffset)).toISOString().split('T')[0];
@@ -332,12 +343,22 @@
 
     function processCurrentState() {
       const currentJourney = state.history.filter(h => parseInt(h['Run ID']) === state.currentRun);
+      
+      // We must sort chronologically to find the TRUE "Last" log
+      currentJourney.sort((a, b) => {
+        const dA = new Date(a.Timestamp);
+        const dB = new Date(b.Timestamp);
+        if (dA - dB !== 0) return dA - dB;
+        return parseInt(a['Total Ayahs Read']) - parseInt(b['Total Ayahs Read']);
+      });
+
       if (currentJourney.length > 0) {
-        const lastLog = currentJourney[0]; // (It's raw descending from Google Sheet)
+        const lastLog = currentJourney[currentJourney.length - 1]; 
         state.currentSurahIndex = parseInt(lastLog['Surah Number']) - 1 || 0;
         state.currentAyah = parseInt(lastLog['Ayah Number']) || 0;
         state.currentTotalRead = parseInt(lastLog['Total Ayahs Read']) || 0;
       } else { state.currentSurahIndex = 0; state.currentAyah = 0; state.currentTotalRead = 0; }
+      
       document.getElementById('input-surah').value = state.currentSurahIndex;
     }
 
@@ -348,10 +369,7 @@
       const sData = QURAN_DATA[selectedIdx];
 
       if (!dStr) return alert("Please select a date!");
-      
-      // Prevent future time-travel
       if (dStr > localISOTime) return alert("You cannot log progress for a future date!");
-      
       if (!inputAyah || inputAyah < 1 || inputAyah > sData.count) return alert(`Enter a valid Ayah (1-${sData.count})`);
 
       let newAbsoluteTotal = 0;
@@ -408,10 +426,10 @@
       // Filter Current Run
       let currentJourney = state.history.filter(h => parseInt(h['Run ID']) === state.currentRun && parseInt(h['Ayahs Read Today']) > 0);
       
-      // Explicitly Sort Chronologically (Ascending by Date, then by Total Ayahs if same day)
+      // Explicitly Sort Chronologically
       currentJourney.sort((a, b) => {
-        const dA = new Date(a.Timestamp.split('T')[0]);
-        const dB = new Date(b.Timestamp.split('T')[0]);
+        const dA = new Date(a.Timestamp);
+        const dB = new Date(b.Timestamp);
         if (dA - dB !== 0) return dA - dB;
         return parseInt(a['Total Ayahs Read']) - parseInt(b['Total Ayahs Read']);
       });
@@ -419,7 +437,7 @@
       // Daily Stats + Streaks
       let dailyTotals = {};
       currentJourney.forEach(entry => {
-        let dStr = entry.Timestamp.split('T')[0];
+        let dStr = getLocalYMD(entry.Timestamp);
         dailyTotals[dStr] = (dailyTotals[dStr] || 0) + parseInt(entry['Ayahs Read Today']);
       });
       const uniqueDates = Object.keys(dailyTotals).sort((a,b) => new Date(b) - new Date(a)); // Descending for Streak checking
@@ -481,8 +499,8 @@
       // Get chronological journey
       let currentJourney = state.history.filter(h => parseInt(h['Run ID']) === state.currentRun && parseInt(h['Ayahs Read Today']) > 0);
       currentJourney.sort((a, b) => {
-        const dA = new Date(a.Timestamp.split('T')[0]);
-        const dB = new Date(b.Timestamp.split('T')[0]);
+        const dA = new Date(a.Timestamp);
+        const dB = new Date(b.Timestamp);
         if (dA - dB !== 0) return dA - dB;
         return parseInt(a['Total Ayahs Read']) - parseInt(b['Total Ayahs Read']);
       });
@@ -506,7 +524,7 @@
         
         let dailySums = {};
         chronoJourney.forEach(entry => {
-          let dStr = entry.Timestamp.split('T')[0];
+          let dStr = getLocalYMD(entry.Timestamp);
           dailySums[dStr] = (dailySums[dStr] || 0) + parseInt(entry['Ayahs Read Today']);
         });
         
