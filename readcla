@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Panda's Quran Tracker ✨🌙</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-dark: #0b0f19;
+      --bg-light: #1a1a3a;
+      --accent-pink: #ec6f9c;
+      --accent-glow: #fca4c1;
+      --bar-bg: rgba(236, 111, 156, 0.2);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: radial-gradient(ellipse at bottom, var(--bg-light) 0%, var(--bg-dark) 100%);
+      color: white; min-height: 100vh; overflow-x: hidden; position: relative;
+      display: flex; flex-direction: column; align-items: center; padding: 20px;
+    }
+
+    /* Cosmic Background Effects */
+    .stars { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+    .star { position: absolute; background: white; border-radius: 50%; animation: twinkle 2s ease-in-out infinite alternate; }
+    @keyframes twinkle { 0% { opacity: 0.3; transform: scale(1); } 100% { opacity: 1; transform: scale(1.2); } }
+    
+    .shooting-star {
+      position: absolute; width: 2px; height: 2px; border-radius: 50%;
+      background: linear-gradient(45deg, var(--accent-glow), var(--accent-pink), #FF1493);
+      box-shadow: 0 0 10px var(--accent-pink); animation: shoot 3s linear infinite; z-index: 0;
+    }
+    .shooting-star::after {
+      content: ''; position: absolute; top: 0; left: 0; width: 50px; height: 2px;
+      background: linear-gradient(to right, transparent, var(--accent-pink), transparent); transform: translateX(-50px);
+    }
+    @keyframes shoot {
+      0% { transform: translateX(-100px) translateY(100px); opacity: 1; }
+      70% { opacity: 1; }
+      100% { transform: translateX(300px) translateY(-100px); opacity: 0; }
+    }
+
+    canvas.sakura { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 100; opacity: 0.5; }
+
+    .container { width: 100%; max-width: 600px; z-index: 10; position: relative; }
+    
+    /* Glassmorphism Cards */
+    .card { 
+      background: rgba(20, 25, 40, 0.6); backdrop-filter: blur(10px); border: 1px solid rgba(236, 111, 156, 0.15);
+      border-radius: 20px; padding: 25px; margin-bottom: 25px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); 
+    }
+    .card h3 { color: var(--accent-glow); margin-bottom: 15px; font-size: 1.2rem; display: flex; justify-content: space-between; align-items: center; text-shadow: 0 0 10px rgba(236,111,156,0.3);}
+
+    /* Top Status Banner */
+    .status-banner { text-align: center; margin-bottom: 25px; padding: 20px; border-radius: 20px; background: rgba(236, 111, 156, 0.05); border: 1px solid var(--bar-bg); }
+    .status-banner h2 { font-size: 1rem; font-weight: 500; color: #DDA0DD; margin-bottom: 5px;}
+    .status-banner h1 { font-size: 1.4rem; color: #fff; margin: 5px 0; text-shadow: 0 0 15px rgba(236,111,156,0.5);}
+
+    /* Progress Bars */
+    .progress-label { display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 600; color: #DDA0DD; margin-bottom: 5px; margin-top: 15px;}
+    .progress-wrapper { background: rgba(0,0,0,0.4); border-radius: 12px; height: 22px; width: 100%; overflow: hidden; position: relative; border: 1px solid var(--bar-bg);}
+    .progress-fill { background: linear-gradient(to right, #fca4c1, #ec6f9c); height: 100%; width: 0%; transition: width 0.8s ease; }
+    .progress-text { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
+
+    /* Inputs & Buttons */
+    label { font-size: 0.85rem; font-weight: 600; color: #DDA0DD; margin-bottom: 6px; display: block;}
+    select, input {
+      width: 100%; padding: 12px; margin-bottom: 15px; background: rgba(0,0,0,0.3);
+      border: 1px solid var(--bar-bg); border-radius: 12px; color: white;
+      font-family: 'Poppins'; font-size: 1rem;
+    }
+    select:focus, input:focus { outline: none; border-color: var(--accent-pink); box-shadow: 0 0 10px rgba(236,111,156,0.2); }
+    
+    .flex-row { display: flex; gap: 10px; }
+    .flex-row > * { flex: 1; }
+
+    button {
+      background: linear-gradient(45deg, #ec6f9c, #d86dd1); color: white;
+      padding: 14px; border: none; border-radius: 15px; font-weight: 600;
+      width: 100%; cursor: pointer; font-family: 'Poppins'; font-size: 1rem;
+      transition: 0.3s; box-shadow: 0 4px 15px rgba(236, 111, 156, 0.3);
+    }
+    button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(236, 111, 156, 0.5); }
+    .btn-secondary { background: rgba(236,111,156,0.1); border: 1px solid var(--bar-bg); color: white; box-shadow: none; padding: 8px 15px; width: auto; font-size: 0.85rem;}
+
+    /* 60-Hizb Winding Road Map */
+    .map-container { position: relative; width: 100%; padding: 20px 15px; display: flex; flex-direction: column; align-items: center; overflow: hidden;}
+    .road-row { height: 24px; margin-bottom: 36px; position: relative; width: 100%; display: flex; justify-content: space-between; align-items: center; }
+    .road-row::before { content: ''; position: absolute; left: 0; right: 0; top: 11px; height: 2px; background: var(--bar-bg); z-index: 1; }
+    .road-row:nth-child(odd):not(:last-child)::after { content: ''; position: absolute; right: -15px; top: 11px; width: 30px; height: 60px; border: 2px solid var(--bar-bg); border-left: none; border-radius: 0 20px 20px 0; z-index: 1; }
+    .road-row:nth-child(even):not(:last-child)::after { content: ''; position: absolute; left: -15px; top: 11px; width: 30px; height: 60px; border: 2px solid var(--bar-bg); border-right: none; border-radius: 20px 0 0 20px; z-index: 1; }
+    .road-row:nth-child(even) { flex-direction: row-reverse; } 
+    
+    .dot { width: 16px; height: 16px; background: rgba(0,0,0,0.8); border: 2px solid #DDA0DD; border-radius: 50%; z-index: 2; position: relative; transition: 0.5s; }
+    .dot.active { background: var(--accent-glow); border-color: #fff; box-shadow: 0 0 12px var(--accent-glow); }
+    
+    .panda-avatar { position: absolute; width: 35px; height: 35px; z-index: 5; transition: left 0.8s ease-in-out, top 0.8s ease-in-out; transform: translate(-50%, -50%); filter: drop-shadow(0 0 8px rgba(236,111,156,0.8)); }
+
+    /* Written Log Area — FIX: overflow-x hidden + tighter columns for mobile */
+    .log-container { max-height: 250px; overflow-y: auto; overflow-x: hidden; padding-right: 5px; margin-top: 15px; }
+    
+    .log-item { 
+      display: grid; grid-template-columns: 75px 65px 1fr 45px; gap: 6px; 
+      align-items: center; padding: 12px 0; border-bottom: 1px dashed rgba(255,255,255,0.1); 
+    }
+    .session-badge { background: var(--bar-bg); color: #fff; padding: 2px 4px; border-radius: 6px; font-size: 0.65rem; text-align: center; font-weight: bold; white-space: nowrap;}
+    .log-date { font-size: 0.7rem; color: #DDA0DD; white-space: nowrap;}
+    .log-text { font-size: 0.75rem; color: white; line-height: 1.3; font-weight: 500; word-wrap: break-word; min-width: 0;}
+    .log-pct { font-size: 0.8rem; color: var(--accent-glow); font-weight: bold; text-align: right; white-space: nowrap;}
+
+    /* ── CHART: Base styles shared by both views ── */
+    .chart-container {
+      display: flex; align-items: flex-end; height: 220px;
+      margin-top: 10px; padding-bottom: 5px; position: relative; gap: 6px;
+    }
+    .chart-container::before {
+      content: ''; position: absolute; bottom: 40px; left: 0;
+      width: 100%; height: 1px; background: rgba(255,255,255,0.1); z-index: 0;
+    }
+
+    /* ── CHART: Last 14 days — original behaviour (scroll + fixed-width bars) ── */
+    .chart-container.view-14 { justify-content: flex-end; overflow-x: auto; overflow-y: hidden; }
+    .chart-container.view-14 .bar-wrapper { flex: 0 0 auto; min-width: 25px; }
+
+    /* ── CHART: Show All — fluid/adaptive (no scroll, bars shrink to fit) ── */
+    .chart-container.view-all { justify-content: space-around; overflow: hidden; }
+    .chart-container.view-all .bar-wrapper { flex: 1; min-width: 0; }
+
+    /* ── CHART: Shared bar-wrapper internals ── */
+    .bar-wrapper { display: flex; flex-direction: column; justify-content: flex-end; align-items: center; position: relative; height: 100%; z-index: 1; }
+    .bar { background: linear-gradient(to top, rgba(236,111,156,0.3), var(--accent-pink)); min-height: 2px; transition: height 0.5s; width: 100%; max-width: 25px; border-radius: 4px 4px 0 0;}
+    
+    .bar-tooltip { position: absolute; top: 0; font-size: 0.7rem; background: rgba(0,0,0,0.8); padding: 4px 8px; border-radius: 6px; opacity: 0; transition: 0.2s; white-space: nowrap; pointer-events: none; z-index: 10;}
+    .bar-wrapper:hover .bar-tooltip { opacity: 1; transform: translateY(-20px); }
+
+    /* date labels — normal for 14-day, rotated for show-all */
+    .date-label { font-size: 0.6rem; color: #DDA0DD; margin-top: 4px; text-align: center; }
+    .date-label.rotated { writing-mode: vertical-rl; transform: rotate(180deg); font-size: 0.55rem; letter-spacing: 0.5px; height: 35px; display: flex; align-items: flex-start; }
+
+    #login-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: var(--bg-dark); display: flex; justify-content: center; align-items: center; z-index: 9999; }
+    #loader { display: none; position: fixed; top: 20px; right: 20px; background: rgba(0,0,0,0.8); color: var(--accent-glow); padding: 10px 20px; border-radius: 20px; border: 1px solid var(--accent-pink); z-index: 9999; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div class="stars" id="starfield"></div>
+  <canvas id="sakura-canvas" class="sakura"></canvas>
+  <div id="loader">✨ Syncing...</div>
+
+  <div id="login-overlay">
+    <div class="card" style="max-width: 350px; text-align: center; width: 90%;">
+      <img src="momorin-placeholder.png" alt="Panda" style="width: 100px; margin-bottom: 15px; animation: twinkle 3s infinite;">
+      <h2 style="color: var(--accent-glow); margin-bottom: 20px;">Panda's Quran Tracker</h2>
+      <input type="password" id="login-pwd" placeholder="Enter Password">
+      <button onclick="attemptLogin()">Enter Journey</button>
+      <p id="login-error" style="color: #FF1493; margin-top: 15px; display: none; font-size: 0.85rem;"></p>
+    </div>
+  </div>
+
+  <div class="container" id="app-container" style="display: none;">
+    
+    <div class="status-banner card">
+      <h2>You are currently on</h2>
+      <h1 id="status-surah">Surah Al-Fatihah, Ayah 1</h1>
+      <p id="status-next" style="color: #DDA0DD; font-size: 0.9rem;">Continue by reading Ayah 2</p>
+    </div>
+
+    <div class="card">
+      <h3>📖 Log Reading</h3>
+      
+      <div class="flex-row">
+        <div style="flex: 2;">
+          <label>Date</label>
+          <input type="date" id="input-date">
+        </div>
+        <div style="flex: 3;">
+          <label>Surah</label>
+          <select id="input-surah"></select>
+        </div>
+      </div>
+      
+      <label>Ending Ayah (Where you stopped)</label>
+      <input type="number" id="input-ayah" placeholder="e.g. 50">
+      
+      <button onclick="logProgress()">Log Progress</button>
+    </div>
+
+    <div class="card">
+      <h3>✨ Your Progress</h3>
+      
+      <div class="progress-label"><span>Current Surah</span><span id="lbl-surah-pct">0%</span></div>
+      <div class="progress-wrapper"><div class="progress-fill" id="fill-surah"></div><div class="progress-text" id="txt-surah">0 / 0 Ayahs</div></div>
+
+      <div class="progress-label"><span>Whole Quran</span><span id="lbl-total-pct">0%</span></div>
+      <div class="progress-wrapper"><div class="progress-fill" id="fill-total" style="background: linear-gradient(to right, #9370DB, #d86dd1);"></div><div class="progress-text" id="txt-total">0 / 6236 Ayahs</div></div>
+
+      <div class="flex-row" style="margin-top: 25px; text-align: center; border-top: 1px dashed var(--bar-bg); padding-top: 15px;">
+        <div>
+          <div style="font-size: 1.3rem; color: var(--accent-glow); font-weight: 700;" id="stat-avg">0</div>
+          <div style="font-size: 0.75rem; color: #DDA0DD;">Avg / Day</div>
+          <div style="font-size: 0.7rem; color: white; background: var(--bar-bg); border-radius: 8px; padding: 2px 6px; display: inline-block; margin-top: 4px;" id="stat-avg-pct">0%</div>
+        </div>
+        <div>
+          <div style="font-size: 1.3rem; color: #FFD700; font-weight: 700;" id="stat-streak">0 🔥</div>
+          <div style="font-size: 0.75rem; color: #DDA0DD;">Active Streak</div>
+          <!-- FIX: Record streak now shown here instead of invisible placeholder -->
+          <div style="font-size: 0.7rem; color: white; background: var(--bar-bg); border-radius: 8px; padding: 2px 6px; display: inline-block; margin-top: 4px;" id="stat-record-streak">0 🏆 best</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-bottom: 5px;">📍 60-Hizb Winding Road</h3>
+      <p style="font-size: 0.8rem; color: #DDA0DD; text-align: center; margin-bottom: 30px;">Follow the cosmic path to completion!</p>
+      <div class="map-container" id="hizb-map">
+        <img src="momorin-placeholder.png" class="panda-avatar" id="panda-avatar" alt="Panda">
+        </div>
+    </div>
+
+    <div class="card">
+      <h3>📜 Written Log</h3>
+      <div class="log-container" id="written-log">
+        </div>
+    </div>
+
+    <div class="card">
+      <h3>
+        📊 Reading History
+        <button class="btn-secondary" id="btn-chart-toggle" onclick="toggleChart()">Show All</button>
+      </h3>
+      <!-- FIX: start with view-14 class applied -->
+      <div class="chart-container view-14" id="chart-box"></div>
+    </div>
+    
+    <button class="btn-secondary" style="width: 100%; border: 1px dashed #DDA0DD; margin-bottom: 40px;" onclick="resetJourney()">🔄 Start New Journey (Reset Tracker)</button>
+  </div>
+
+  <script src="sakuraform.js"></script>
+  <script>
+    // ⚠️ REPLACE WITH YOUR WEB APP URL ⚠️
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbzv35XYj_2RqPXL8CYLHnpi-XfQ5ChN0YiC-_0Ae-PBTV7Yb61XiSbbHM7pXizAWDn2/exec';
+    
+    const QURAN_DATA = [
+      { name: "Al-Fatihah", count: 7 }, { name: "Al-Baqarah", count: 286 }, { name: "Aali-Imran", count: 200 }, { name: "An-Nisa", count: 176 },
+      { name: "Al-Ma'idah", count: 120 }, { name: "Al-An'am", count: 165 }, { name: "Al-A'raf", count: 206 }, { name: "Al-Anfal", count: 75 },
+      { name: "At-Tawbah", count: 129 }, { name: "Yunus", count: 109 }, { name: "Hud", count: 123 }, { name: "Yusuf", count: 111 },
+      { name: "Ar-Ra'd", count: 43 }, { name: "Ibrahim", count: 52 }, { name: "Al-Hijr", count: 99 }, { name: "An-Nahl", count: 128 },
+      { name: "Al-Isra", count: 111 }, { name: "Al-Kahf", count: 110 }, { name: "Maryam", count: 98 }, { name: "Ta-Ha", count: 135 },
+      { name: "Al-Anbiya", count: 112 }, { name: "Al-Hajj", count: 78 }, { name: "Al-Mu'minun", count: 118 }, { name: "An-Nur", count: 64 },
+      { name: "Al-Furqan", count: 77 }, { name: "Ash-Shu'ara", count: 227 }, { name: "An-Naml", count: 93 }, { name: "Al-Qasas", count: 88 },
+      { name: "Al-Ankabut", count: 69 }, { name: "Ar-Rum", count: 60 }, { name: "Luqman", count: 34 }, { name: "As-Sajdah", count: 30 },
+      { name: "Al-Ahzab", count: 73 }, { name: "Saba", count: 54 }, { name: "Fatir", count: 45 }, { name: "Ya-Sin", count: 83 },
+      { name: "As-Saffat", count: 182 }, { name: "Sad", count: 88 }, { name: "Az-Zumar", count: 75 }, { name: "Ghafir", count: 85 },
+      { name: "Fussilat", count: 54 }, { name: "Ash-Shura", count: 53 }, { name: "Az-Zukhruf", count: 89 }, { name: "Ad-Dukhan", count: 59 },
+      { name: "Al-Jathiyah", count: 37 }, { name: "Al-Ahqaf", count: 35 }, { name: "Muhammad", count: 38 }, { name: "Al-Fath", count: 29 },
+      { name: "Al-Hujurat", count: 18 }, { name: "Qaf", count: 45 }, { name: "Ad-Dhariyat", count: 60 }, { name: "At-Tur", count: 49 },
+      { name: "An-Najm", count: 62 }, { name: "Al-Qamar", count: 55 }, { name: "Ar-Rahman", count: 78 }, { name: "Al-Waqi'ah", count: 96 },
+      { name: "Al-Hadid", count: 29 }, { name: "Al-Mujadila", count: 22 }, { name: "Al-Hashr", count: 24 }, { name: "Al-Mumtahanah", count: 13 },
+      { name: "As-Saff", count: 14 }, { name: "Al-Jumu'ah", count: 11 }, { name: "Al-Munafiqun", count: 11 }, { name: "At-Taghabun", count: 18 },
+      { name: "At-Talaq", count: 12 }, { name: "At-Tahrim", count: 12 }, { name: "Al-Mulk", count: 30 }, { name: "Al-Qalam", count: 52 },
+      { name: "Al-Haqqah", count: 52 }, { name: "Al-Ma'arij", count: 44 }, { name: "Nuh", count: 28 }, { name: "Al-Jinn", count: 28 },
+      { name: "Al-Muzzammil", count: 20 }, { name: "Al-Muddaththir", count: 56 }, { name: "Al-Qiyamah", count: 40 }, { name: "Al-Insan", count: 31 },
+      { name: "Al-Mursalat", count: 50 }, { name: "An-Naba", count: 40 }, { name: "An-Nazi'at", count: 46 }, { name: 'Abasa', count: 42 },
+      { name: "At-Takwir", count: 29 }, { name: "Al-Infitar", count: 19 }, { name: "Al-Mutaffifin", count: 36 }, { name: "Al-Inshiqaq", count: 25 },
+      { name: "Al-Buruj", count: 22 }, { name: "At-Tariq", count: 17 }, { name: "Al-A'la", count: 19 }, { name: "Al-Ghashiyah", count: 26 },
+      { name: "Al-Fajr", count: 30 }, { name: "Al-Balad", count: 20 }, { name: "Ash-Shams", count: 15 }, { name: "Al-Lail", count: 21 },
+      { name: "Ad-Duha", count: 11 }, { name: "Ash-Sharh", count: 8 }, { name: "At-Tin", count: 8 }, { name: "Al-'Alaq", count: 19 },
+      { name: "Al-Qadr", count: 5 }, { name: "Al-Bayyinah", count: 8 }, { name: "Az-Zalzalah", count: 8 }, { name: "Al-'Adiyat", count: 11 },
+      { name: "Al-Qari'ah", count: 11 }, { name: "At-Takathur", count: 8 }, { name: "Al-'Asr", count: 3 }, { name: "Al-Humazah", count: 9 },
+      { name: "Al-Fil", count: 5 }, { name: "Quraish", count: 4 }, { name: "Al-Ma'un", count: 7 }, { name: "Al-Kawthar", count: 3 },
+      { name: "Al-Kafirun", count: 6 }, { name: "An-Nasr", count: 3 }, { name: "Al-Masad", count: 5 }, { name: "Al-Ikhlas", count: 4 },
+      { name: "Al-Falaq", count: 5 }, { name: "An-Nas", count: 6 }
+    ];
+
+    const TOTAL_QURAN_AYAHS = 6236;
+    let state = { history: [], currentRun: 1, currentTotalRead: 0, currentSurahIndex: 0, currentAyah: 0, chartView: '14' };
+
+    function getLocalYMD(dateStr) {
+      if (!dateStr) return "";
+      let d = new Date(dateStr);
+      if (isNaN(d)) return dateStr.split('T')[0];
+      let yyyy = d.getFullYear();
+      let mm = String(d.getMonth() + 1).padStart(2, '0');
+      let dd = String(d.getDate()).padStart(2, '0');
+      return `${yyyy}-${mm}-${dd}`;
+    }
+
+    function formatEUDate(dateStr) {
+      const ymd = getLocalYMD(dateStr);
+      const parts = ymd.split('-');
+      if (parts.length === 3) return `${parts[2]}.${parts[1]}.${parts[0]}`;
+      return dateStr;
+    }
+
+    const todayLocal = new Date();
+    const tzOffset = todayLocal.getTimezoneOffset() * 60000;
+    const localISOTime = (new Date(todayLocal - tzOffset)).toISOString().split('T')[0];
+    document.getElementById('input-date').value = localISOTime;
+    
+    const selectEl = document.getElementById('input-surah');
+    QURAN_DATA.forEach((s, i) => { selectEl.appendChild(new Option(`${i+1}. ${s.name} (${s.count})`, i)); });
+
+    function createStarfield() {
+      const starfield = document.getElementById('starfield');
+      for (let i = 0; i < 150; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        star.style.left = Math.random() * 100 + '%'; star.style.top = Math.random() * 100 + '%';
+        star.style.width = star.style.height = Math.random() * 3 + 'px';
+        star.style.animationDelay = Math.random() * 2 + 's';
+        starfield.appendChild(star);
+      }
+    }
+
+    // FIX: Append to #starfield instead of document.body.
+    // Appending to body on iOS Safari can trigger a layout recalculation
+    // that snaps the scroll position back to the top.
+    function createShootingStar() {
+      const starfield = document.getElementById('starfield');
+      const s = document.createElement('div');
+      s.className = 'shooting-star';
+      s.style.top = Math.random() * 50 + '%';
+      s.style.left = Math.random() * 100 + '%';
+      starfield.appendChild(s);
+      setTimeout(() => s.remove(), 3000);
+    }
+    createStarfield();
+    setInterval(createShootingStar, 2500);
+
+    window.addEventListener('resize', () => {
+      if (document.getElementById('app-container').style.display === 'block') renderMap();
+    });
+
+    async function apiCall(payload) {
+      document.getElementById('loader').style.display = 'block';
+      try {
+        const res = await fetch(scriptURL, { method: 'POST', body: JSON.stringify(payload) });
+        const data = await res.json();
+        document.getElementById('loader').style.display = 'none';
+        return data;
+      } catch (e) { document.getElementById('loader').style.display = 'none'; return { success: false }; }
+    }
+
+    async function attemptLogin() {
+      const pwd = document.getElementById('login-pwd').value;
+      if (!pwd) return;
+      const res = await apiCall({ action: 'login', password: pwd });
+      if (res.success) {
+        document.getElementById('login-overlay').style.display = 'none';
+        document.getElementById('app-container').style.display = 'block';
+        fetchData();
+      } else {
+        document.getElementById('login-error').innerText = res.message;
+        document.getElementById('login-error').style.display = 'block';
+      }
+    }
+
+    // FIX: Save and restore scroll position around render() so that
+    // any re-render triggered by fetchData doesn't snap the page to the top.
+    async function fetchData() {
+      const res = await apiCall({ action: 'get_data' });
+      if (res.success) {
+        state.history = res.history; state.currentRun = res.currentRun;
+        processCurrentState();
+        const savedScroll = window.scrollY;
+        render();
+        requestAnimationFrame(() => window.scrollTo(0, savedScroll));
+      }
+    }
+
+    function processCurrentState() {
+      const currentJourney = state.history.filter(h => parseInt(h['Run ID']) === state.currentRun);
+      
+      currentJourney.sort((a, b) => {
+        const dA = new Date(a.Timestamp);
+        const dB = new Date(b.Timestamp);
+        if (dA - dB !== 0) return dA - dB;
+        return parseInt(a['Total Ayahs Read']) - parseInt(b['Total Ayahs Read']);
+      });
+
+      if (currentJourney.length > 0) {
+        const lastLog = currentJourney[currentJourney.length - 1]; 
+        state.currentSurahIndex = parseInt(lastLog['Surah Number']) - 1 || 0;
+        state.currentAyah = parseInt(lastLog['Ayah Number']) || 0;
+        state.currentTotalRead = parseInt(lastLog['Total Ayahs Read']) || 0;
+      } else { state.currentSurahIndex = 0; state.currentAyah = 0; state.currentTotalRead = 0; }
+      
+      document.getElementById('input-surah').value = state.currentSurahIndex;
+    }
+
+    async function logProgress() {
+      const dStr = document.getElementById('input-date').value;
+      const selectedIdx = parseInt(document.getElementById('input-surah').value);
+      const inputAyah = parseInt(document.getElementById('input-ayah').value);
+      const sData = QURAN_DATA[selectedIdx];
+
+      if (!dStr) return alert("Please select a date!");
+      if (dStr > localISOTime) return alert("You cannot log progress for a future date!");
+      if (!inputAyah || inputAyah < 1 || inputAyah > sData.count) return alert(`Enter a valid Ayah (1-${sData.count})`);
+
+      let newAbsoluteTotal = 0;
+      for (let i = 0; i < selectedIdx; i++) newAbsoluteTotal += QURAN_DATA[i].count;
+      newAbsoluteTotal += inputAyah;
+
+      const ayahsReadToday = newAbsoluteTotal - state.currentTotalRead;
+      if (ayahsReadToday <= 0) return alert("You must enter a position further than your current progress!");
+
+      const res = await apiCall({
+        action: 'log_progress', dateStr: dStr, runId: state.currentRun, surahNum: selectedIdx + 1,
+        surahName: sData.name, ayahNum: inputAyah, totalAyahs: newAbsoluteTotal, ayahsToday: ayahsReadToday
+      });
+      if (res.success) { document.getElementById('input-ayah').value = ''; fetchData(); }
+    }
+
+    async function resetJourney() {
+      const dStr = document.getElementById('input-date').value || localISOTime;
+      if(confirm("Are you sure? This starts a fresh tracker!")) {
+        await apiCall({ action: 'reset_run', dateStr: dStr, newRunId: state.currentRun + 1 });
+        fetchData();
+      }
+    }
+
+    function toggleChart() {
+      state.chartView = state.chartView === '14' ? 'all' : '14';
+      document.getElementById('btn-chart-toggle').innerText = state.chartView === '14' ? "Show All" : "Show Last 14 Days";
+      renderChart();
+    }
+
+    function render() {
+      const sName = QURAN_DATA[state.currentSurahIndex].name;
+      document.getElementById('status-surah').innerText = `Surah ${sName}, Ayah ${state.currentAyah}`;
+      let nextText = "You finished the Quran! 🎉";
+      if (state.currentTotalRead < TOTAL_QURAN_AYAHS) {
+        if (state.currentAyah < QURAN_DATA[state.currentSurahIndex].count) nextText = `Continue reading Ayah ${state.currentAyah + 1}`;
+        else nextText = `Continue by starting Surah ${QURAN_DATA[state.currentSurahIndex + 1].name}`;
+      }
+      document.getElementById('status-next').innerText = nextText;
+
+      const sTotal = QURAN_DATA[state.currentSurahIndex].count;
+      const sPct = ((state.currentAyah / sTotal) * 100).toFixed(1);
+      document.getElementById('fill-surah').style.width = `${sPct}%`;
+      document.getElementById('txt-surah').innerText = `${state.currentAyah} / ${sTotal}`;
+      document.getElementById('lbl-surah-pct').innerText = `${sPct}%`;
+
+      const tPct = ((state.currentTotalRead / TOTAL_QURAN_AYAHS) * 100).toFixed(2);
+      document.getElementById('fill-total').style.width = `${tPct}%`;
+      document.getElementById('txt-total').innerText = `${state.currentTotalRead} / 6236`;
+      document.getElementById('lbl-total-pct').innerText = `${tPct}%`;
+
+      let currentJourney = state.history.filter(h => parseInt(h['Run ID']) === state.currentRun && parseInt(h['Ayahs Read Today']) > 0);
+      
+      currentJourney.sort((a, b) => {
+        const dA = new Date(a.Timestamp);
+        const dB = new Date(b.Timestamp);
+        if (dA - dB !== 0) return dA - dB;
+        return parseInt(a['Total Ayahs Read']) - parseInt(b['Total Ayahs Read']);
+      });
+
+      let dailyTotals = {};
+      currentJourney.forEach(entry => {
+        let dStr = getLocalYMD(entry.Timestamp);
+        dailyTotals[dStr] = (dailyTotals[dStr] || 0) + parseInt(entry['Ayahs Read Today']);
+      });
+      const uniqueDates = Object.keys(dailyTotals).sort((a,b) => new Date(b) - new Date(a));
+      
+      let avg = 0, streak = 0, recordStreak = 0;
+      if (uniqueDates.length > 0) {
+        const totalSum = Object.values(dailyTotals).reduce((sum, val) => sum + val, 0);
+        avg = Math.round(totalSum / uniqueDates.length);
+        
+        // Active streak (checking from today backwards)
+        let checkDate = new Date(); checkDate.setHours(0,0,0,0);
+        let firstLog = new Date(uniqueDates[0]); firstLog.setHours(0,0,0,0);
+        let diff = (checkDate - firstLog) / 86400000;
+        if (diff === 0 || diff === 1) {
+          streak = 1;
+          for (let i = 1; i < uniqueDates.length; i++) {
+            let prevD = new Date(uniqueDates[i-1]); prevD.setHours(0,0,0,0);
+            let currD = new Date(uniqueDates[i]); currD.setHours(0,0,0,0);
+            if ((prevD - currD) / 86400000 === 1) streak++; else break;
+          }
+        }
+
+        // FIX: Record (best-ever) streak — scan all dates chronologically
+        const sortedAsc = [...uniqueDates].sort((a,b) => new Date(a) - new Date(b));
+        let tempStreak = 1;
+        recordStreak = 1;
+        for (let i = 1; i < sortedAsc.length; i++) {
+          let prevD = new Date(sortedAsc[i-1]); prevD.setHours(0,0,0,0);
+          let currD = new Date(sortedAsc[i]); currD.setHours(0,0,0,0);
+          if ((currD - prevD) / 86400000 === 1) {
+            tempStreak++;
+            if (tempStreak > recordStreak) recordStreak = tempStreak;
+          } else {
+            tempStreak = 1;
+          }
+        }
+      }
+
+      document.getElementById('stat-avg').innerText = avg;
+      const avgPct = ((avg / 6236) * 100).toFixed(2);
+      document.getElementById('stat-avg-pct').innerText = `${avgPct}% per day`;
+      document.getElementById('stat-streak').innerText = `${streak} 🔥`;
+      document.getElementById('stat-record-streak').innerText = `${recordStreak} 🏆 best`;
+
+      // Written Log
+      const logBox = document.getElementById('written-log');
+      logBox.innerHTML = currentJourney.length === 0 ? '<div style="text-align:center; color:#999; padding: 20px;">No reading logged yet.</div>' : '';
+      
+      let chronoJourney = [...currentJourney];
+      chronoJourney.forEach((entry, i) => { entry.sessionNum = i + 1; });
+      let displayJourney = [...chronoJourney].reverse(); 
+
+      displayJourney.forEach(entry => {
+        let pctDone = ((entry['Total Ayahs Read'] / 6236) * 100).toFixed(2);
+        let niceDate = formatEUDate(entry.Timestamp);
+        logBox.innerHTML += `
+          <div class="log-item">
+            <span class="session-badge">Session ${entry.sessionNum}</span>
+            <span class="log-date">${niceDate}</span>
+            <span class="log-text">${entry['Surah Name']}, Ayah ${entry['Ayah Number']}</span>
+            <span class="log-pct">${pctDone}%</span>
+          </div>`;
+      });
+
+      renderChart();
+      renderMap();
+    }
+
+    function renderChart() {
+      const chartBox = document.getElementById('chart-box');
+      chartBox.innerHTML = '';
+
+      // FIX: Apply the correct CSS class for each view mode.
+      // view-14 = original scrollable fixed-width bars
+      // view-all = fluid adaptive bars that fit the container
+      chartBox.className = `chart-container ${state.chartView === '14' ? 'view-14' : 'view-all'}`;
+      
+      let currentJourney = state.history.filter(h => parseInt(h['Run ID']) === state.currentRun && parseInt(h['Ayahs Read Today']) > 0);
+      currentJourney.sort((a, b) => {
+        const dA = new Date(a.Timestamp);
+        const dB = new Date(b.Timestamp);
+        if (dA - dB !== 0) return dA - dB;
+        return parseInt(a['Total Ayahs Read']) - parseInt(b['Total Ayahs Read']);
+      });
+      let chronoJourney = [...currentJourney];
+      chronoJourney.forEach((entry, i) => { entry.sessionNum = i + 1; });
+      
+      if (state.chartView === '14') {
+        // --- LAST 14 DAYS: original heartbeat chart (unchanged) ---
+        let days14 = [];
+        let today = new Date();
+        for(let i=13; i>=0; i--) {
+          let d = new Date(today);
+          d.setDate(d.getDate() - i);
+          let yyyy = d.getFullYear();
+          let mm = String(d.getMonth() + 1).padStart(2, '0');
+          let dd = String(d.getDate()).padStart(2, '0');
+          days14.push(`${yyyy}-${mm}-${dd}`);
+        }
+        
+        let dailySums = {};
+        chronoJourney.forEach(entry => {
+          let dStr = getLocalYMD(entry.Timestamp);
+          dailySums[dStr] = (dailySums[dStr] || 0) + parseInt(entry['Ayahs Read Today']);
+        });
+        
+        let maxRead = Math.max(...days14.map(d => dailySums[d] || 0), 10);
+        
+        days14.forEach(date => {
+          const val = dailySums[date] || 0;
+          const pct = val === 0 ? 0 : Math.max((val / maxRead) * 100, 5); 
+          let niceDate = formatEUDate(date).substring(0, 5); // dd.mm
+          
+          chartBox.innerHTML += `
+            <div class="bar-wrapper">
+              ${val > 0 ? `<div class="bar-tooltip">${val} Ayahs</div>` : ''}
+              <div class="bar" style="height: ${pct}%; background: ${val===0 ? 'transparent' : ''}; border: ${val===0 ? 'none' : ''}"></div>
+              <div class="date-label">${niceDate}</div>
+            </div>`;
+        });
+
+      } else {
+        // --- SHOW ALL: fluid adaptive staircase chart (UPDATE 1 style) ---
+        if(chronoJourney.length === 0) {
+           chartBox.innerHTML = '<p style="width:100%; text-align:center; color:#999; font-size:0.8rem; margin-bottom:20px;">No reading logged yet.</p>';
+           return;
+        }
+
+        chronoJourney.forEach((entry) => {
+          const total = parseInt(entry['Total Ayahs Read']);
+          const pct = Math.max((total / TOTAL_QURAN_AYAHS) * 100, 2);
+          let niceDate = formatEUDate(entry.Timestamp).substring(0, 5); // dd.mm
+          
+          chartBox.innerHTML += `
+            <div class="bar-wrapper">
+              <div class="bar-tooltip" style="top: -35px;">Session ${entry.sessionNum}<br>${total} / 6236</div>
+              <div class="bar" style="height: ${pct}%; border-radius: 2px 2px 0 0;"></div>
+              <div class="date-label rotated">${niceDate}</div>
+            </div>`;
+        });
+      }
+    }
+
+    function renderMap() {
+      const mapEl = document.getElementById('hizb-map');
+      Array.from(mapEl.children).forEach(c => { if(c.id !== 'panda-avatar') c.remove(); });
+      
+      const dotsPerRow = 10; const rows = 6; 
+      const hizbProgress = (state.currentTotalRead / TOTAL_QURAN_AYAHS) * 60;
+      
+      for(let r = 0; r < rows; r++) {
+        let rowDiv = document.createElement('div');
+        rowDiv.className = 'road-row';
+        for(let d = 0; d < dotsPerRow; d++) {
+          let dotIndex = (r * dotsPerRow) + d;
+          let dot = document.createElement('div');
+          dot.className = `dot ${hizbProgress >= dotIndex ? 'active' : ''}`;
+          dot.id = `dot-${dotIndex}`;
+          rowDiv.appendChild(dot);
+        }
+        mapEl.appendChild(rowDiv);
+      }
+
+      setTimeout(() => {
+        let activeIndex = Math.floor(hizbProgress);
+        if (activeIndex > 59) activeIndex = 59;
+        
+        const currentDot = document.getElementById(`dot-${activeIndex}`);
+        const nextDot = document.getElementById(`dot-${Math.min(activeIndex + 1, 59)}`);
+        
+        if (currentDot && nextDot) {
+          const remainder = hizbProgress % 1;
+          const rectC = currentDot.getBoundingClientRect();
+          const rectN = nextDot.getBoundingClientRect();
+          const mapRect = mapEl.getBoundingClientRect();
+          
+          const startX = rectC.left - mapRect.left + (rectC.width/2);
+          const startY = rectC.top - mapRect.top + (rectC.height/2);
+          const endX = rectN.left - mapRect.left + (rectN.width/2);
+          const endY = rectN.top - mapRect.top + (rectN.height/2);
+          
+          const panda = document.getElementById('panda-avatar');
+          panda.style.left = `${startX + ((endX - startX) * remainder)}px`;
+          panda.style.top = `${startY + ((endY - startY) * remainder)}px`;
+        }
+      }, 100); 
+    }
+  </script>
+</body>
+</html>
