@@ -101,34 +101,26 @@
     .panda-avatar { position: absolute; width: 35px; height: 35px; z-index: 5; transition: left 0.8s ease-in-out, top 0.8s ease-in-out; transform: translate(-50%, -50%); filter: drop-shadow(0 0 8px rgba(236,111,156,0.8)); }
 
     /* Written Log Area */
-    .log-container { max-height: 250px; overflow-y: auto; padding-right: 5px; margin-top: 15px; overflow-x: hidden; }
+    .log-container { max-height: 250px; overflow-y: auto; padding-right: 5px; margin-top: 15px; }
     
     .log-item { 
-      display: grid; grid-template-columns: 75px 65px 1fr 45px; gap: 6px; 
+      display: grid; grid-template-columns: 80px 80px 1fr 60px; gap: 10px; 
       align-items: center; padding: 12px 0; border-bottom: 1px dashed rgba(255,255,255,0.1); 
     }
-    .session-badge { background: var(--bar-bg); color: #fff; padding: 2px 4px; border-radius: 6px; font-size: 0.65rem; text-align: center; font-weight: bold; white-space: nowrap;}
-    .log-date { font-size: 0.7rem; color: #DDA0DD; white-space: nowrap;}
-    .log-text { font-size: 0.75rem; color: white; line-height: 1.3; font-weight: 500; word-wrap: break-word;}
-    .log-pct { font-size: 0.8rem; color: var(--accent-glow); font-weight: bold; text-align: right;}
+    .session-badge { background: var(--bar-bg); color: #fff; padding: 2px 6px; border-radius: 6px; font-size: 0.7rem; text-align: center; font-weight: bold;}
+    .log-date { font-size: 0.75rem; color: #DDA0DD; }
+    .log-text { font-size: 0.8rem; color: white; line-height: 1.3; font-weight: 500;}
+    .log-pct { font-size: 0.85rem; color: var(--accent-glow); font-weight: bold; text-align: right;}
 
-    /* Smart Charts Base */
-    .chart-container { display: flex; align-items: flex-end; height: 220px; margin-top: 10px; padding-bottom: 5px; position: relative; overflow-x: auto; }
-    .chart-container::before { content: ''; position: absolute; bottom: 40px; left: 0; width: 100%; height: 1px; background: rgba(255,255,255,0.1); z-index: 0; }
-    .bar-wrapper { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; position: relative; height: 100%; z-index: 1; min-width: 0;}
-    .bar { background: linear-gradient(to top, rgba(236,111,156,0.3), var(--accent-pink)); min-height: 2px; transition: height 0.5s; width: 100%; }
-    .date-label { color: #DDA0DD; margin-top: 4px; display: flex; justify-content: center; align-items: center; }
+    /* Smart Charts (TALLER HEIGHT) */
+    .chart-container { display: flex; align-items: flex-end; justify-content: flex-end; height: 220px; margin-top: 10px; padding-bottom: 5px; position: relative; overflow-x: auto; gap: 6px;}
+    .chart-container::before { content: ''; position: absolute; bottom: 25px; left: 0; width: 100%; height: 1px; background: rgba(255,255,255,0.1); z-index: 0; }
+    
+    .bar-wrapper { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; position: relative; height: 100%; z-index: 1; min-width: 25px;}
+    .bar { background: linear-gradient(to top, rgba(236,111,156,0.3), var(--accent-pink)); min-height: 2px; transition: height 0.5s; width: 100%; max-width: 25px; border-radius: 4px 4px 0 0;}
+    
     .bar-tooltip { position: absolute; top: 0; font-size: 0.7rem; background: rgba(0,0,0,0.8); padding: 4px 8px; border-radius: 6px; opacity: 0; transition: 0.2s; white-space: nowrap; pointer-events: none; z-index: 10;}
     .bar-wrapper:hover .bar-tooltip { opacity: 1; transform: translateY(-20px); }
-
-    /* Smart Chart Modes */
-    .chart-14 { justify-content: flex-end; gap: 6px; }
-    .chart-14 .bar { max-width: 25px; border-radius: 4px 4px 0 0; }
-    .chart-14 .date-label { font-size: 0.6rem; height: auto; writing-mode: horizontal-tb; transform: none; }
-
-    .chart-all { justify-content: flex-start; gap: 2px; }
-    .chart-all .bar { max-width: none; border-radius: 2px 2px 0 0; }
-    .chart-all .date-label { font-size: 0.55rem; height: 35px; writing-mode: vertical-rl; transform: rotate(180deg); letter-spacing: 0.5px; margin-top: 8px;}
 
     #login-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: var(--bg-dark); display: flex; justify-content: center; align-items: center; z-index: 9999; }
     #loader { display: none; position: fixed; top: 20px; right: 20px; background: rgba(0,0,0,0.8); color: var(--accent-glow); padding: 10px 20px; border-radius: 20px; border: 1px solid var(--accent-pink); z-index: 9999; font-weight: 600; }
@@ -195,7 +187,7 @@
         <div>
           <div style="font-size: 1.3rem; color: #FFD700; font-weight: 700;" id="stat-streak">0 🔥</div>
           <div style="font-size: 0.75rem; color: #DDA0DD;">Active Streak</div>
-          <div style="font-size: 0.7rem; color: white; background: var(--bar-bg); border-radius: 8px; padding: 2px 6px; display: inline-block; margin-top: 4px;" id="stat-max-streak">Best: 0</div>
+          <div style="font-size: 0.7rem; color: transparent; padding: 2px 6px; display: inline-block; margin-top: 4px;">-</div>
         </div>
       </div>
     </div>
@@ -219,7 +211,7 @@
         📊 Reading History
         <button class="btn-secondary" id="btn-chart-toggle" onclick="toggleChart()">Show All</button>
       </h3>
-      <div id="chart-box" class="chart-container chart-14"></div>
+      <div class="chart-container" id="chart-box"></div>
     </div>
     
     <button class="btn-secondary" style="width: 100%; border: 1px dashed #DDA0DD; margin-bottom: 40px;" onclick="resetJourney()">🔄 Start New Journey (Reset Tracker)</button>
@@ -231,7 +223,7 @@
     const scriptURL = 'https://script.google.com/macros/s/AKfycbzv35XYj_2RqPXL8CYLHnpi-XfQ5ChN0YiC-_0Ae-PBTV7Yb61XiSbbHM7pXizAWDn2/exec';
     
     const QURAN_DATA = [
-      { name: "Al-Fatihah", count: 7 }, { name: "Al-Baqarah", count: 286 }, { name: "Aali-Imran", count: 200 }, { name: "An-Nisa", count: 176 },
+      { name: "Al-Fatihah", count: 7 }, { name: "Al-Baqarah", count: 286 }, { name: "Aal-E-Imran", count: 200 }, { name: "An-Nisa", count: 176 },
       { name: "Al-Ma'idah", count: 120 }, { name: "Al-An'am", count: 165 }, { name: "Al-A'raf", count: 206 }, { name: "Al-Anfal", count: 75 },
       { name: "At-Tawbah", count: 129 }, { name: "Yunus", count: 109 }, { name: "Hud", count: 123 }, { name: "Yusuf", count: 111 },
       { name: "Ar-Ra'd", count: 43 }, { name: "Ibrahim", count: 52 }, { name: "Al-Hijr", count: 99 }, { name: "An-Nahl", count: 128 },
@@ -265,17 +257,18 @@
     const TOTAL_QURAN_AYAHS = 6236;
     let state = { history: [], currentRun: 1, currentTotalRead: 0, currentSurahIndex: 0, currentAyah: 0, chartView: '14' };
 
-    // --- DATE FIX: Safely parse YYYY-MM-DD from Google without timezone shifts ---
+    // --- DATE FIX: Translates UTC safely back to local timezone before extracting YYYY-MM-DD ---
     function getLocalYMD(dateStr) {
       if (!dateStr) return "";
       let d = new Date(dateStr);
-      if (isNaN(d)) return dateStr.split('T')[0]; 
+      if (isNaN(d)) return dateStr.split('T')[0]; // Fallback
       let yyyy = d.getFullYear();
       let mm = String(d.getMonth() + 1).padStart(2, '0');
       let dd = String(d.getDate()).padStart(2, '0');
       return `${yyyy}-${mm}-${dd}`;
     }
 
+    // Format YYYY-MM-DD to EU dd.mm.yyyy safely
     function formatEUDate(dateStr) {
       const ymd = getLocalYMD(dateStr);
       const parts = ymd.split('-');
@@ -310,17 +303,12 @@
     }
     createStarfield(); setInterval(createShootingStar, 2500);
 
-    // --- FIX 1: NO DOM DESTRUCTION ON RESIZE (Stops scroll snapping) ---
-    let lastWidth = window.innerWidth;
+    // Dynamic Map resize
     window.addEventListener('resize', () => {
-      if (window.innerWidth !== lastWidth) {
-        lastWidth = window.innerWidth;
-        if (document.getElementById('app-container').style.display === 'block') {
-          positionPanda(); // Only move the panda, don't rebuild map
-        }
-      }
+      if (document.getElementById('app-container').style.display === 'block') renderMap();
     });
 
+    // API & Logic
     async function apiCall(payload) {
       document.getElementById('loader').style.display = 'block';
       try {
@@ -356,6 +344,7 @@
     function processCurrentState() {
       const currentJourney = state.history.filter(h => parseInt(h['Run ID']) === state.currentRun);
       
+      // We must sort chronologically to find the TRUE "Last" log
       currentJourney.sort((a, b) => {
         const dA = new Date(a.Timestamp);
         const dB = new Date(b.Timestamp);
@@ -412,6 +401,7 @@
     }
 
     function render() {
+      // Top Banner
       const sName = QURAN_DATA[state.currentSurahIndex].name;
       document.getElementById('status-surah').innerText = `Surah ${sName}, Ayah ${state.currentAyah}`;
       let nextText = "You finished the Quran! 🎉";
@@ -421,6 +411,7 @@
       }
       document.getElementById('status-next').innerText = nextText;
 
+      // Progress Bars
       const sTotal = QURAN_DATA[state.currentSurahIndex].count;
       const sPct = ((state.currentAyah / sTotal) * 100).toFixed(1);
       document.getElementById('fill-surah').style.width = `${sPct}%`;
@@ -432,8 +423,10 @@
       document.getElementById('txt-total').innerText = `${state.currentTotalRead} / 6236`;
       document.getElementById('lbl-total-pct').innerText = `${tPct}%`;
 
+      // Filter Current Run
       let currentJourney = state.history.filter(h => parseInt(h['Run ID']) === state.currentRun && parseInt(h['Ayahs Read Today']) > 0);
       
+      // Explicitly Sort Chronologically
       currentJourney.sort((a, b) => {
         const dA = new Date(a.Timestamp);
         const dB = new Date(b.Timestamp);
@@ -441,57 +434,46 @@
         return parseInt(a['Total Ayahs Read']) - parseInt(b['Total Ayahs Read']);
       });
 
+      // Daily Stats + Streaks
       let dailyTotals = {};
       currentJourney.forEach(entry => {
         let dStr = getLocalYMD(entry.Timestamp);
         dailyTotals[dStr] = (dailyTotals[dStr] || 0) + parseInt(entry['Ayahs Read Today']);
       });
-      const uniqueDates = Object.keys(dailyTotals).sort((a,b) => new Date(b) - new Date(a)); 
+      const uniqueDates = Object.keys(dailyTotals).sort((a,b) => new Date(b) - new Date(a)); // Descending for Streak checking
       
-      let avg = 0; let activeStreak = 0; let maxStreak = 0;
+      let avg = 0; let streak = 0;
       if (uniqueDates.length > 0) {
         const totalSum = Object.values(dailyTotals).reduce((sum, val) => sum + val, 0);
         avg = Math.round(totalSum / uniqueDates.length);
-        
-        let ascDates = [...uniqueDates].reverse(); 
-        let currentRunCount = 1;
-        maxStreak = 1;
-        for (let i = 1; i < ascDates.length; i++) {
-          let prevD = new Date(ascDates[i-1]); prevD.setHours(0,0,0,0);
-          let currD = new Date(ascDates[i]); currD.setHours(0,0,0,0);
-          if ((currD - prevD) / 86400000 === 1) {
-            currentRunCount++;
-            maxStreak = Math.max(maxStreak, currentRunCount);
-          } else {
-            currentRunCount = 1;
-          }
-        }
         
         let checkDate = new Date(); checkDate.setHours(0,0,0,0);
         let firstLog = new Date(uniqueDates[0]); firstLog.setHours(0,0,0,0);
         let diff = (checkDate - firstLog) / 86400000;
         
         if (diff === 0 || diff === 1) {
-          activeStreak = 1;
+          streak = 1;
           for (let i = 1; i < uniqueDates.length; i++) {
             let prevD = new Date(uniqueDates[i-1]); prevD.setHours(0,0,0,0);
             let currD = new Date(uniqueDates[i]); currD.setHours(0,0,0,0);
-            if ((prevD - currD) / 86400000 === 1) activeStreak++; else break;
+            if ((prevD - currD) / 86400000 === 1) streak++; else break;
           }
         }
       }
-      
       document.getElementById('stat-avg').innerText = avg;
       const avgPct = ((avg / 6236) * 100).toFixed(2);
       document.getElementById('stat-avg-pct').innerText = `${avgPct}% per day`;
-      document.getElementById('stat-streak').innerText = `${activeStreak} 🔥`;
-      document.getElementById('stat-max-streak').innerText = `Best: ${maxStreak}`;
+      document.getElementById('stat-streak').innerText = `${streak} 🔥`;
 
+      // Written Log (Chronological Session assignment)
       const logBox = document.getElementById('written-log');
       logBox.innerHTML = currentJourney.length === 0 ? '<div style="text-align:center; color:#999; padding: 20px;">No reading logged yet.</div>' : '';
       
+      // Assign session numbers starting from oldest to newest
       let chronoJourney = [...currentJourney];
       chronoJourney.forEach((entry, i) => { entry.sessionNum = i + 1; });
+      
+      // Flip for text log so newest session is at the top
       let displayJourney = [...chronoJourney].reverse(); 
 
       displayJourney.forEach(entry => {
@@ -507,13 +489,14 @@
       });
 
       renderChart();
-      buildMap(); 
+      renderMap();
     }
 
     function renderChart() {
       const chartBox = document.getElementById('chart-box');
       chartBox.innerHTML = '';
       
+      // Get chronological journey
       let currentJourney = state.history.filter(h => parseInt(h['Run ID']) === state.currentRun && parseInt(h['Ayahs Read Today']) > 0);
       currentJourney.sort((a, b) => {
         const dA = new Date(a.Timestamp);
@@ -525,7 +508,8 @@
       chronoJourney.forEach((entry, i) => { entry.sessionNum = i + 1; });
       
       if (state.chartView === '14') {
-        chartBox.className = 'chart-container chart-14';
+        // --- 14 DAY HEARTBEAT CHART (Includes skipped days) ---
+        chartBox.style.justifyContent = 'flex-end';
         
         let days14 = [];
         let today = new Date();
@@ -555,11 +539,13 @@
             <div class="bar-wrapper">
               ${val > 0 ? `<div class="bar-tooltip">${val} Ayahs</div>` : ''}
               <div class="bar" style="height: ${pct}%; background: ${val===0 ? 'transparent' : ''}; border: ${val===0 ? 'none' : ''}"></div>
-              <div class="date-label">${niceDate}</div>
+              <div style="font-size:0.6rem; color:#DDA0DD; margin-top:4px;">${niceDate}</div>
             </div>`;
         });
       } else {
-        chartBox.className = 'chart-container chart-all';
+        // --- SHOW ALL STAIRCASE CHART (Cumulative Progress) ---
+        chartBox.style.justifyContent = 'flex-start'; // Start from left and scroll right if many sessions
+        
         if(chronoJourney.length === 0) {
            chartBox.innerHTML = '<p style="width:100%; text-align:center; color:#999; font-size:0.8rem; margin-bottom:20px;">No reading logged yet.</p>';
            return;
@@ -567,78 +553,62 @@
 
         chronoJourney.forEach((entry) => {
           const total = parseInt(entry['Total Ayahs Read']);
-          const pct = Math.max((total / TOTAL_QURAN_AYAHS) * 100, 2); 
+          const pct = Math.max((total / TOTAL_QURAN_AYAHS) * 100, 2); // At least 2% so step is visible
           let niceDate = formatEUDate(entry.Timestamp).substring(0, 5); // dd.mm
           
           chartBox.innerHTML += `
             <div class="bar-wrapper">
               <div class="bar-tooltip" style="top: -35px;">Session ${entry.sessionNum}<br>${total} / 6236</div>
               <div class="bar" style="height: ${pct}%;"></div>
-              <div class="date-label rotated">${niceDate}</div>
+              <div style="font-size:0.6rem; color:#DDA0DD; margin-top:4px;">${niceDate}</div>
             </div>`;
         });
       }
     }
 
-    function buildMap() {
+    function renderMap() {
       const mapEl = document.getElementById('hizb-map');
+      Array.from(mapEl.children).forEach(c => { if(c.id !== 'panda-avatar') c.remove(); });
       
-      // ONLY build the map nodes if they don't exist
-      if (mapEl.querySelectorAll('.road-row').length === 0) {
-        const dotsPerRow = 10; const rows = 6; 
-        for(let r = 0; r < rows; r++) {
-          let rowDiv = document.createElement('div');
-          rowDiv.className = 'road-row';
-          for(let d = 0; d < dotsPerRow; d++) {
-            let dotIndex = (r * dotsPerRow) + d;
-            let dot = document.createElement('div');
-            dot.className = 'dot';
-            dot.id = `dot-${dotIndex}`;
-            rowDiv.appendChild(dot);
-          }
-          mapEl.appendChild(rowDiv);
-        }
-      }
-
-      // Update active state of dots
+      const dotsPerRow = 10; const rows = 6; 
       const hizbProgress = (state.currentTotalRead / TOTAL_QURAN_AYAHS) * 60;
-      for(let i = 0; i < 60; i++) {
-        let dot = document.getElementById(`dot-${i}`);
-        if (dot) {
-          if (hizbProgress >= i) dot.classList.add('active');
-          else dot.classList.remove('active');
+      
+      for(let r = 0; r < rows; r++) {
+        let rowDiv = document.createElement('div');
+        rowDiv.className = 'road-row';
+        for(let d = 0; d < dotsPerRow; d++) {
+          let dotIndex = (r * dotsPerRow) + d;
+          let dot = document.createElement('div');
+          dot.className = `dot ${hizbProgress >= dotIndex ? 'active' : ''}`;
+          dot.id = `dot-${dotIndex}`;
+          rowDiv.appendChild(dot);
         }
+        mapEl.appendChild(rowDiv);
       }
 
-      setTimeout(positionPanda, 100); // Allow DOM to settle, then position Panda
-    }
-
-    function positionPanda() {
-      const mapEl = document.getElementById('hizb-map');
-      if (!mapEl) return;
-      
-      const hizbProgress = (state.currentTotalRead / TOTAL_QURAN_AYAHS) * 60;
-      let activeIndex = Math.floor(hizbProgress);
-      if (activeIndex > 59) activeIndex = 59;
-      
-      const currentDot = document.getElementById(`dot-${activeIndex}`);
-      const nextDot = document.getElementById(`dot-${Math.min(activeIndex + 1, 59)}`);
-      
-      if (currentDot && nextDot) {
-        const remainder = hizbProgress % 1;
-        const rectC = currentDot.getBoundingClientRect();
-        const rectN = nextDot.getBoundingClientRect();
-        const mapRect = mapEl.getBoundingClientRect();
+      setTimeout(() => {
+        let activeIndex = Math.floor(hizbProgress);
+        if (activeIndex > 59) activeIndex = 59;
         
-        const startX = rectC.left - mapRect.left + (rectC.width/2);
-        const startY = rectC.top - mapRect.top + (rectC.height/2);
-        const endX = rectN.left - mapRect.left + (rectN.width/2);
-        const endY = rectN.top - mapRect.top + (rectN.height/2);
+        const currentDot = document.getElementById(`dot-${activeIndex}`);
+        const nextDot = document.getElementById(`dot-${Math.min(activeIndex + 1, 59)}`);
         
-        const panda = document.getElementById('panda-avatar');
-        panda.style.left = `${startX + ((endX - startX) * remainder)}px`;
-        panda.style.top = `${startY + ((endY - startY) * remainder)}px`;
-      }
+        if (currentDot && nextDot) {
+          const remainder = hizbProgress % 1;
+          const rectC = currentDot.getBoundingClientRect();
+          const rectN = nextDot.getBoundingClientRect();
+          const mapRect = mapEl.getBoundingClientRect();
+          
+          const startX = rectC.left - mapRect.left + (rectC.width/2);
+          const startY = rectC.top - mapRect.top + (rectC.height/2);
+          const endX = rectN.left - mapRect.left + (rectN.width/2);
+          const endY = rectN.top - mapRect.top + (rectN.height/2);
+          
+          const panda = document.getElementById('panda-avatar');
+          panda.style.left = `${startX + ((endX - startX) * remainder)}px`;
+          panda.style.top = `${startY + ((endY - startY) * remainder)}px`;
+        }
+      }, 100); 
     }
   </script>
 </body>
