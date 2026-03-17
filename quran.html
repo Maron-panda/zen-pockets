@@ -3,147 +3,258 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Panda's Quran Tracker 🌙</title>
+  <title>Panda's Quran Tracker ✨🌙</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   
   <style>
     :root {
       --bg-dark: #0b0f19;
-      --bg-card: #161b2e;
-      --text-main: #fdf6fb;
-      --text-muted: #94a3b8;
+      --bg-light: #1a1a3a;
       --accent-pink: #ec6f9c;
       --accent-glow: #fca4c1;
-      --bar-bg: #2a314d;
+      --bar-bg: rgba(236, 111, 156, 0.2);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
     
     body {
-      background: radial-gradient(circle at top, #1a1a3a, var(--bg-dark));
       font-family: 'Poppins', sans-serif;
-      color: var(--text-main);
-      min-height: 100vh;
-      display: flex; flex-direction: column; align-items: center;
-      padding: 20px; position: relative; overflow-x: hidden;
+      background: radial-gradient(ellipse at bottom, var(--bg-light) 0%, var(--bg-dark) 100%);
+      color: white; min-height: 100vh; overflow-x: hidden; position: relative;
+      display: flex; flex-direction: column; align-items: center; padding: 20px;
     }
 
-    /* Sakura & Stars Background */
-    canvas.sakura { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 100; opacity: 0.6; }
-    .stars { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 0; background-image: radial-gradient(#fff 1px, transparent 1px); background-size: 50px 50px; opacity: 0.1; }
+    /* Cosmic Background Effects */
+    #starfield { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; overflow: hidden; pointer-events: none; z-index: 0; }
+    .star { position: absolute; background: white; border-radius: 50%; animation: twinkle 2s ease-in-out infinite alternate; }
+    @keyframes twinkle { 0% { opacity: 0.3; transform: scale(1); } 100% { opacity: 1; transform: scale(1.2); } }
+    
+    .shooting-star {
+      position: absolute; width: 2px; height: 2px; border-radius: 50%;
+      background: linear-gradient(45deg, var(--accent-glow), var(--accent-pink), #FF1493);
+      box-shadow: 0 0 10px var(--accent-pink); animation: shoot 3s linear infinite; z-index: 0;
+    }
+    .shooting-star::after {
+      content: ''; position: absolute; top: 0; left: 0; width: 50px; height: 2px;
+      background: linear-gradient(to right, transparent, var(--accent-pink), transparent); transform: translateX(-50px);
+    }
+    @keyframes shoot {
+      0% { transform: translateX(-100px) translateY(100px); opacity: 1; }
+      70% { opacity: 1; }
+      100% { transform: translateX(300px) translateY(-100px); opacity: 0; }
+    }
+
+    canvas.sakura { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 100; opacity: 0.5; }
 
     .container { width: 100%; max-width: 600px; z-index: 10; position: relative; }
     
-    /* Top Status Banner */
-    .status-banner {
-      background: linear-gradient(135deg, rgba(236, 111, 156, 0.2), rgba(26, 26, 58, 0.8));
-      border: 1px solid rgba(236, 111, 156, 0.4); border-radius: 20px;
-      padding: 20px; text-align: center; margin-bottom: 25px;
-      box-shadow: 0 0 20px rgba(236, 111, 156, 0.15);
+    /* Glassmorphism Cards */
+    .card { 
+      background: rgba(20, 25, 40, 0.6); backdrop-filter: blur(10px); border: 1px solid rgba(236, 111, 156, 0.15);
+      border-radius: 20px; padding: 25px; margin-bottom: 25px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); 
     }
-    .status-banner h2 { font-size: 1.1rem; font-weight: 500; color: var(--text-main); margin-bottom: 5px;}
-    .status-banner h1 { font-size: 1.6rem; color: var(--accent-glow); margin: 5px 0;}
-    .status-banner p { font-size: 0.95rem; color: var(--text-muted); }
+    .card h3 { color: var(--accent-glow); margin-bottom: 15px; font-size: 1.2rem; display: flex; justify-content: space-between; align-items: center; text-shadow: 0 0 10px rgba(236,111,156,0.3);}
 
-    .card { background: var(--bg-card); border-radius: 20px; padding: 25px; margin-bottom: 25px; border: 1px solid #2a314d; box-shadow: 0 8px 30px rgba(0,0,0,0.3); }
-    .card h3 { color: var(--accent-glow); margin-bottom: 15px; font-size: 1.2rem; display: flex; justify-content: space-between; align-items: center;}
+    /* Top Status Banner */
+    .status-banner { text-align: center; margin-bottom: 25px; padding: 20px; border-radius: 20px; background: rgba(236, 111, 156, 0.05); border: 1px solid var(--bar-bg); }
+    .status-banner h2 { font-size: 1rem; font-weight: 500; color: #DDA0DD; margin-bottom: 5px;}
+    .status-banner h1 { font-size: 1.4rem; color: #fff; margin: 5px 0; text-shadow: 0 0 15px rgba(236,111,156,0.5);}
 
-    /* Progress Bars (Foodtruck style) */
-    .progress-label { display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 600; color: var(--text-muted); margin-bottom: 5px; margin-top: 15px;}
-    .progress-wrapper { background: var(--bar-bg); border-radius: 12px; height: 20px; width: 100%; overflow: hidden; position: relative; }
-    .progress-fill { background: linear-gradient(to right, #fca4c1, #e48ccf); height: 100%; width: 0%; transition: width 0.8s ease; }
-    .progress-text { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
+    /* Progress Bars */
+    .progress-label { display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 600; color: #DDA0DD; margin-bottom: 5px; margin-top: 15px;}
+    .progress-wrapper { background: rgba(0,0,0,0.4); border-radius: 12px; height: 22px; width: 100%; overflow: hidden; position: relative; border: 1px solid var(--bar-bg);}
+    .progress-fill { background: linear-gradient(to right, #fca4c1, #ec6f9c); height: 100%; width: 0%; transition: width 0.8s ease; }
+    .progress-text { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
 
     /* Inputs & Buttons */
-    label { font-size: 0.85rem; font-weight: 600; color: var(--text-muted); margin-bottom: 6px; display: block;}
-    select, input[type="number"] {
-      width: 100%; padding: 12px; margin-bottom: 15px; background: var(--bg-dark);
-      border: 1px solid var(--bar-bg); border-radius: 12px; color: var(--text-main);
+    label { font-size: 0.85rem; font-weight: 600; color: #DDA0DD; margin-bottom: 6px; display: block;}
+    select, input {
+      width: 100%; padding: 12px; margin-bottom: 15px; background: rgba(0,0,0,0.3);
+      border: 1px solid var(--bar-bg); border-radius: 12px; color: white;
       font-family: 'Poppins'; font-size: 1rem;
     }
-    select:focus, input:focus { outline: none; border-color: var(--accent-pink); }
+    select:focus, input:focus { outline: none; border-color: var(--accent-pink); box-shadow: 0 0 10px rgba(236,111,156,0.2); }
     
     .flex-row { display: flex; gap: 10px; }
     .flex-row > * { flex: 1; }
 
     button {
-      background: linear-gradient(to right, #ec6f9c, #d86dd1); color: white;
+      background: linear-gradient(45deg, #ec6f9c, #d86dd1); color: white;
       padding: 14px; border: none; border-radius: 15px; font-weight: 600;
       width: 100%; cursor: pointer; font-family: 'Poppins'; font-size: 1rem;
       transition: 0.3s; box-shadow: 0 4px 15px rgba(236, 111, 156, 0.3);
     }
     button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(236, 111, 156, 0.5); }
-    .btn-secondary { background: var(--bar-bg); color: var(--text-main); box-shadow: none; padding: 8px 15px; width: auto; font-size: 0.85rem;}
+    .btn-secondary { background: rgba(236,111,156,0.1); border: 1px solid var(--bar-bg); color: white; box-shadow: none; padding: 8px 15px; width: auto; font-size: 0.85rem;}
 
-    /* Swaying Road (Hizb Map) */
-    .map-container { position: relative; width: 100%; padding: 20px 0; display: flex; flex-direction: column; align-items: center; }
-    .road-row { display: flex; justify-content: space-between; width: 100%; position: relative; margin-bottom: 30px; }
-    .road-row::before {
-      content: ''; position: absolute; top: 50%; left: 10px; right: 10px; height: 2px;
-      border-top: 2px dashed var(--bar-bg); z-index: 1;
-    }
-    .road-row:nth-child(even) { flex-direction: row-reverse; } /* Zig Zag */
+    /* 60-Hizb Winding Road Map */
+    .map-container { position: relative; width: 100%; padding: 20px 15px; display: flex; flex-direction: column; align-items: center; overflow: hidden;}
+    .road-row { height: 24px; margin-bottom: 36px; position: relative; width: 100%; display: flex; justify-content: space-between; align-items: center; }
+    .road-row::before { content: ''; position: absolute; left: 0; right: 0; top: 11px; height: 2px; background: var(--bar-bg); z-index: 1; }
+    .road-row:nth-child(odd):not(:last-child)::after { content: ''; position: absolute; right: -15px; top: 11px; width: 30px; height: 60px; border: 2px solid var(--bar-bg); border-left: none; border-radius: 0 20px 20px 0; z-index: 1; }
+    .road-row:nth-child(even):not(:last-child)::after { content: ''; position: absolute; left: -15px; top: 11px; width: 30px; height: 60px; border: 2px solid var(--bar-bg); border-right: none; border-radius: 20px 0 0 20px; z-index: 1; }
+    .road-row:nth-child(even) { flex-direction: row-reverse; } 
     
-    .dot { width: 14px; height: 14px; background: var(--bar-bg); border-radius: 50%; z-index: 2; position: relative; transition: 0.5s; }
-    .dot.active { background: var(--accent-glow); box-shadow: 0 0 10px var(--accent-glow); }
+    .dot { width: 16px; height: 16px; background: rgba(0,0,0,0.8); border: 2px solid #DDA0DD; border-radius: 50%; z-index: 2; position: relative; transition: 0.5s; }
+    .dot.active { background: var(--accent-glow); border-color: #fff; box-shadow: 0 0 12px var(--accent-glow); }
     
-    .panda-avatar {
-      position: absolute; width: 40px; height: 40px; z-index: 5;
-      transition: all 1s ease-in-out; transform: translate(-50%, -50%);
-      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));
+    .panda-avatar { position: absolute; width: 35px; height: 35px; z-index: 5; transition: left 0.8s ease-in-out, top 0.8s ease-in-out; transform: translate(-50%, -50%); filter: drop-shadow(0 0 8px rgba(236,111,156,0.8)); }
+
+    /* Written Log Area */
+    .log-container { max-height: 250px; overflow-y: auto; overflow-x: hidden; padding-right: 5px; margin-top: 15px; }
+    
+    .log-item { 
+      display: grid; grid-template-columns: 75px 65px 1fr 45px; gap: 6px; 
+      align-items: center; padding: 12px 0; border-bottom: 1px dashed rgba(255,255,255,0.1); 
+    }
+    .session-badge { background: var(--bar-bg); color: #fff; padding: 2px 4px; border-radius: 6px; font-size: 0.65rem; text-align: center; font-weight: bold; white-space: nowrap;}
+    .log-date { font-size: 0.7rem; color: #DDA0DD; white-space: nowrap;}
+    .log-text { font-size: 0.75rem; color: white; line-height: 1.3; font-weight: 500; word-wrap: break-word; min-width: 0;}
+    .log-pct { font-size: 0.8rem; color: var(--accent-glow); font-weight: bold; text-align: right; white-space: nowrap;}
+
+    /* ── CHART CONTAINER (Shared Base) ── */
+    .chart-container {
+      position: relative;
+      height: 220px; /* Strict height enforced for percentage scaling */
+      width: 100%;
+      margin-top: 50px;
+      margin-bottom: 30px; /* Gives room for dates/text below the axis */
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2); /* The flush X-Axis line */
+      padding-bottom: 0; /* Ensures no rogue padding ruins the flush bottom */
     }
 
-    /* Bar Chart */
-    .chart-container { display: flex; align-items: flex-end; justify-content: space-between; height: 150px; gap: 4px; margin-top: 20px; border-bottom: 1px solid var(--bar-bg); padding-bottom: 5px;}
-    .bar-wrapper { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; position: relative; }
-    .bar { width: 100%; background: linear-gradient(to top, var(--bar-bg), var(--accent-pink)); border-radius: 4px 4px 0 0; min-height: 2px; transition: height 0.5s; }
-    .bar-date { font-size: 0.6rem; color: var(--text-muted); margin-top: 5px; transform: rotate(-45deg); white-space: nowrap; }
-    .bar-tooltip { position: absolute; top: -25px; font-size: 0.7rem; background: var(--bg-dark); padding: 2px 6px; border-radius: 4px; opacity: 0; transition: 0.2s; pointer-events: none;}
-    .bar-wrapper:hover .bar-tooltip { opacity: 1; }
+    /* Common Tooltip */
+    .bar-tooltip { position: absolute; top: 0; font-size: 0.7rem; background: rgba(0,0,0,0.8); padding: 4px 8px; border-radius: 6px; opacity: 0; transition: 0.2s; white-space: nowrap; pointer-events: none; z-index: 10; text-align: center; }
+    .bar-wrapper:hover .bar-tooltip { opacity: 1; transform: translateY(-20px); }
 
-    /* Login Overlay */
+    /* ── 10-DAY VIEW (CSS Grid) ── */
+    .chart-container.view-10 {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr); /* 10 perfectly equal columns */
+      gap: 4px;
+      align-items: end; /* Gravity pulls bars flat to the bottom line */
+    }
+    .chart-container.view-10 .bar-wrapper {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      height: 100%;
+    }
+    .chart-container.view-10 .bar {
+      width: 100%;
+      border-radius: 4px 4px 0 0;
+      margin-bottom: 0;
+      background: linear-gradient(to top, rgba(236,111,156,0.3), var(--accent-pink));
+    }
+    .chart-container.view-10 .date-label {
+      position: absolute;
+      bottom: -22px; /* Hangs horizontally below the x-axis */
+      width: 100%;
+      text-align: center;
+      font-size: 0.6rem;
+      color: #DDA0DD;
+    }
+
+    /* ── AVERAGE INDICATOR LINE ── */
+    .average-line {
+      position: absolute;
+      left: 0;
+      right: 0;
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.4);
+      z-index: 1;
+      pointer-events: none;
+    }
+    .average-label {
+      position: absolute;
+      right: 5px;
+      bottom: calc(100% + 2px);
+      font-size: 0.6rem;
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    /* ── SHOW ALL VIEW (Staircase) ── */
+    .chart-container.view-all {
+      display: flex;
+      align-items: flex-end; /* Flush bottom */
+      gap: 1px;
+      
+      /* 1. The Faint "End Goal" Grey Field */
+      background-color: rgba(255, 255, 255, 0.03); 
+      
+      /* 2. The 3 Milestone Lines (75%, 50%, and 25% from the top) */
+      background-image: 
+        linear-gradient(to bottom, transparent 25%, rgba(255, 255, 255, 0.1) 25%, rgba(255, 255, 255, 0.1) calc(25% + 1px), transparent calc(25% + 1px)),
+        linear-gradient(to bottom, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) calc(50% + 1px), transparent calc(50% + 1px)),
+        linear-gradient(to bottom, transparent 75%, rgba(255, 255, 255, 0.1) 75%, rgba(255, 255, 255, 0.1) calc(75% + 1px), transparent calc(75% + 1px));
+    }
+    
+    .chart-container.view-all .bar-wrapper {
+      flex: 1 1 0%;
+      min-width: 0; /* Allows bars to shrink perfectly to fit screen */
+      height: 100%;
+      display: flex;
+      align-items: flex-end;
+      position: relative;
+      justify-content: center;
+    }
+    .chart-container.view-all .bar {
+      width: 100%;
+      border-radius: 1px 1px 0 0; /* Squared staircase look */
+      margin-bottom: 0;
+      background: linear-gradient(to top, rgba(236,111,156,0.3), var(--accent-pink));
+    }
+    .period-axis {
+      text-align: center;
+      color: #DDA0DD;
+      font-size: 0.75rem;
+      margin-top: 5px;
+      font-weight: 500;
+    }
+
     #login-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: var(--bg-dark); display: flex; justify-content: center; align-items: center; z-index: 9999; }
-    #loader { display: none; position: fixed; top: 20px; right: 20px; background: var(--bg-card); color: var(--accent-glow); padding: 10px 20px; border-radius: 20px; border: 1px solid var(--accent-pink); z-index: 9999; font-weight: 600; }
+    #loader { display: none; position: fixed; top: 20px; right: 20px; background: rgba(0,0,0,0.8); color: var(--accent-glow); padding: 10px 20px; border-radius: 20px; border: 1px solid var(--accent-pink); z-index: 9999; font-weight: 600; }
   </style>
 </head>
 <body>
-  <div class="stars"></div>
+  <div id="starfield"></div>
   <canvas id="sakura-canvas" class="sakura"></canvas>
-  <div id="loader">🌙 Syncing...</div>
+  <div id="loader">✨ Syncing...</div>
 
   <div id="login-overlay">
     <div class="card" style="max-width: 350px; text-align: center; width: 90%;">
-      <img src="momorin-placeholder.png" alt="Panda" style="width: 100px; margin-bottom: 15px; animation: float 3s infinite;">
+      <img src="momorin-placeholder.png" alt="Panda" style="width: 100px; margin-bottom: 15px; animation: twinkle 3s infinite;">
       <h2 style="color: var(--accent-glow); margin-bottom: 20px;">Panda's Quran Tracker</h2>
       <input type="password" id="login-pwd" placeholder="Enter Password">
       <button onclick="attemptLogin()">Enter Journey</button>
-      <p id="login-error" style="color: #ef4444; margin-top: 15px; display: none; font-size: 0.85rem;"></p>
+      <p id="login-error" style="color: #FF1493; margin-top: 15px; display: none; font-size: 0.85rem;"></p>
     </div>
   </div>
 
   <div class="container" id="app-container" style="display: none;">
     
-    <div class="status-banner">
+    <div class="status-banner card">
       <h2>You are currently on</h2>
       <h1 id="status-surah">Surah Al-Fatihah, Ayah 1</h1>
-      <p id="status-next">Continue by reading Ayah 2</p>
+      <p id="status-next" style="color: #DDA0DD; font-size: 0.9rem;">Continue by reading Ayah 2</p>
     </div>
 
     <div class="card">
-      <h3>📖 Where did you stop today?</h3>
-      <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 15px;">
-        Even if you read multiple Surahs, just enter the final Ayah you finished on!
-      </p>
-      
-      <label>Surah</label>
-      <select id="input-surah"></select>
+      <h3>📖 Log Reading</h3>
       
       <div class="flex-row">
-        <div>
-          <label>Ending Ayah</label>
-          <input type="number" id="input-ayah" placeholder="e.g. 50">
+        <div style="flex: 2;">
+          <label>Date</label>
+          <input type="date" id="input-date">
+        </div>
+        <div style="flex: 3;">
+          <label>Surah</label>
+          <select id="input-surah"></select>
         </div>
       </div>
+      
+      <label>Where did you stop today?</label>
+      <input type="number" id="input-ayah" placeholder="e.g. 50">
       
       <button onclick="logProgress()">Log Progress</button>
     </div>
@@ -152,48 +263,47 @@
       <h3>✨ Your Progress</h3>
       
       <div class="progress-label"><span>Current Surah</span><span id="lbl-surah-pct">0%</span></div>
-      <div class="progress-wrapper">
-        <div class="progress-fill" id="fill-surah"></div>
-        <div class="progress-text" id="txt-surah">0 / 0 Ayahs</div>
-      </div>
+      <div class="progress-wrapper"><div class="progress-fill" id="fill-surah"></div><div class="progress-text" id="txt-surah">0 / 0 Ayahs</div></div>
 
       <div class="progress-label"><span>Whole Quran</span><span id="lbl-total-pct">0%</span></div>
-      <div class="progress-wrapper">
-        <div class="progress-fill" id="fill-total" style="background: linear-gradient(to right, #818cf8, #c084fc);"></div>
-        <div class="progress-text" id="txt-total">0 / 6236 Ayahs</div>
-      </div>
+      <div class="progress-wrapper"><div class="progress-fill" id="fill-total" style="background: linear-gradient(to right, #9370DB, #d86dd1);"></div><div class="progress-text" id="txt-total">0 / 6236 Ayahs</div></div>
 
-      <div class="flex-row" style="margin-top: 20px; text-align: center; border-top: 1px solid var(--bar-bg); padding-top: 15px;">
+      <div class="flex-row" style="margin-top: 25px; text-align: center; border-top: 1px dashed var(--bar-bg); padding-top: 15px;">
         <div>
-          <div style="font-size: 1.2rem; color: var(--accent-glow); font-weight: 700;" id="stat-avg">0</div>
-          <div style="font-size: 0.75rem; color: var(--text-muted);">Avg / Day</div>
+          <div style="font-size: 1.3rem; color: var(--accent-glow); font-weight: 700;" id="stat-avg">0</div>
+          <div style="font-size: 0.75rem; color: #DDA0DD;">Avg / Day</div>
+          <div style="font-size: 0.7rem; color: white; background: var(--bar-bg); border-radius: 8px; padding: 2px 6px; display: inline-block; margin-top: 4px;" id="stat-avg-pct">0%</div>
         </div>
         <div>
-          <div style="font-size: 1.2rem; color: #fbbf24; font-weight: 700;" id="stat-streak">0 🔥</div>
-          <div style="font-size: 0.75rem; color: var(--text-muted);">Current Streak</div>
+          <div style="font-size: 1.3rem; color: #FFD700; font-weight: 700;" id="stat-streak">0 🔥</div>
+          <div style="font-size: 0.75rem; color: #DDA0DD;">Active Streak</div>
+          <div style="font-size: 0.7rem; color: white; background: var(--bar-bg); border-radius: 8px; padding: 2px 6px; display: inline-block; margin-top: 4px;" id="stat-record-streak">0 🏆 best</div>
         </div>
       </div>
     </div>
 
     <div class="card">
-      <h3 style="margin-bottom: 5px;">📍 60-Hizb Journey</h3>
-      <p style="font-size: 0.8rem; color: var(--text-muted); text-align: center; margin-bottom: 20px;">Follow the glowing path to completion!</p>
-      
+      <h3 style="margin-bottom: 5px;">📍 60-Hizb Winding Road</h3>
+      <p style="font-size: 0.8rem; color: #DDA0DD; text-align: center; margin-bottom: 30px;">Follow the cosmic path to Jannah!</p>
       <div class="map-container" id="hizb-map">
         <img src="momorin-placeholder.png" class="panda-avatar" id="panda-avatar" alt="Panda">
-        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>📜 Session Log</h3>
+      <div class="log-container" id="written-log"></div>
     </div>
 
     <div class="card">
       <h3>
         📊 Reading History
-        <button class="btn-secondary" id="btn-chart-toggle" onclick="toggleChart()">Last 14 Days</button>
+        <button class="btn-secondary" id="btn-chart-toggle" onclick="toggleChart()">Show All</button>
       </h3>
-      <div class="chart-container" id="chart-box">
-        </div>
+      <div class="chart-container view-10" id="chart-box"></div>
     </div>
     
-    <button class="btn-secondary" style="width: 100%; border: 1px dashed var(--text-muted); margin-bottom: 40px;" onclick="resetJourney()">🔄 Start New Journey (Reset Tracker)</button>
+    <button class="btn-secondary" style="width: 100%; border: 1px dashed #DDA0DD; margin-bottom: 40px;" onclick="resetJourney()">🔄 Start New Journey (Reset Tracker)</button>
   </div>
 
   <script src="sakuraform.js"></script>
@@ -201,9 +311,8 @@
     // ⚠️ REPLACE WITH YOUR WEB APP URL ⚠️
     const scriptURL = 'https://script.google.com/macros/s/AKfycbzv35XYj_2RqPXL8CYLHnpi-XfQ5ChN0YiC-_0Ae-PBTV7Yb61XiSbbHM7pXizAWDn2/exec';
     
-    // --- QURAN DATABASE (6236 Total Ayahs) ---
     const QURAN_DATA = [
-      { name: "Al-Fatihah", count: 7 }, { name: "Al-Baqarah", count: 286 }, { name: "Aal-E-Imran", count: 200 }, { name: "An-Nisa", count: 176 },
+      { name: "Al-Fatihah", count: 7 }, { name: "Al-Baqarah", count: 286 }, { name: "Aali-Imran", count: 200 }, { name: "An-Nisa", count: 176 },
       { name: "Al-Ma'idah", count: 120 }, { name: "Al-An'am", count: 165 }, { name: "Al-A'raf", count: 206 }, { name: "Al-Anfal", count: 75 },
       { name: "At-Tawbah", count: 129 }, { name: "Yunus", count: 109 }, { name: "Hud", count: 123 }, { name: "Yusuf", count: 111 },
       { name: "Ar-Ra'd", count: 43 }, { name: "Ibrahim", count: 52 }, { name: "Al-Hijr", count: 99 }, { name: "An-Nahl", count: 128 },
@@ -235,14 +344,65 @@
     ];
 
     const TOTAL_QURAN_AYAHS = 6236;
-    let state = { history: [], currentRun: 1, currentTotalRead: 0, currentSurahIndex: 0, currentAyah: 0, chartView: '14' };
+    let state = { history: [], currentRun: 1, currentTotalRead: 0, currentSurahIndex: 0, currentAyah: 0, chartView: '10' };
 
-    // Initialize Dropdown
+    function getLocalYMD(dateStr) {
+      if (!dateStr) return "";
+      let d = new Date(dateStr);
+      if (isNaN(d)) return dateStr.split('T')[0];
+      let yyyy = d.getFullYear();
+      let mm = String(d.getMonth() + 1).padStart(2, '0');
+      let dd = String(d.getDate()).padStart(2, '0');
+      return `${yyyy}-${mm}-${dd}`;
+    }
+
+    function formatEUDate(dateStr) {
+      const ymd = getLocalYMD(dateStr);
+      const parts = ymd.split('-');
+      if (parts.length === 3) return `${parts[2]}.${parts[1]}.${parts[0]}`;
+      return dateStr;
+    }
+
+    const todayLocal = new Date();
+    const tzOffset = todayLocal.getTimezoneOffset() * 60000;
+    const localISOTime = (new Date(todayLocal - tzOffset)).toISOString().split('T')[0];
+    document.getElementById('input-date').value = localISOTime;
+    
     const selectEl = document.getElementById('input-surah');
-    QURAN_DATA.forEach((s, i) => {
-      let opt = document.createElement('option');
-      opt.value = i; opt.text = `${i+1}. ${s.name} (${s.count} Ayahs)`;
-      selectEl.appendChild(opt);
+    QURAN_DATA.forEach((s, i) => { selectEl.appendChild(new Option(`${i+1}. ${s.name} (${s.count})`, i)); });
+
+    function createStarfield() {
+      const starfield = document.getElementById('starfield');
+      for (let i = 0; i < 150; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        star.style.left = Math.random() * 100 + '%'; star.style.top = Math.random() * 100 + '%';
+        star.style.width = star.style.height = Math.random() * 3 + 'px';
+        star.style.animationDelay = Math.random() * 2 + 's';
+        starfield.appendChild(star);
+      }
+    }
+
+    function createShootingStar() {
+      const starfield = document.getElementById('starfield');
+      const s = document.createElement('div');
+      s.className = 'shooting-star';
+      s.style.top = Math.random() * 50 + '%';
+      s.style.left = Math.random() * 100 + '%';
+      starfield.appendChild(s);
+      setTimeout(() => s.remove(), 3000);
+    }
+    createStarfield();
+    setInterval(createShootingStar, 2500);
+
+    let lastWidth = window.innerWidth;
+    window.addEventListener('resize', () => {
+      if (window.innerWidth !== lastWidth) {
+        lastWidth = window.innerWidth;
+        if (document.getElementById('app-container').style.display === 'block') {
+          positionPanda();
+        }
+      }
     });
 
     async function apiCall(payload) {
@@ -252,10 +412,7 @@
         const data = await res.json();
         document.getElementById('loader').style.display = 'none';
         return data;
-      } catch (e) {
-        document.getElementById('loader').style.display = 'none';
-        return { success: false, message: "Network Error" };
-      }
+      } catch (e) { document.getElementById('loader').style.display = 'none'; return { success: false }; }
     }
 
     async function attemptLogin() {
@@ -275,92 +432,80 @@
     async function fetchData() {
       const res = await apiCall({ action: 'get_data' });
       if (res.success) {
-        state.history = res.history;
-        state.currentRun = res.currentRun;
+        state.history = res.history; state.currentRun = res.currentRun;
         processCurrentState();
         render();
       }
     }
 
     function processCurrentState() {
-      // Filter history to ONLY show the current reading journey (Run ID)
       const currentJourney = state.history.filter(h => parseInt(h['Run ID']) === state.currentRun);
       
+      currentJourney.sort((a, b) => {
+        const dA = new Date(a.Timestamp);
+        const dB = new Date(b.Timestamp);
+        if (dA - dB !== 0) return dA - dB;
+        return parseInt(a['Total Ayahs Read']) - parseInt(b['Total Ayahs Read']);
+      });
+
       if (currentJourney.length > 0) {
-        const lastLog = currentJourney[0]; // (It's reversed, so 0 is the newest)
+        const lastLog = currentJourney[currentJourney.length - 1]; 
         state.currentSurahIndex = parseInt(lastLog['Surah Number']) - 1 || 0;
         state.currentAyah = parseInt(lastLog['Ayah Number']) || 0;
         state.currentTotalRead = parseInt(lastLog['Total Ayahs Read']) || 0;
-      } else {
-        state.currentSurahIndex = 0;
-        state.currentAyah = 0;
-        state.currentTotalRead = 0;
-      }
+      } else { state.currentSurahIndex = 0; state.currentAyah = 0; state.currentTotalRead = 0; }
       
-      // Auto-update dropdown
       document.getElementById('input-surah').value = state.currentSurahIndex;
     }
 
     async function logProgress() {
-      const selectedSurahIdx = parseInt(document.getElementById('input-surah').value);
+      const dStr = document.getElementById('input-date').value;
+      const selectedIdx = parseInt(document.getElementById('input-surah').value);
       const inputAyah = parseInt(document.getElementById('input-ayah').value);
-      const surahData = QURAN_DATA[selectedSurahIdx];
+      const sData = QURAN_DATA[selectedIdx];
 
-      if (!inputAyah || inputAyah < 1 || inputAyah > surahData.count) {
-        return alert(`Please enter a valid Ayah number for ${surahData.name} (1 - ${surahData.count})`);
-      }
+      if (!dStr) return alert("Please select a date!");
+      if (dStr > localISOTime) return alert("You cannot log progress for a future date!");
+      if (!inputAyah || inputAyah < 1 || inputAyah > sData.count) return alert(`Enter a valid Ayah (1-${sData.count})`);
 
-      // Calculate new absolute total
       let newAbsoluteTotal = 0;
-      for (let i = 0; i < selectedSurahIdx; i++) {
-        newAbsoluteTotal += QURAN_DATA[i].count;
-      }
+      for (let i = 0; i < selectedIdx; i++) newAbsoluteTotal += QURAN_DATA[i].count;
       newAbsoluteTotal += inputAyah;
 
       const ayahsReadToday = newAbsoluteTotal - state.currentTotalRead;
       if (ayahsReadToday <= 0) return alert("You must enter a position further than your current progress!");
 
-      const payload = {
-        action: 'log_progress',
-        runId: state.currentRun,
-        surahNum: selectedSurahIdx + 1,
-        surahName: surahData.name,
-        ayahNum: inputAyah,
-        totalAyahs: newAbsoluteTotal,
-        ayahsToday: ayahsReadToday
-      };
-
-      const res = await apiCall(payload);
-      if (res.success) {
-        document.getElementById('input-ayah').value = '';
-        fetchData();
-      }
+      const res = await apiCall({
+        action: 'log_progress', dateStr: dStr, runId: state.currentRun, surahNum: selectedIdx + 1,
+        surahName: sData.name, ayahNum: inputAyah, totalAyahs: newAbsoluteTotal, ayahsToday: ayahsReadToday
+      });
+      if (res.success) { document.getElementById('input-ayah').value = ''; fetchData(); }
     }
 
     async function resetJourney() {
-      if(confirm("Are you sure? This will start a fresh progress tracker! (Old data remains safe in Google Sheets).")) {
-        await apiCall({ action: 'reset_run', newRunId: state.currentRun + 1 });
+      const dStr = document.getElementById('input-date').value || localISOTime;
+      if(confirm("Are you sure? This starts a fresh tracker!")) {
+        await apiCall({ action: 'reset_run', dateStr: dStr, newRunId: state.currentRun + 1 });
         fetchData();
       }
     }
 
-    // --- RENDER FUNCTIONS ---
+    function toggleChart() {
+      state.chartView = state.chartView === '10' ? 'all' : '10';
+      document.getElementById('btn-chart-toggle').innerText = state.chartView === '10' ? "Show All" : "Show Last 10 Days";
+      renderChart();
+    }
+
     function render() {
-      // 1. Top Banner
       const sName = QURAN_DATA[state.currentSurahIndex].name;
       document.getElementById('status-surah').innerText = `Surah ${sName}, Ayah ${state.currentAyah}`;
-      
       let nextText = "You finished the Quran! 🎉";
       if (state.currentTotalRead < TOTAL_QURAN_AYAHS) {
-        if (state.currentAyah < QURAN_DATA[state.currentSurahIndex].count) {
-          nextText = `Continue by reading Ayah ${state.currentAyah + 1}`;
-        } else {
-          nextText = `Continue by starting Surah ${QURAN_DATA[state.currentSurahIndex + 1].name}`;
-        }
+        if (state.currentAyah < QURAN_DATA[state.currentSurahIndex].count) nextText = `Continue reading Ayah ${state.currentAyah + 1}`;
+        else nextText = `Continue by starting Surah ${QURAN_DATA[state.currentSurahIndex + 1].name}`;
       }
       document.getElementById('status-next').innerText = nextText;
 
-      // 2. Progress Bars
       const sTotal = QURAN_DATA[state.currentSurahIndex].count;
       const sPct = ((state.currentAyah / sTotal) * 100).toFixed(1);
       document.getElementById('fill-surah').style.width = `${sPct}%`;
@@ -372,118 +517,257 @@
       document.getElementById('txt-total').innerText = `${state.currentTotalRead} / 6236`;
       document.getElementById('lbl-total-pct').innerText = `${tPct}%`;
 
-      // 3. Stats
-      const currentJourney = state.history.filter(h => parseInt(h['Run ID']) === state.currentRun && parseInt(h['Ayahs Read Today']) > 0);
-      let avg = 0; let streak = 0;
-      if (currentJourney.length > 0) {
-        const totalSum = currentJourney.reduce((sum, r) => sum + parseInt(r['Ayahs Read Today']), 0);
-        avg = Math.round(totalSum / currentJourney.length);
+      let currentJourney = state.history.filter(h => parseInt(h['Run ID']) === state.currentRun && parseInt(h['Ayahs Read Today']) > 0);
+      
+      currentJourney.sort((a, b) => {
+        const dA = new Date(a.Timestamp);
+        const dB = new Date(b.Timestamp);
+        if (dA - dB !== 0) return dA - dB;
+        return parseInt(a['Total Ayahs Read']) - parseInt(b['Total Ayahs Read']);
+      });
+
+      let dailyTotals = {};
+      currentJourney.forEach(entry => {
+        let dStr = getLocalYMD(entry.Timestamp);
+        dailyTotals[dStr] = (dailyTotals[dStr] || 0) + parseInt(entry['Ayahs Read Today']);
+      });
+      const uniqueDates = Object.keys(dailyTotals).sort((a,b) => new Date(b) - new Date(a));
+      
+      let avg = 0, streak = 0, recordStreak = 0;
+      if (uniqueDates.length > 0) {
+        const totalSum = Object.values(dailyTotals).reduce((sum, val) => sum + val, 0);
+        avg = Math.round(totalSum / uniqueDates.length);
         
-        // Simple streak logic (assuming 1 log per day for visually testing)
-        // A real robust streak would check exact Date strings.
-        streak = currentJourney.length; 
+        let checkDate = new Date(); checkDate.setHours(0,0,0,0);
+        let firstLog = new Date(uniqueDates[0]); firstLog.setHours(0,0,0,0);
+        let diff = (checkDate - firstLog) / 86400000;
+        if (diff === 0 || diff === 1) {
+          streak = 1;
+          for (let i = 1; i < uniqueDates.length; i++) {
+            let prevD = new Date(uniqueDates[i-1]); prevD.setHours(0,0,0,0);
+            let currD = new Date(uniqueDates[i]); currD.setHours(0,0,0,0);
+            if ((prevD - currD) / 86400000 === 1) streak++; else break;
+          }
+        }
+
+        const sortedAsc = [...uniqueDates].sort((a,b) => new Date(a) - new Date(b));
+        let tempStreak = 1;
+        recordStreak = 1;
+        for (let i = 1; i < sortedAsc.length; i++) {
+          let prevD = new Date(sortedAsc[i-1]); prevD.setHours(0,0,0,0);
+          let currD = new Date(sortedAsc[i]); currD.setHours(0,0,0,0);
+          if ((currD - prevD) / 86400000 === 1) {
+            tempStreak++;
+            if (tempStreak > recordStreak) recordStreak = tempStreak;
+          } else {
+            tempStreak = 1;
+          }
+        }
       }
+
       document.getElementById('stat-avg').innerText = avg;
+      const avgPct = ((avg / 6236) * 100).toFixed(2);
+      document.getElementById('stat-avg-pct').innerText = `${avgPct}% per day`;
       document.getElementById('stat-streak').innerText = `${streak} 🔥`;
+      document.getElementById('stat-record-streak').innerText = `${recordStreak} 🏆 best`;
 
-      renderMap();
+      const logBox = document.getElementById('written-log');
+      logBox.innerHTML = currentJourney.length === 0 ? '<div style="text-align:center; color:#999; padding: 20px;">No reading logged yet.</div>' : '';
+      
+      let chronoJourney = [...currentJourney];
+      chronoJourney.forEach((entry, i) => { entry.sessionNum = i + 1; });
+      let displayJourney = [...chronoJourney].reverse(); 
+
+      displayJourney.forEach(entry => {
+        let pctDone = ((entry['Total Ayahs Read'] / 6236) * 100).toFixed(2);
+        let niceDate = formatEUDate(entry.Timestamp);
+        logBox.innerHTML += `
+          <div class="log-item">
+            <span class="session-badge">Session ${entry.sessionNum}</span>
+            <span class="log-date">${niceDate}</span>
+            <span class="log-text">${entry['Surah Name']}, Ayah ${entry['Ayah Number']}</span>
+            <span class="log-pct">${pctDone}%</span>
+          </div>`;
+      });
+
       renderChart();
-    }
-
-    function renderMap() {
-      const mapEl = document.getElementById('hizb-map');
-      // Clear old dots, keep panda
-      Array.from(mapEl.children).forEach(c => { if(c.id !== 'panda-avatar') c.remove(); });
-      
-      const dotsPerRow = 10; const rows = 6; // 60 dots
-      const hizbProgress = (state.currentTotalRead / TOTAL_QURAN_AYAHS) * 60;
-      
-      let pandaX = 0, pandaY = 0;
-      
-      for(let r = 0; r < rows; r++) {
-        let rowDiv = document.createElement('div');
-        rowDiv.className = 'road-row';
-        
-        for(let d = 0; d < dotsPerRow; d++) {
-          let dotIndex = (r * dotsPerRow) + d;
-          let dot = document.createElement('div');
-          dot.className = `dot ${hizbProgress >= dotIndex ? 'active' : ''}`;
-          dot.id = `dot-${dotIndex}`;
-          rowDiv.appendChild(dot);
-        }
-        mapEl.appendChild(rowDiv);
-      }
-
-      // Smooth Panda Placement
-      setTimeout(() => {
-        let activeIndex = Math.floor(hizbProgress);
-        if (activeIndex > 59) activeIndex = 59;
-        
-        const currentDot = document.getElementById(`dot-${activeIndex}`);
-        const nextDot = document.getElementById(`dot-${Math.min(activeIndex + 1, 59)}`);
-        
-        if (currentDot && nextDot) {
-          const remainder = hizbProgress % 1;
-          const rectC = currentDot.getBoundingClientRect();
-          const rectN = nextDot.getBoundingClientRect();
-          const mapRect = mapEl.getBoundingClientRect();
-          
-          const startX = rectC.left - mapRect.left + (rectC.width/2);
-          const startY = rectC.top - mapRect.top + (rectC.height/2);
-          const endX = rectN.left - mapRect.left + (rectN.width/2);
-          const endY = rectN.top - mapRect.top + (rectN.height/2);
-          
-          pandaX = startX + ((endX - startX) * remainder);
-          pandaY = startY + ((endY - startY) * remainder);
-          
-          const panda = document.getElementById('panda-avatar');
-          panda.style.left = `${pandaX}px`;
-          panda.style.top = `${pandaY}px`;
-        }
-      }, 100); // slight delay to allow CSS grid to render first
-    }
-
-    function toggleChart() {
-      state.chartView = state.chartView === '14' ? 'all' : '14';
-      document.getElementById('btn-chart-toggle').innerText = state.chartView === '14' ? "Show All-Time" : "Show Last 14 Days";
-      renderChart();
+      buildMap();
     }
 
     function renderChart() {
-      const container = document.getElementById('chart-box');
-      container.innerHTML = '';
+      const chartBox = document.getElementById('chart-box');
       
-      // Filter out non-reading days (like the start marker)
-      let journeyData = state.history.filter(h => parseInt(h['Run ID']) === state.currentRun && parseInt(h['Ayahs Read Today']) > 0);
-      
-      // Reverse to chronological order for chart (L to R)
-      journeyData = journeyData.reverse(); 
-      
-      if (state.chartView === '14') {
-        journeyData = journeyData.slice(-14);
-      }
+      // Clean up old period text before redrawing
+      document.querySelectorAll('.period-axis').forEach(e => e.remove());
+      chartBox.innerHTML = '';
 
-      if (journeyData.length === 0) {
-        container.innerHTML = '<p style="color:var(--text-muted); font-size:0.8rem; width:100%; text-align:center; padding-bottom: 20px;">No reading data yet!</p>';
-        return;
-      }
-
-      const maxRead = Math.max(...journeyData.map(d => parseInt(d['Ayahs Read Today'])));
-      
-      journeyData.forEach(day => {
-        const val = parseInt(day['Ayahs Read Today']);
-        const pct = Math.max((val / maxRead) * 100, 5); // min 5% height
-        const dateStr = new Date(day['Timestamp']).toLocaleDateString(undefined, {month:'short', day:'numeric'});
-        
-        const wrapper = document.createElement('div');
-        wrapper.className = 'bar-wrapper';
-        wrapper.innerHTML = `
-          <div class="bar-tooltip">${val} Ayahs</div>
-          <div class="bar" style="height: ${pct}%"></div>
-          <div class="bar-date">${dateStr}</div>
-        `;
-        container.appendChild(wrapper);
+      let currentJourney = state.history.filter(h => parseInt(h['Run ID']) === state.currentRun && parseInt(h['Ayahs Read Today']) > 0);
+      currentJourney.sort((a, b) => {
+        const dA = new Date(a.Timestamp);
+        const dB = new Date(b.Timestamp);
+        if (dA - dB !== 0) return dA - dB;
+        return parseInt(a['Total Ayahs Read']) - parseInt(b['Total Ayahs Read']);
       });
+      
+      if(currentJourney.length === 0) {
+           chartBox.innerHTML = '<p style="width:100%; text-align:center; color:#999; font-size:0.8rem; margin-top:20px;">No reading logged yet.</p>';
+           return;
+      }
+
+      let chronoJourney = [...currentJourney];
+      chronoJourney.forEach((entry, i) => { entry.sessionNum = i + 1; });
+
+      // Calculate overall Journey Average
+      let totalAyahs = 0;
+      let activeDays = new Set();
+      chronoJourney.forEach(entry => {
+        totalAyahs += parseInt(entry['Ayahs Read Today']) || 0;
+        activeDays.add(getLocalYMD(entry.Timestamp));
+      });
+      let avgAyahs = activeDays.size > 0 ? (totalAyahs / activeDays.size) : 0;
+      
+      // --- 10 DAY VIEW ---
+      if (state.chartView === '10') {
+        chartBox.className = 'chart-container view-10';
+        
+        let days10 = [];
+        let today = new Date();
+        for(let i=9; i>=0; i--) {
+          let d = new Date(today);
+          d.setDate(d.getDate() - i);
+          let yyyy = d.getFullYear();
+          let mm = String(d.getMonth() + 1).padStart(2, '0');
+          let dd = String(d.getDate()).padStart(2, '0');
+          days10.push(`${yyyy}-${mm}-${dd}`);
+        }
+        
+        let dailySums = {};
+        chronoJourney.forEach(entry => {
+          let dStr = getLocalYMD(entry.Timestamp);
+          dailySums[dStr] = (dailySums[dStr] || 0) + parseInt(entry['Ayahs Read Today']);
+        });
+        
+        let maxRead = Math.max(...days10.map(d => dailySums[d] || 0), 10);
+        let barsHTML = '';
+        
+        days10.forEach(date => {
+          const val = dailySums[date] || 0;
+          const pct = val === 0 ? 0 : Math.max((val / maxRead) * 100, 2); 
+          let niceDate = date.substring(8, 10) + '.' + date.substring(5, 7); // DD.MM format
+          
+          barsHTML += `
+            <div class="bar-wrapper">
+              ${val > 0 ? `<div class="bar-tooltip">${niceDate}<br>${val} Ayahs</div>` : ''}
+              <div class="bar" style="height: ${pct}%; background: ${val===0 ? 'transparent' : ''};"></div>
+              <div class="date-label">${niceDate}</div>
+            </div>`;
+        });
+
+        // The JS Math for the Average Line position
+        let avgPct = (avgAyahs / maxRead) * 100;
+        if (avgPct > 0 && avgPct <= 100) {
+          barsHTML += `
+            <div class="average-line" style="bottom: ${avgPct}%;">
+                <div class="average-label">Avg: ${Math.round(avgAyahs)}</div>
+            </div>`;
+        }
+        
+        chartBox.innerHTML = barsHTML;
+
+      // --- SHOW ALL VIEW ---
+      } else {
+        chartBox.className = 'chart-container view-all';
+        let barsHTML = '';
+        
+        // Loop through the EXACT sessions to preserve "Session X"
+        chronoJourney.forEach((entry) => {
+          const total = parseInt(entry['Total Ayahs Read']);
+          // Height is strictly calculated out of the 6236 goal
+          const pct = Math.min((total / TOTAL_QURAN_AYAHS) * 100, 100);
+          
+          barsHTML += `
+            <div class="bar-wrapper">
+              <div class="bar-tooltip" style="top:-35px; white-space:nowrap;">Session ${entry.sessionNum}<br>${total} / 6236</div>
+              <div class="bar" style="height: ${Math.max(pct, 1)}%;"></div>
+            </div>`;
+        });
+        
+        chartBox.innerHTML = barsHTML;
+        
+        // Inject Period Axis text outside the container
+        if (chronoJourney.length > 0) {
+          let firstObj = new Date(chronoJourney[0].Timestamp);
+          let lastObj = new Date(chronoJourney[chronoJourney.length - 1].Timestamp);
+          
+          let options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+          let strFirst = firstObj.toLocaleDateString('en-GB', options);
+          let strLast = lastObj.toLocaleDateString('en-GB', options);
+
+          let periodTitle = document.createElement('div');
+          periodTitle.className = 'period-axis';
+          periodTitle.innerText = `${strFirst} → ${strLast}`;
+          chartBox.parentNode.insertBefore(periodTitle, chartBox.nextSibling);
+        }
+      }
+    }
+
+    function buildMap() {
+      const mapEl = document.getElementById('hizb-map');
+      
+      if (mapEl.querySelectorAll('.road-row').length === 0) {
+        const dotsPerRow = 10; const rows = 6; 
+        for(let r = 0; r < rows; r++) {
+          let rowDiv = document.createElement('div');
+          rowDiv.className = 'road-row';
+          for(let d = 0; d < dotsPerRow; d++) {
+            let dotIndex = (r * dotsPerRow) + d;
+            let dot = document.createElement('div');
+            dot.className = 'dot';
+            dot.id = `dot-${dotIndex}`;
+            rowDiv.appendChild(dot);
+          }
+          mapEl.appendChild(rowDiv);
+        }
+      }
+
+      const hizbProgress = (state.currentTotalRead / TOTAL_QURAN_AYAHS) * 60;
+      for(let i = 0; i < 60; i++) {
+        let dot = document.getElementById(`dot-${i}`);
+        if (dot) {
+          if (hizbProgress >= i) dot.classList.add('active');
+          else dot.classList.remove('active');
+        }
+      }
+
+      setTimeout(positionPanda, 100); 
+    }
+
+    function positionPanda() {
+      const mapEl = document.getElementById('hizb-map');
+      if (!mapEl) return;
+      
+      const hizbProgress = (state.currentTotalRead / TOTAL_QURAN_AYAHS) * 60;
+      let activeIndex = Math.floor(hizbProgress);
+      if (activeIndex > 59) activeIndex = 59;
+      
+      const currentDot = document.getElementById(`dot-${activeIndex}`);
+      const nextDot = document.getElementById(`dot-${Math.min(activeIndex + 1, 59)}`);
+      
+      if (currentDot && nextDot) {
+        const remainder = hizbProgress % 1;
+        const rectC = currentDot.getBoundingClientRect();
+        const rectN = nextDot.getBoundingClientRect();
+        const mapRect = mapEl.getBoundingClientRect();
+        
+        const startX = rectC.left - mapRect.left + (rectC.width/2);
+        const startY = rectC.top - mapRect.top + (rectC.height/2);
+        const endX = rectN.left - mapRect.left + (rectN.width/2);
+        const endY = rectN.top - mapRect.top + (rectN.height/2);
+        
+        const panda = document.getElementById('panda-avatar');
+        panda.style.left = `${startX + ((endX - startX) * remainder)}px`;
+        panda.style.top = `${startY + ((endY - startY) * remainder)}px`;
+      }
     }
   </script>
 </body>
