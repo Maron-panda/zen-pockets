@@ -174,19 +174,57 @@
     }
 
     /* ── SHOW ALL VIEW (Staircase) ── */
+
     .chart-container.view-all {
       display: flex;
-      align-items: flex-end; /* Flush bottom */
-      gap: 1px;
-      
-      /* 1. The Faint "End Goal" Grey Field */
-      background-color: rgba(255, 255, 255, 0.03); 
-      
-      /* 2. The 3 Milestone Lines (75%, 50%, and 25% from the top) */
-      background-image: 
-        linear-gradient(to bottom, transparent 25%, rgba(255, 255, 255, 0.1) 25%, rgba(255, 255, 255, 0.1) calc(25% + 1px), transparent calc(25% + 1px)),
-        linear-gradient(to bottom, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) calc(50% + 1px), transparent calc(50% + 1px)),
-        linear-gradient(to bottom, transparent 75%, rgba(255, 255, 255, 0.1) 75%, rgba(255, 255, 255, 0.1) calc(75% + 1px), transparent calc(75% + 1px));
+      align-items: flex-end;
+      gap: 2px; /* Small gap for the "chart" feel */
+      padding: 0 10px;
+      /* The "Pink Dawn" Glow behind the mountain */
+      background: radial-gradient(circle at bottom, rgba(236, 111, 156, 0.15) 0%, transparent 70%);
+      border-radius: 12px;
+      position: relative;
+    }
+
+    .chart-container.view-all .bar-wrapper {
+      flex: 1 1 0%;
+      min-width: 0;
+      height: 100%;
+      display: flex;
+      align-items: flex-end;
+      position: relative;
+      z-index: 2; /* Sits above the milestone lines */
+    }
+
+    .chart-container.view-all .bar {
+      width: 100%;
+      /* Sleeker Rounded Top */
+      border-radius: 4px 4px 0 0; 
+      /* Galaxy Gradient: Deep Violet -> Signature Pink -> Glowing Tip */
+      background: linear-gradient(to top, 
+        rgba(46, 26, 71, 0.8) 0%, 
+        var(--accent-pink) 70%, 
+        #ffffff 100%
+      );
+      /* Subtle "Energy" Glow */
+      box-shadow: 0 0 10px rgba(236, 111, 156, 0.2);
+      transition: transform 0.2s;
+    }
+
+    /* Milestone Shooting Star Lines */
+    .milestone-line {
+      position: absolute;
+      left: 0;
+      right: 0;
+      border-top: 1px dashed rgba(255, 255, 255, 0.15);
+      z-index: 1;
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      font-size: 0.7rem;
+      color: rgba(255, 255, 255, 0.5);
+      padding-right: 5px;
     }
     
     .chart-container.view-all .bar-wrapper {
@@ -679,33 +717,39 @@
         chartBox.className = 'chart-container view-all';
         let barsHTML = '';
         
-        // Loop through the EXACT sessions to preserve "Session X"
+        // 1. Add Milestone Lines (The Shooting Stars)
+        const milestones = [
+          { pct: 75, label: '75% ✨' },
+          { pct: 50, label: '50% 💫' },
+          { pct: 25, label: '25% ☄️' }
+        ];
+        
+        milestones.forEach(m => {
+          barsHTML += `<div class="milestone-line" style="bottom: ${m.pct}%;">${m.label}</div>`;
+        });
+
+        // 2. Add the Session Bars
         chronoJourney.forEach((entry) => {
           const total = parseInt(entry['Total Ayahs Read']);
-          // Height is strictly calculated out of the 6236 goal
           const pct = Math.min((total / TOTAL_QURAN_AYAHS) * 100, 100);
           
           barsHTML += `
             <div class="bar-wrapper">
-              <div class="bar-tooltip" style="top:-35px; white-space:nowrap;">Session ${entry.sessionNum}<br>${total} / 6236</div>
+              <div class="bar-tooltip" style="top:-35px;">Session ${entry.sessionNum}<br>${total} / 6236</div>
               <div class="bar" style="height: ${Math.max(pct, 1)}%;"></div>
             </div>`;
         });
         
         chartBox.innerHTML = barsHTML;
         
-        // Inject Period Axis text outside the container
+        // 3. Add the Date Range at bottom
         if (chronoJourney.length > 0) {
-          let firstObj = new Date(chronoJourney[0].Timestamp);
-          let lastObj = new Date(chronoJourney[chronoJourney.length - 1].Timestamp);
-          
-          let options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
-          let strFirst = firstObj.toLocaleDateString('en-GB', options);
-          let strLast = lastObj.toLocaleDateString('en-GB', options);
+          let first = new Date(chronoJourney[0].Timestamp).toLocaleDateString('en-GB', { day:'numeric', month:'short' });
+          let last = new Date(chronoJourney[chronoJourney.length-1].Timestamp).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
 
           let periodTitle = document.createElement('div');
           periodTitle.className = 'period-axis';
-          periodTitle.innerText = `${strFirst} → ${strLast}`;
+          periodTitle.innerText = `${first} ➔ ${last}`;
           chartBox.parentNode.insertBefore(periodTitle, chartBox.nextSibling);
         }
       }
