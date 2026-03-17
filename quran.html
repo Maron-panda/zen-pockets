@@ -174,16 +174,30 @@
     }
 
     /* ── SHOW ALL VIEW (Staircase) ── */
-
     .chart-container.view-all {
       display: flex;
       align-items: flex-end;
-      gap: 2px; /* Small gap for the "chart" feel */
+      gap: 2px;
       padding: 0 10px;
-      /* The "Pink Dawn" Glow behind the mountain */
-      background: radial-gradient(circle at bottom, rgba(236, 111, 156, 0.15) 0%, transparent 70%);
+      /* SWAPPED: Pink Dawn for Lunar Aura */
+      background: radial-gradient(circle at bottom, rgba(200, 230, 255, 0.1) 0%, transparent 80%);
       border-radius: 12px;
       position: relative;
+      /* THE FINISH LINE (100% Goal) */
+      border-top: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    /* Adding the "Goal Complete" Label */
+    .chart-container.view-all::before {
+      content: "Goal ✨";
+      position: absolute;
+      top: -25px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.7rem;
+      letter-spacing: 1px;
+      color: rgba(255, 255, 255, 0.6);
+      font-weight: 600;
     }
 
     .chart-container.view-all .bar-wrapper {
