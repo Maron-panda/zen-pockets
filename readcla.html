@@ -178,12 +178,11 @@
       display: flex;
       align-items: flex-end; /* Flush bottom */
       gap: 1px;
-      overflow-x: auto;
-      overflow-y: hidden;
+      overflow: hidden; /* FORCES NO SCROLLING */
     }
     .chart-container.view-all .bar-wrapper {
       flex: 1 1 0%;
-      min-width: 6px;
+      min-width: 0; /* Allows bars to shrink perfectly to fit screen */
       height: 100%;
       display: flex;
       align-items: flex-end;
@@ -669,38 +668,27 @@
       // --- SHOW ALL VIEW ---
       } else {
         chartBox.className = 'chart-container view-all';
-        
-        let dailySums = {};
-        chronoJourney.forEach(entry => {
-          let dStr = getLocalYMD(entry.Timestamp);
-          dailySums[dStr] = (dailySums[dStr] || 0) + parseInt(entry['Ayahs Read Today']);
-        });
-
-        let allDates = Object.keys(dailySums).sort();
-        let cumulative = 0;
         let barsHTML = '';
         
-        allDates.forEach(date => {
-          cumulative += dailySums[date];
+        // Loop through the EXACT sessions to preserve "Session X"
+        chronoJourney.forEach((entry) => {
+          const total = parseInt(entry['Total Ayahs Read']);
           // Height is strictly calculated out of the 6236 goal
-          const pct = Math.min((cumulative / TOTAL_QURAN_AYAHS) * 100, 100);
+          const pct = Math.min((total / TOTAL_QURAN_AYAHS) * 100, 100);
           
-          let dObj = new Date(date);
-          let niceDate = dObj.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-
           barsHTML += `
             <div class="bar-wrapper">
-              <div class="bar-tooltip" style="top:-35px;">${niceDate}<br>${cumulative} / 6236</div>
-              <div class="bar" style="height: ${pct}%;"></div>
+              <div class="bar-tooltip" style="top:-35px; white-space:nowrap;">Session ${entry.sessionNum}<br>${total} / 6236</div>
+              <div class="bar" style="height: ${Math.max(pct, 1)}%;"></div>
             </div>`;
         });
         
         chartBox.innerHTML = barsHTML;
         
         // Inject Period Axis text outside the container
-        if (allDates.length > 0) {
-          let firstObj = new Date(allDates[0]);
-          let lastObj = new Date(allDates[allDates.length - 1]);
+        if (chronoJourney.length > 0) {
+          let firstObj = new Date(chronoJourney[0].Timestamp);
+          let lastObj = new Date(chronoJourney[chronoJourney.length - 1].Timestamp);
           
           let options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
           let strFirst = firstObj.toLocaleDateString('en-GB', options);
