@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cozy Panda Study Cafe 🍵🐼</title>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-cream: #FDFBF7;
+      --text-mocha: #4A3B32;
+      --matcha: #A5C4A3;
+      --sakura: #F2C6C2;
+      --latte: #D4BBA5;
+      --card-bg: rgba(255, 255, 255, 0.85);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Quicksand', sans-serif; }
+    
+    body {
+      background: var(--bg-cream);
+      color: var(--text-mocha);
+      min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center; padding: 20px;
+      background-image: radial-gradient(var(--sakura) 1px, transparent 1px);
+      background-size: 30px 30px; /* Subtle dotted cafe wallpaper */
+    }
+
+    .container { width: 100%; max-width: 650px; position: relative; }
+    
+    .card { 
+      background: var(--card-bg); backdrop-filter: blur(10px);
+      border: 2px solid #FFF; border-radius: 20px; padding: 25px; 
+      margin-bottom: 25px; box-shadow: 0 8px 20px rgba(74, 59, 50, 0.08); 
+    }
+
+    h1 { color: var(--text-mocha); text-align: center; font-size: 1.8rem; margin-bottom: 5px; }
+    .subtitle { text-align: center; font-size: 0.95rem; color: #887467; margin-bottom: 20px; font-weight: 500; }
+
+    /* The Predictor Box */
+    .predictor-box {
+      background: rgba(165, 196, 163, 0.15); border: 2px dashed var(--matcha);
+      padding: 15px; border-radius: 15px; text-align: center; margin-bottom: 25px;
+    }
+    .predictor-box span { font-weight: 700; color: #7CA179; }
+
+    /* Countdowns */
+    .countdown-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 25px;}
+    .cd-card { background: #FFF; padding: 15px; border-radius: 15px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.03); border-bottom: 4px solid var(--sakura);}
+    .cd-card.strategi { border-bottom-color: var(--latte); }
+    .cd-card.makro { border-bottom-color: var(--matcha); }
+    .cd-card.finans { border-bottom-color: #A3C4D1; }
+    .cd-card.mikro { border-bottom-color: var(--sakura); }
+    .cd-title { font-size: 0.8rem; font-weight: 700; color: #887467; text-transform: uppercase; }
+    .cd-days { font-size: 1.8rem; font-weight: 700; color: var(--text-mocha); margin: 5px 0; }
+    .cd-date { font-size: 0.75rem; color: #A89B93; }
+
+    /* Overall Progress */
+    .prog-label { display: flex; justify-content: space-between; font-weight: 600; font-size: 0.9rem; margin-bottom: 8px;}
+    .prog-track { height: 18px; background: #EEE5DD; border-radius: 10px; overflow: hidden; margin-bottom: 20px;}
+    .prog-fill { height: 100%; background: var(--matcha); transition: width 0.5s ease; }
+
+    /* The Winding Road Map */
+    .map-container { position: relative; width: 100%; padding: 20px 10px; display: flex; flex-direction: column; align-items: center; overflow: hidden; margin-bottom: 10px;}
+    .road-row { height: 20px; margin-bottom: 30px; position: relative; width: 100%; display: flex; justify-content: space-between; align-items: center; }
+    .road-row::before { content: ''; position: absolute; left: 0; right: 0; top: 9px; height: 3px; background: #EEE5DD; z-index: 1; }
+    .road-row:nth-child(odd):not(:last-child)::after { content: ''; position: absolute; right: -10px; top: 9px; width: 25px; height: 50px; border: 3px solid #EEE5DD; border-left: none; border-radius: 0 20px 20px 0; z-index: 1; }
+    .road-row:nth-child(even):not(:last-child)::after { content: ''; position: absolute; left: -10px; top: 9px; width: 25px; height: 50px; border: 3px solid #EEE5DD; border-right: none; border-radius: 20px 0 0 20px; z-index: 1; }
+    .road-row:nth-child(even) { flex-direction: row-reverse; } 
+    
+    .dot { width: 14px; height: 14px; background: #FFF; border: 3px solid #EEE5DD; border-radius: 50%; z-index: 2; position: relative; transition: 0.3s; }
+    .dot.active { background: var(--matcha); border-color: #FFF; box-shadow: 0 0 8px var(--matcha); }
+    .panda-avatar { position: absolute; font-size: 1.5rem; z-index: 5; transition: left 0.8s ease, top 0.8s ease; transform: translate(-50%, -50%); }
+
+    /* Task List */
+    .subject-header { font-size: 1.2rem; font-weight: 700; border-bottom: 2px dashed #EEE5DD; padding-bottom: 10px; margin-top: 25px; margin-bottom: 15px;}
+    .task-item { display: flex; align-items: center; justify-content: space-between; padding: 12px; background: #FFF; border-radius: 12px; margin-bottom: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); border: 1px solid #F0EBE6;}
+    .task-name { font-size: 0.95rem; font-weight: 600; }
+    .task-type { font-size: 0.7rem; color: #FFF; background: var(--latte); padding: 3px 6px; border-radius: 6px; margin-left: 8px;}
+    .task-type.core { background: var(--sakura); }
+
+    /* 3-State Button */
+    .status-btn { border: none; padding: 6px 12px; border-radius: 8px; font-weight: 600; font-size: 0.8rem; cursor: pointer; transition: 0.2s; min-width: 110px;}
+    .s-0 { background: #EEE5DD; color: #887467; } /* Not Started */
+    .s-1 { background: var(--sakura); color: #FFF; } /* In Progress */
+    .s-2 { background: var(--matcha); color: #FFF; } /* Tidying Notes */
+    .s-3 { background: var(--latte); color: #FFF; } /* Done */
+
+    #loader { display: none; position: fixed; top: 20px; right: 20px; background: #FFF; color: var(--text-mocha); padding: 10px 20px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); z-index: 9999; font-weight: 600; }
+  </style>
+</head>
+<body>
+
+  <div id="loader">🐼 Syncing...</div>
+
+  <div class="container">
+    <h1>🐼 Panda Study Cafe</h1>
+    <p class="subtitle">Brew some coffee, open the books.</p>
+
+    <div class="predictor-box" id="predictor-box">
+      </div>
+
+    <div class="countdown-grid">
+      <div class="cd-card strategi">
+        <div class="cd-title">Strategi II</div>
+        <div class="cd-days" id="cd-strat">--</div>
+        <div class="cd-date">15.04.2026</div>
+      </div>
+      <div class="cd-card makro">
+        <div class="cd-title">Makroøkonomi II</div>
+        <div class="cd-days" id="cd-makro">--</div>
+        <div class="cd-date">29.05.2026</div>
+      </div>
+      <div class="cd-card finans">
+        <div class="cd-title">Finansregnskap</div>
+        <div class="cd-days" id="cd-finans">--</div>
+        <div class="cd-date">05.06.2026</div>
+      </div>
+      <div class="cd-card mikro">
+        <div class="cd-title">Mikroøkonomi II</div>
+        <div class="cd-days" id="cd-mikro">--</div>
+        <div class="cd-date">12.06.2026</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="prog-label"><span>Core 43 Progress</span><span id="overall-pct">0%</span></div>
+      <div class="prog-track"><div class="prog-fill" id="overall-fill" style="width: 0%;"></div></div>
+      
+      <p style="text-align:center; font-size: 0.8rem; color:#887467; margin-bottom: 15px;">Your cozy path to completing the 43 core lectures!</p>
+      <div class="map-container" id="study-map">
+        <div class="panda-avatar" id="panda-avatar">🐼</div>
+      </div>
+    </div>
+
+    <div class="card" id="task-list">
+      </div>
+  </div>
+
+  <script>
+    // ⚠️ REPLACE WITH YOUR NEW WEB APP URL ⚠️
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyEd9bWziMu01aEGexL9fgt3VXkMUSsz8FFvvFC_7ybz9BWZBVuHYzpMqrf1mDZK27Ryw/exec';
+
+    // Dates mapped to European format DD.MM.YYYY
+    const EXAMS = {
+      strat: new Date('2026-04-15T09:00:00'),
+      makro: new Date('2026-05-29T09:00:00'),
+      finans: new Date('2026-06-05T09:00:00'),
+      mikro: new Date('2026-06-12T09:00:00')
+    };
+
+    let tasks = [];
+    const STATES = ["Not Started", "In Progress", "Tidying Notes", "Done"];
+
+    // Initialize Baseline Database if empty
+    function generateBaseTasks() {
+      let base = [];
+      let id = 0;
+      
+      // Makro (15 Core + Extras)
+      for(let i=1; i<=15; i++) base.push({ id: id++, sub: "Makroøkonomi II", type: "Core", name: `Forelesning ${i}`, status: 0 });
+      for(let i=1; i<=3; i++) base.push({ id: id++, sub: "Makroøkonomi II", type: "Extra", name: `Oppgavesett ${i}`, status: 0 });
+      base.push({ id: id++, sub: "Makroøkonomi II", type: "Extra", name: "Siste runde", status: 0 });
+      base.push({ id: id++, sub: "Makroøkonomi II", type: "Extra", name: "Exam Prep 1", status: 0 }, { id: id++, sub: "Makroøkonomi II", type: "Extra", name: "Exam Prep 2", status: 0 });
+
+      // Finans (14 Core)
+      for(let i=1; i<=14; i++) base.push({ id: id++, sub: "Finansregnskap", type: "Core", name: `Studieøkt ${i}`, status: 0 });
+
+      // Mikro (14 Core + Extras)
+      for(let i=1; i<=14; i++) base.push({ id: id++, sub: "Mikroøkonomi II", type: "Core", name: `Forelesning ${i}`, status: 0 });
+      for(let i=1; i<=14; i++) base.push({ id: id++, sub: "Mikroøkonomi II", type: "Extra", name: `Oppgave ${i}`, status: 0 });
+      base.push({ id: id++, sub: "Mikroøkonomi II", type: "Extra", name: "Oppfrisking Mikro I - Del 1", status: 0 }, { id: id++, sub: "Mikroøkonomi II", type: "Extra", name: "Oppfrisking Mikro I - Del 2", status: 0 });
+      base.push({ id: id++, sub: "Mikroøkonomi II", type: "Extra", name: "Exam Prep 1", status: 0 }, { id: id++, sub: "Mikroøkonomi II", type: "Extra", name: "Exam Prep 2", status: 0 });
+
+      // Strategi (Just 1 task)
+      base.push({ id: id++, sub: "Strategi II", type: "Extra", name: "Final Exam Prep", status: 0 });
+
+      return base;
+    }
+
+    async function loadData() {
+      document.getElementById('loader').style.display = 'block';
+      try {
+        const res = await fetch(SCRIPT_URL);
+        const data = await res.json();
+        
+        if (data.isNew) {
+          tasks = generateBaseTasks();
+          saveData(); // Initial save
+        } else {
+          tasks = data;
+        }
+        updateUI();
+      } catch (e) {
+        console.error("Error loading", e);
+        // Fallback to local if offline
+        tasks = generateBaseTasks();
+        updateUI();
+      }
+      document.getElementById('loader').style.display = 'none';
+    }
+
+    async function saveData() {
+      document.getElementById('loader').style.display = 'block';
+      try {
+        await fetch(SCRIPT_URL, {
+          method: 'POST',
+          body: JSON.stringify(tasks)
+        });
+      } catch (e) { console.error("Save failed", e); }
+      document.getElementById('loader').style.display = 'none';
+    }
+
+    function toggleStatus(id) {
+      let task = tasks.find(t => t.id === id);
+      if(task) {
+        task.status = (task.status + 1) % 4; // Cycles 0 -> 1 -> 2 -> 3 -> 0
+        updateUI();
+        saveData();
+      }
+    }
+
+    function updateUI() {
+      updateCountdowns();
+      renderTasks();
+      updateMapAndPredictor();
+    }
+
+    function updateCountdowns() {
+      const now = new Date();
+      for (const [key, date] of Object.entries(EXAMS)) {
+        const diff = date - now;
+        const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+        document.getElementById(`cd-${key}`).innerText = days >= 0 ? `${days}d` : "Done!";
+      }
+    }
+
+    function updateMapAndPredictor() {
+      const coreTasks = tasks.filter(t => t.type === 'Core');
+      const totalCore = coreTasks.length; // 43
+      const completedCore = coreTasks.filter(t => t.status === 3).length; // Only 'Done' counts as physical step
+      
+      // Update Predictor
+      const remaining = totalCore - completedCore;
+      if (remaining === 0) {
+        document.getElementById('predictor-box').innerHTML = "You have finished all Core 43 lectures! 🎉";
+      } else {
+        // If watching 1 a day, add 'remaining' days to today
+        let targetDate = new Date();
+        targetDate.setDate(targetDate.getDate() + remaining);
+        let dateStr = targetDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+        
+        document.getElementById('predictor-box').innerHTML = 
+          `If you study just <strong>1 core lecture a day</strong> starting today, you will finish all core material by <br><span style="font-size: 1.2rem;">${dateStr}</span> 🍵`;
+      }
+
+      // Update Overall Bar
+      const pct = Math.round((completedCore / totalCore) * 100);
+      document.getElementById('overall-pct').innerText = `${completedCore} / ${totalCore} (${pct}%)`;
+      document.getElementById('overall-fill').style.width = `${pct}%`;
+
+      // Draw Map (5 rows of 9 dots to fit 43)
+      const mapEl = document.getElementById('study-map');
+      if (mapEl.querySelectorAll('.road-row').length === 0) {
+        let dotsDrawn = 0;
+        for(let r=0; r<5; r++) {
+          let row = document.createElement('div');
+          row.className = 'road-row';
+          for(let d=0; d<9; d++) {
+            if (dotsDrawn < 43) {
+              let dot = document.createElement('div');
+              dot.className = 'dot';
+              dot.id = `map-dot-${dotsDrawn}`;
+              row.appendChild(dot);
+              dotsDrawn++;
+            }
+          }
+          mapEl.appendChild(row);
+        }
+      }
+
+      // Color active dots
+      for(let i=0; i<43; i++) {
+        let dot = document.getElementById(`map-dot-${i}`);
+        if(dot) {
+          if (i < completedCore) dot.classList.add('active');
+          else dot.classList.remove('active');
+        }
+      }
+
+      // Position Panda
+      setTimeout(() => {
+        let activeIdx = Math.min(completedCore, 42);
+        let currDot = document.getElementById(`map-dot-${activeIdx}`);
+        if(currDot) {
+          const rect = currDot.getBoundingClientRect();
+          const mapRect = mapEl.getBoundingClientRect();
+          const x = rect.left - mapRect.left + (rect.width/2);
+          const y = rect.top - mapRect.top + (rect.height/2);
+          const panda = document.getElementById('panda-avatar');
+          panda.style.left = `${x}px`;
+          panda.style.top = `${y - 10}px`; // slightly above the dot
+        }
+      }, 100);
+    }
+
+    function renderTasks() {
+      const listEl = document.getElementById('task-list');
+      listEl.innerHTML = '';
+
+      const subjects = ["Makroøkonomi II", "Finansregnskap", "Mikroøkonomi II", "Strategi II"];
+
+      subjects.forEach(sub => {
+        let subTasks = tasks.filter(t => t.sub === sub);
+        if (subTasks.length === 0) return;
+
+        let total = subTasks.length;
+        let done = subTasks.filter(t => t.status === 3).length;
+
+        let html = `<div class="subject-header">${sub} <span style="float:right; font-size: 0.9rem; color: #A5C4A3;">${done}/${total}</span></div>`;
+        
+        subTasks.forEach(t => {
+          html += `
+            <div class="task-item">
+              <div>
+                <span class="task-name" style="${t.status === 3 ? 'text-decoration: line-through; color: #A89B93;' : ''}">${t.name}</span>
+                <span class="task-type ${t.type.toLowerCase()}">${t.type}</span>
+              </div>
+              <button class="status-btn s-${t.status}" onclick="toggleStatus(${t.id})">
+                ${STATES[t.status]}
+              </button>
+            </div>
+          `;
+        });
+        listEl.innerHTML += html;
+      });
+    }
+
+    // Start App
+    window.onload = loadData;
+  </script>
+</body>
+</html>
