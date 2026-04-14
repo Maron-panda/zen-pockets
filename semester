@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>📚 Studieplan 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --cream: #fef9f3;
+      --card: #ffffff;
+      --text: #3a2f3e;
+      --muted: #9e8ea8;
+      --dot: rgba(180,155,205,0.16);
+
+      --m1-light: #fff0f4; --m1-border: #ffd6e3; --m1-accent: #e03065; --m1-mid: #ffb3c8;
+      --m2-light: #f0f5ff; --m2-border: #cad8ff; --m2-accent: #3a6fda; --m2-mid: #a8c0ff;
+      --m3-light: #f0faf5; --m3-border: #bce8ce; --m3-accent: #2a9e63; --m3-mid: #96deb4;
+
+      --s-none-bg: #ede8f2;   --s-none-text: #8778935;
+      --s-prog-bg: #fff3b0;   --s-prog-text: #886500;
+      --s-tidy-bg: #e8dcff;   --s-tidy-text: #5830b0;
+      --s-done-bg: #c5f0d8;   --s-done-text: #18763e;
+
+      --radius: 18px;
+      --shadow: 0 3px 18px rgba(58,47,62,0.08);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: radial-gradient(circle, var(--dot) 1.5px, transparent 1.5px);
+      background-size: 22px 22px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .wrapper {
+      position: relative;
+      z-index: 1;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 5rem;
+    }
+
+    /* ── HEADER ── */
+    .header { text-align: center; margin-bottom: 2rem; }
+    .header h1 {
+      font-size: 2.2rem;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+    }
+    .header h1 .heart { color: var(--m1-accent); }
+    .rate-blurb { font-size: 1rem; color: var(--muted); font-weight: 600; line-height: 1.5; }
+    .rate-blurb strong { color: var(--text); }
+
+    /* ── COUNTDOWNS ── */
+    .countdowns {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .cd-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1.2rem 1rem;
+      text-align: center;
+      border-top: 4px solid;
+    }
+    .cd-card.m1 { border-color: var(--m1-accent); }
+    .cd-card.m2 { border-color: var(--m2-accent); }
+    .cd-card.m3 { border-color: var(--m3-accent); }
+
+    .cd-label { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); margin-bottom: 0.2rem; }
+    .cd-days { font-size: 2.6rem; font-weight: 900; line-height: 1; margin-bottom: 0.2rem; }
+    .m1 .cd-days { color: var(--m1-accent); }
+    .m2 .cd-days { color: var(--m2-accent); }
+    .m3 .cd-days { color: var(--m3-accent); }
+    .cd-name { font-size: 0.8rem; font-weight: 800; }
+    .cd-date { font-size: 0.7rem; color: var(--muted); margin-top: 0.15rem; }
+    .cd-warning { font-size: 0.7rem; color: var(--m1-accent); font-weight: 800; margin-top: 0.2rem; }
+
+    /* ── OVERALL ── */
+    .overall-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1.4rem 1.8rem;
+      margin-bottom: 1.5rem;
+    }
+    .overall-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.75rem;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+    .overall-top .label { font-weight: 800; font-size: 0.95rem; }
+    .overall-top .count { font-size: 0.85rem; color: var(--muted); font-weight: 700; }
+
+    .bar-wrap {
+      background: #f0eaf5;
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .bar-fill { height: 100%; border-radius: 99px; transition: width 0.5s cubic-bezier(.4,0,.2,1); }
+    .overall-bar { height: 14px; }
+    .overall-bar .bar-fill { background: linear-gradient(90deg, var(--m1-accent), #9b72cf, var(--m2-accent)); }
+    .sub-bar { height: 9px; }
+    .m1 .sub-bar .bar-fill { background: var(--m1-accent); }
+    .m2 .sub-bar .bar-fill { background: var(--m2-accent); }
+    .m3 .sub-bar .bar-fill { background: var(--m3-accent); }
+
+    .rate-row {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-top: 1rem;
+      font-size: 0.85rem;
+      color: var(--muted);
+      font-weight: 700;
+      flex-wrap: wrap;
+    }
+    .rate-row input[type=number] {
+      width: 58px;
+      padding: 4px 8px;
+      border: 2px solid var(--m1-mid);
+      border-radius: 10px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 800;
+      text-align: center;
+      color: var(--text);
+      background: var(--cream);
+    }
+    .rate-row input:focus { outline: none; border-color: var(--m1-accent); }
+
+    /* ── SUBJECT CARDS ── */
+    .subj-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      margin-bottom: 1.25rem;
+      overflow: hidden;
+    }
+
+    .subj-header {
+      padding: 1.1rem 1.6rem;
+      cursor: pointer;
+      user-select: none;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .m1 .subj-header { background: var(--m1-light); }
+    .m2 .subj-header { background: var(--m2-light); }
+    .m3 .subj-header { background: var(--m3-light); }
+
+    .subj-header-left { flex: 1; min-width: 0; }
+    .subj-name { font-size: 1rem; font-weight: 900; }
+    .m1 .subj-name { color: var(--m1-accent); }
+    .m2 .subj-name { color: var(--m2-accent); }
+    .m3 .subj-name { color: var(--m3-accent); }
+    .subj-stats { font-size: 0.78rem; color: var(--muted); font-weight: 700; margin-top: 0.12rem; }
+
+    .subj-progress-bar {
+      padding: 0.65rem 1.6rem 0.5rem;
+      border-top: 1px solid;
+    }
+    .m1 .subj-progress-bar { border-color: var(--m1-border); background: var(--m1-light); }
+    .m2 .subj-progress-bar { border-color: var(--m2-border); background: var(--m2-light); }
+    .m3 .subj-progress-bar { border-color: var(--m3-border); background: var(--m3-light); }
+
+    .bar-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.5rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--muted);
+    }
+    .bar-row .bar-wrap { flex: 1; }
+    .bar-row .pct { min-width: 38px; text-align: right; }
+
+    .chevron { font-size: 1rem; color: var(--muted); transition: transform 0.25s ease; flex-shrink: 0; }
+    .chevron.open { transform: rotate(180deg); }
+
+    /* ── ITEMS ── */
+    .items-body { padding: 0.25rem 1.6rem 1rem; }
+    .items-body.hidden { display: none; }
+
+    .section-tag {
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--muted);
+      margin: 0.85rem 0 0.35rem;
+    }
+
+    .item-row {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.35rem 0;
+      border-bottom: 1px solid #f5f0f8;
+    }
+    .item-row:last-child { border-bottom: none; }
+
+    .item-name { flex: 1; font-size: 0.9rem; font-weight: 600; transition: color 0.2s; }
+    .item-row.st-done .item-name { text-decoration: line-through; color: var(--muted); }
+
+    .status-pill {
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 3px 11px;
+      border-radius: 99px;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.15s ease;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .status-pill:hover { transform: scale(1.07); }
+    .status-pill:active { transform: scale(0.95); }
+
+    .st-none     .status-pill { background: var(--s-none-bg); color: #877893; }
+    .st-inprogress .status-pill { background: var(--s-prog-bg); color: var(--s-prog-text); }
+    .st-tidying  .status-pill { background: var(--s-tidy-bg); color: var(--s-tidy-text); }
+    .st-done     .status-pill { background: var(--s-done-bg); color: var(--s-done-text); }
+
+    /* ── TOOLBAR ── */
+    .toolbar { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; margin-top: 1.5rem; }
+    .btn {
+      padding: 0.55rem 1.25rem;
+      border-radius: 99px;
+      border: none;
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn:active { transform: translateY(0px); }
+    .btn-reset  { background: #eeebf2; color: #7a6882; }
+
+    /* ── LEGEND ── */
+    .legend {
+      display: flex;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 1.5rem;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--muted);
+    }
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(12px);
+      background: var(--text);
+      color: #fff;
+      padding: 0.55rem 1.4rem;
+      border-radius: 99px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 999;
+      transition: opacity 0.28s, transform 0.28s;
+    }
+    .toast.visible { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    @media (max-width: 580px) {
+      .countdowns { grid-template-columns: 1fr; }
+      .header h1 { font-size: 1.75rem; }
+      .cd-days { font-size: 2rem; }
+      .overall-card { padding: 1rem 1.2rem; }
+      .subj-header, .items-body { padding-left: 1.1rem; padding-right: 1.1rem; }
+      .subj-progress-bar { padding-left: 1.1rem; padding-right: 1.1rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrapper">
+
+  <div class="header">
+    <h1>Studieplan <span class="heart">♡</span> 2026</h1>
+    <p class="rate-blurb" id="rate-sentence">Laster fremgang...</p>
+  </div>
+
+  <div class="countdowns">
+    <div class="cd-card m1">
+      <div class="cd-label">dager til eksamen</div>
+      <div class="cd-days" id="cd-makro">—</div>
+      <div class="cd-name">Makroøkonomi II</div>
+      <div class="cd-date">29. mai 2026 · kl 09:00</div>
+      <div class="cd-warning" id="warn-makro"></div>
+    </div>
+    <div class="cd-card m3">
+      <div class="cd-label">dager til eksamen</div>
+      <div class="cd-days" id="cd-finans">—</div>
+      <div class="cd-name">Finansregnskap</div>
+      <div class="cd-date">5. juni 2026 · kl 09:00</div>
+      <div class="cd-warning" id="warn-finans"></div>
+    </div>
+    <div class="cd-card m2">
+      <div class="cd-label">dager til eksamen</div>
+      <div class="cd-days" id="cd-mikro">—</div>
+      <div class="cd-name">Mikroøkonomi II</div>
+      <div class="cd-date">12. juni 2026 · kl 09:00</div>
+      <div class="cd-warning" id="warn-mikro"></div>
+    </div>
+  </div>
+
+  <div class="overall-card">
+    <div class="overall-top">
+      <span class="label">📹 Obligatorisk fremgang</span>
+      <span class="count" id="overall-count">0 / 43 videoer</span>
+    </div>
+    <div class="bar-wrap overall-bar">
+      <div class="bar-fill" id="overall-bar" style="width:0%"></div>
+    </div>
+    <div class="rate-row">
+      <span>Jeg ser</span>
+      <input type="number" id="rate-input" min="0.1" max="10" step="0.1" value="1">
+      <span>video(er) per dag &nbsp;→&nbsp; ferdig om ca.</span>
+      <strong id="days-left" style="color:var(--text)">— dager</strong>
+    </div>
+  </div>
+
+  <div id="subjects-root"></div>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#c8c0d4"></div> Ikke startet</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#f0c800"></div> Pågår</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#b090ef"></div> Notater</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#3ab870"></div> Ferdig</div>
+    <div class="legend-item" style="margin-left:0.75rem;font-style:italic">← klikk på status for å oppdatere</div>
+  </div>
+
+  <div class="toolbar">
+    <button class="btn btn-reset" onclick="resetAll()">↺ Nullstill alt</button>
+  </div>
+
+</div><div class="toast" id="toast"></div>
+
+<script>
+// PÅKREVD: Lim inn din Google Apps Script Web App URL her:
+const GS_URL = "https://script.google.com/macros/s/AKfycbw8SYdQKWEMtjHV2BV9XvCu0Ey0jykXAxo4uiIfgQiclug55u1XOddVgDm17OjZFm0T/exec";
+
+/* ═══════════════════════════════════════════════
+   DATA
+═══════════════════════════════════════════════ */
+const SUBJECTS = [
+  {
+    id: 'makro', cls: 'm1',
+    name: 'Makroøkonomi II',
+    exam: new Date('2026-05-29T09:00:00'),
+    main: Array.from({length:15}, (_,i) => `Forelesning ${i+1}`),
+    extra: [
+      'Oppgavesett 1','Oppgavesett 2','Oppgavesett 3',
+      '"Siste runde" forelesning',
+      'Eksamen (tidligere år) 1','Eksamen (tidligere år) 2'
+    ]
+  },
+  {
+    id: 'mikro', cls: 'm2',
+    name: 'Mikroøkonomi II',
+    exam: new Date('2026-06-12T09:00:00'),
+    main: Array.from({length:14}, (_,i) => `Forelesning ${i+1}`),
+    extra: [
+      ...Array.from({length:14}, (_,i) => `Oppgaver til forelesning ${i+1}`),
+      'Oppfrisking fra Mikro I del 1',
+      'Oppfrisking fra Mikro I del 2',
+      'Eksamen (tidligere år) 1',
+      'Eksamen (tidligere år) 2'
+    ]
+  },
+  {
+    id: 'finans', cls: 'm3',
+    name: 'Finansregnskap og regnskapsanalyse',
+    exam: new Date('2026-06-05T09:00:00'),
+    main: Array.from({length:14}, (_,i) => `Studieøkt ${i+1}`),
+    extra: []
+  }
+];
+
+const STATUSES = ['none','inprogress','tidying','done'];
+const STATUS_LABELS = {
+  none:       'Ikke startet',
+  inprogress: 'Pågår ✏️',
+  tidying:    'Notater 📝',
+  done:       'Ferdig ✓'
+};
+
+/* ═══════════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════════ */
+let state = { items:{}, rate:1, log:[] };
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem('studieplan2026');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      state = Object.assign({}, state, parsed);
+    }
+  } catch(e) {}
+}
+
+function saveState() {
+  localStorage.setItem('studieplan2026', JSON.stringify(state));
+  syncToSheets().catch(()=>{});
+}
+
+/* ═══════════════════════════════════════════════
+   ITEM HELPERS
+═══════════════════════════════════════════════ */
+function itemKey(subId, kind, i) { return subId + '-' + kind + '-' + i; }
+function getStatus(subId, kind, i) { return state.items[itemKey(subId,kind,i)] || 'none'; }
+
+function cycleStatus(subId, kind, idx) {
+  const cur = getStatus(subId, kind, idx);
+  const wasDone = (cur === 'done');
+  const next = STATUSES[(STATUSES.indexOf(cur)+1) % STATUSES.length];
+  state.items[itemKey(subId,kind,idx)] = next;
+
+  if (kind === 'main') {
+    const today = new Date().toISOString().split('T')[0];
+    if (next === 'done' && !wasDone) {
+      state.log.push(today);
+    } else if (next !== 'done' && wasDone) {
+      const pos = state.log.lastIndexOf(today);
+      if (pos !== -1) state.log.splice(pos, 1);
+    }
+  }
+  saveState();
+  renderAll();
+}
+
+/* ═══════════════════════════════════════════════
+   STATS & CALCULATIONS
+═══════════════════════════════════════════════ */
+function subjectStats(sub) {
+  const mainDone  = sub.main.filter((_,i) => getStatus(sub.id,'main',i)==='done').length;
+  const extraDone = sub.extra.filter((_,i) => getStatus(sub.id,'extra',i)==='done').length;
+  return { mainDone, mainTotal:sub.main.length, extraDone, extraTotal:sub.extra.length };
+}
+
+function overallStats() {
+  return SUBJECTS.reduce((acc,s) => {
+    const {mainDone,mainTotal} = subjectStats(s);
+    return { done: acc.done+mainDone, total: acc.total+mainTotal };
+  }, {done:0, total:0});
+}
+
+function effectiveRate() {
+  const ago7 = new Date();
+  ago7.setDate(ago7.getDate()-7);
+  const ago7str = ago7.toISOString().split('T')[0];
+  const recent = (state.log||[]).filter(d=>d>=ago7str).length;
+  return recent >= 3 ? Math.round(recent/7*10)/10 : state.rate;
+}
+
+function daysUntil(date) {
+  const now   = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const tgt   = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  return Math.max(0, Math.round((tgt-today)/86400000));
+}
+
+function formatDate(d) {
+  return d.toLocaleDateString('nb-NO',{day:'numeric',month:'long',year:'numeric'});
+}
+
+/* ═══════════════════════════════════════════════
+   RENDER
+═══════════════════════════════════════════════ */
+function renderAll() {
+  renderCountdowns();
+  renderOverall();
+  renderSubjects();
+  renderRateSentence();
+}
+
+function renderCountdowns() {
+  SUBJECTS.forEach(sub => {
+    const days = daysUntil(sub.exam);
+    document.getElementById('cd-'+sub.id).textContent = days;
+    const warnEl = document.getElementById('warn-'+sub.id);
+    if (days === 0) warnEl.textContent = '🚨 I dag!';
+    else if (days <= 3) warnEl.textContent = '⚠️ Snart!';
+    else warnEl.textContent = '';
+  });
+}
+
+function renderOverall() {
+  const {done,total} = overallStats();
+  const pct = total > 0 ? Math.round(done/total*100) : 0;
+  document.getElementById('overall-count').textContent = done + ' / ' + total + ' videoer (' + pct + '%)';
+  document.getElementById('overall-bar').style.width = pct + '%';
+  document.getElementById('rate-input').value = state.rate;
+
+  const {done:d2, total:t2} = overallStats();
+  const remaining = t2 - d2;
+  const rate = effectiveRate();
+  const daysNeeded = remaining > 0 ? Math.ceil(remaining / Math.max(0.1, rate)) : 0;
+  document.getElementById('days-left').textContent = remaining > 0 ? daysNeeded + ' dager' : '0 dager 🎉';
+}
+
+function renderRateSentence() {
+  const {done,total} = overallStats();
+  const remaining = total - done;
+  const el = document.getElementById('rate-sentence');
+
+  if (remaining <= 0) {
+    el.innerHTML = '🎉 Alle obligatoriske videoer er sett! Du er klar til eksamen! ✨';
+    return;
+  }
+
+  const rate = effectiveRate();
+  const daysNeeded = Math.ceil(remaining / Math.max(0.1, rate));
+  const finishD = new Date();
+  finishD.setDate(finishD.getDate() + daysNeeded);
+
+  el.innerHTML = remaining + ' videoer igjen – med <strong>' + rate + ' video/dag</strong> er du ferdig <strong>' + formatDate(finishD) + '</strong> ✨';
+}
+
+function renderSubjects() {
+  const root = document.getElementById('subjects-root');
+
+  // remember open/close state
+  const openMap = {};
+  root.querySelectorAll('[data-subj]').forEach(el => {
+    openMap[el.dataset.subj] = !el.querySelector('.items-body.hidden');
+  });
+
+  root.innerHTML = '';
+
+  SUBJECTS.forEach(sub => {
+    const {mainDone,mainTotal,extraDone,extraTotal} = subjectStats(sub);
+    const mainPct  = mainTotal  > 0 ? Math.round(mainDone /mainTotal *100) : 0;
+    const extraPct = extraTotal > 0 ? Math.round(extraDone/extraTotal*100) : 0;
+    const isOpen   = openMap[sub.id] !== false; // default open
+
+    const card = document.createElement('div');
+    card.className = 'subj-card ' + sub.cls;
+    card.dataset.subj = sub.id;
+
+    let extraBarHTML = '';
+    if (extraTotal > 0) {
+      extraBarHTML = `
+        <div class="bar-row">
+          <span>Ekstra</span>
+          <div class="bar-wrap sub-bar"><div class="bar-fill" style="width:${extraPct}%"></div></div>
+          <span class="pct">${extraDone}/${extraTotal}</span>
+        </div>`;
+    }
+
+    let mainItemsHTML = sub.main.map((name,i) => makeItemRow(sub.id,'main',i,name)).join('');
+    let extraItemsHTML = '';
+    if (extraTotal > 0) {
+      extraItemsHTML = '<div class="section-tag">Ekstra oppgaver</div>' +
+        sub.extra.map((name,i) => makeItemRow(sub.id,'extra',i,name)).join('');
+    }
+
+    card.innerHTML = `
+      <div class="subj-header" onclick="toggleSubject('${sub.id}')">
+        <div class="subj-header-left">
+          <div class="subj-name">${sub.name}</div>
+          <div class="subj-stats">${mainDone}/${mainTotal} ferdig${extraTotal ? ' &nbsp;·&nbsp; '+extraDone+'/'+extraTotal+' ekstra' : ''}</div>
+        </div>
+        <span class="chevron ${isOpen ? 'open' : ''}">▾</span>
+      </div>
+      <div class="subj-progress-bar">
+        <div class="bar-row">
+          <span>Obligatorisk</span>
+          <div class="bar-wrap sub-bar"><div class="bar-fill" style="width:${mainPct}%"></div></div>
+          <span class="pct">${mainDone}/${mainTotal}</span>
+        </div>
+        ${extraBarHTML}
+      </div>
+      <div class="items-body${isOpen ? '' : ' hidden'}">
+        <div class="section-tag">Obligatoriske videoer</div>
+        ${mainItemsHTML}
+        ${extraItemsHTML}
+      </div>`;
+
+    root.appendChild(card);
+  });
+}
+
+function makeItemRow(subId, kind, idx, name) {
+  const st = getStatus(subId, kind, idx);
+  return `<div class="item-row st-${st}">
+    <span class="item-name">${name}</span>
+    <button class="status-pill" onclick="cycleStatus('${subId}','${kind}',${idx})">${STATUS_LABELS[st]}</button>
+  </div>`;
+}
+
+function toggleSubject(subId) {
+  const card    = document.querySelector('[data-subj="'+subId+'"]');
+  const body    = card.querySelector('.items-body');
+  const chevron = card.querySelector('.chevron');
+  body.classList.toggle('hidden');
+  chevron.classList.toggle('open');
+}
+
+/* ═══════════════════════════════════════════════
+   RATE INPUT
+═══════════════════════════════════════════════ */
+document.getElementById('rate-input').addEventListener('input', function() {
+  const v = parseFloat(this.value);
+  if (v > 0) { state.rate = v; saveState(); renderAll(); }
+});
+
+/* ═══════════════════════════════════════════════
+   RESET
+═══════════════════════════════════════════════ */
+function resetAll() {
+  if (!confirm('Vil du nullstille ALL fremgang? Dette kan ikke angres!')) return;
+  state = {items:{}, rate:state.rate, log:[]};
+  saveState();
+  renderAll();
+  toast('↺ Fremgang nullstilt');
+}
+
+/* ═══════════════════════════════════════════════
+   GOOGLE SHEETS SYNC
+═══════════════════════════════════════════════ */
+async function syncToSheets() {
+  if (!GS_URL || GS_URL === "SET_DIN_URL_HER") return;
+  try {
+    await fetch(GS_URL, {
+      method: 'POST',
+      body: JSON.stringify(state),
+      headers: {'Content-Type': 'application/json'}
+    });
+  } catch(e) {
+    console.error("Backup failed", e);
+  }
+}
+
+async function syncFromSheets() {
+  if (!GS_URL || GS_URL === "SET_DIN_URL_HER") return;
+  toast('⏳ Synkroniserer med skyen...');
+  try {
+    const res    = await fetch(GS_URL + '?t=' + Date.now());
+    const loaded = await res.json();
+    if (loaded && typeof loaded === 'object' && Object.keys(loaded).length > 0) {
+      state = Object.assign({}, state, loaded);
+      localStorage.setItem('studieplan2026', JSON.stringify(state));
+      renderAll();
+      toast('✅ Oppdatert fra skyen!');
+    }
+  } catch(e) {
+    console.error('Klarte ikke hente fra Sheets', e);
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════════ */
+let toastTimer;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('visible');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('visible'), 2800);
+}
+
+/* ═══════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════ */
+loadState();
+renderAll();
+syncFromSheets();
+</script>
+</body>
+</html>
