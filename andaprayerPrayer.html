@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Panda's Prayer Tracker ✨🌙</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-dark: #0b0f19;
+      --bg-light: #1a1a3a;
+      --accent-pink: #ec6f9c;
+      --accent-glow: #fca4c1;
+      --bar-bg: rgba(236, 111, 156, 0.2);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: radial-gradient(ellipse at bottom, var(--bg-light) 0%, var(--bg-dark) 100%);
+      color: white; min-height: 100vh; overflow-x: hidden; position: relative;
+      display: flex; flex-direction: column; align-items: center; padding: 20px;
+    }
+
+    /* Cosmic Background Effects */
+    #starfield { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; overflow: hidden; pointer-events: none; z-index: 0; }
+    .star { position: absolute; background: white; border-radius: 50%; animation: twinkle 2s ease-in-out infinite alternate; }
+    @keyframes twinkle { 0% { opacity: 0.3; transform: scale(1); } 100% { opacity: 1; transform: scale(1.2); } }
+
+    .shooting-star {
+      position: absolute; width: 2px; height: 2px; border-radius: 50%;
+      background: linear-gradient(45deg, var(--accent-glow), var(--accent-pink), #FF1493);
+      box-shadow: 0 0 10px var(--accent-pink); animation: shoot 3s linear infinite; z-index: 0;
+    }
+    .shooting-star::after {
+      content: ''; position: absolute; top: 0; left: 0; width: 50px; height: 2px;
+      background: linear-gradient(to right, transparent, var(--accent-pink), transparent); transform: translateX(-50px);
+    }
+    @keyframes shoot {
+      0% { transform: translateX(-100px) translateY(100px); opacity: 1; }
+      70% { opacity: 1; }
+      100% { transform: translateX(300px) translateY(-100px); opacity: 0; }
+    }
+
+    canvas.sakura { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 100; opacity: 0.5; }
+
+    .container { width: 100%; max-width: 600px; z-index: 10; position: relative; }
+
+    /* Glassmorphism Cards */
+    .card {
+      background: rgba(20, 25, 40, 0.6); backdrop-filter: blur(10px); border: 1px solid rgba(236, 111, 156, 0.15);
+      border-radius: 20px; padding: 25px; margin-bottom: 25px; box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    }
+    .card h3 { color: var(--accent-glow); margin-bottom: 15px; font-size: 1.2rem; display: flex; justify-content: space-between; align-items: center; text-shadow: 0 0 10px rgba(236,111,156,0.3);}
+    .card p.sub { font-size: 0.8rem; color: #DDA0DD; margin-top: -10px; margin-bottom: 15px; }
+
+    /* Top Status Banner */
+    .status-banner { text-align: center; margin-bottom: 25px; padding: 20px; border-radius: 20px; background: rgba(236, 111, 156, 0.05); border: 1px solid var(--bar-bg); }
+    .status-banner h2 { font-size: 1rem; font-weight: 500; color: #DDA0DD; margin-bottom: 5px;}
+    .status-banner h1 { font-size: 1.5rem; color: #fff; margin: 5px 0; text-shadow: 0 0 15px rgba(236,111,156,0.5);}
+    .status-banner .since { font-size: 0.8rem; color: #DDA0DD; margin-top: 6px; }
+
+    /* Progress Bars */
+    .progress-label { display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 600; color: #DDA0DD; margin-bottom: 5px; margin-top: 15px;}
+    .progress-wrapper { background: rgba(0,0,0,0.4); border-radius: 12px; height: 22px; width: 100%; overflow: hidden; position: relative; border: 1px solid var(--bar-bg);}
+    .progress-fill { background: linear-gradient(to right, #fca4c1, #ec6f9c); height: 100%; width: 0%; transition: width 0.8s ease; }
+    .progress-text { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
+
+    button {
+      background: linear-gradient(45deg, #ec6f9c, #d86dd1); color: white;
+      padding: 14px; border: none; border-radius: 15px; font-weight: 600;
+      width: 100%; cursor: pointer; font-family: 'Poppins'; font-size: 1rem;
+      transition: 0.3s; box-shadow: 0 4px 15px rgba(236, 111, 156, 0.3);
+    }
+    button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(236, 111, 156, 0.5); }
+    .btn-secondary { background: rgba(236,111,156,0.1); border: 1px solid var(--bar-bg); color: white; box-shadow: none; padding: 10px 15px; width: auto; font-size: 0.85rem;}
+    .btn-ghost { background: transparent; border: 1px dashed rgba(255,255,255,0.25); color: #DDA0DD; box-shadow: none; }
+    .btn-ghost:hover { transform: none; box-shadow: none; border-color: var(--accent-pink); color: white; }
+
+    input[type="password"] {
+      width: 100%; padding: 12px; margin-bottom: 15px; background: rgba(0,0,0,0.3);
+      border: 1px solid var(--bar-bg); border-radius: 12px; color: white;
+      font-family: 'Poppins'; font-size: 1rem;
+    }
+
+    /* Toggle switches */
+    .toggle-row { display: flex; justify-content: space-between; align-items: center; padding: 11px 0; border-bottom: 1px dashed rgba(255,255,255,0.08); }
+    .toggle-row:last-of-type { border-bottom: none; }
+    .toggle-label { font-size: 0.9rem; font-weight: 600; color: #fff; display: flex; align-items: center; gap: 9px; }
+    .toggle-label .emoji { font-size: 1.1rem; }
+    .toggle-label .hint { font-size: 0.7rem; color: #DDA0DD; font-weight: 400; display: block; }
+    .switch { position: relative; width: 48px; height: 27px; flex-shrink: 0; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); border: 1px solid var(--bar-bg); border-radius: 28px; transition: 0.3s; }
+    .slider::before { position: absolute; content: ''; height: 19px; width: 19px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: 0.3s; }
+    input:checked + .slider { background: linear-gradient(45deg, #ec6f9c, #d86dd1); border-color: var(--accent-pink); }
+    input:checked + .slider::before { transform: translateX(21px); box-shadow: 0 0 8px rgba(255,255,255,0.9); }
+    .toggle-row.registered-row { margin-bottom: 4px; }
+    .toggle-divider { height: 1px; background: rgba(255,255,255,0.1); margin: 6px 0 2px; }
+
+    /* Stat blocks */
+    .stat-grid { display: flex; text-align: center; border-top: 1px dashed var(--bar-bg); padding-top: 15px; margin-top: 20px; }
+    .stat-grid > div { flex: 1; }
+    .stat-num { font-size: 1.25rem; color: var(--accent-glow); font-weight: 700; }
+    .stat-num.warn { color: #ff8fa3; }
+    .stat-lbl { font-size: 0.7rem; color: #DDA0DD; margin-top: 2px; }
+    .stat-pill { font-size: 0.65rem; color: white; background: var(--bar-bg); border-radius: 8px; padding: 2px 6px; display: inline-block; margin-top: 4px; }
+
+    /* Calendar */
+    .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .cal-nav-btn { background: rgba(236,111,156,0.15); border: 1px solid var(--bar-bg); color: white; width: 34px; height: 34px; border-radius: 10px; cursor: pointer; font-size: 1rem; font-family: 'Poppins'; }
+    .cal-nav-btn:hover { border-color: var(--accent-pink); }
+    .cal-title { font-size: 1.05rem; font-weight: 700; color: var(--accent-glow); }
+    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+    .cal-weekday { text-align: center; font-size: 0.62rem; color: #DDA0DD; font-weight: 600; padding-bottom: 6px; letter-spacing: 0.5px; }
+    .cal-day { aspect-ratio: 1 / 1; border-radius: 10px; background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.06); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; cursor: pointer; transition: 0.2s; position: relative; }
+    .cal-day:hover { border-color: var(--accent-pink); }
+    .cal-day.empty { visibility: hidden; cursor: default; }
+    .cal-day.future { opacity: 0.25; cursor: not-allowed; }
+    .cal-day.future:hover { border-color: rgba(255,255,255,0.06); }
+    .cal-day.today { border-color: var(--accent-glow); box-shadow: 0 0 8px rgba(236,111,156,0.45); }
+    .cal-day.unregistered:not(.future) { opacity: 0.5; }
+    .cal-daynum { font-size: 0.7rem; font-weight: 700; color: white; }
+    .cal-dots { display: flex; gap: 2px; }
+    .cal-dot { width: 5px; height: 5px; border-radius: 50%; background: rgba(255,255,255,0.18); }
+    .cal-dot.done { background: var(--accent-glow); box-shadow: 0 0 4px var(--accent-glow); }
+    .cal-extras { display: flex; gap: 3px; font-size: 0.5rem; line-height: 1; }
+    .cal-extras span { opacity: 0.2; filter: grayscale(1); }
+    .cal-extras span.done { opacity: 1; filter: none; }
+    .cal-legend { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-top: 16px; font-size: 0.65rem; color: #DDA0DD; }
+    .cal-legend span { display: flex; align-items: center; gap: 4px; }
+    .legend-dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
+
+    /* Chart (reused pattern from Quran tracker) */
+    .chart-container { position: relative; height: 180px; width: 100%; margin-top: 40px; margin-bottom: 30px; border-bottom: 1px solid rgba(255,255,255,0.2); }
+    .chart-container.view-10 { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; align-items: end; }
+    .chart-container.view-10 .bar-wrapper { position: relative; display: flex; flex-direction: column; justify-content: flex-end; height: 100%; }
+    .chart-container.view-10 .bar { width: 100%; border-radius: 4px 4px 0 0; background: linear-gradient(to top, rgba(236,111,156,0.3), var(--accent-pink)); }
+    .chart-container.view-10 .date-label { position: absolute; bottom: -22px; width: 100%; text-align: center; font-size: 0.6rem; color: #DDA0DD; }
+    .bar-tooltip { position: absolute; top: -32px; left: 50%; transform: translateX(-50%); font-size: 0.65rem; background: rgba(0,0,0,0.85); padding: 4px 7px; border-radius: 6px; opacity: 0; transition: 0.2s; white-space: nowrap; pointer-events: none; z-index: 10; text-align: center; }
+    .bar-wrapper:hover .bar-tooltip { opacity: 1; }
+
+    /* Overlays (login + day editor) */
+    #login-overlay, #day-modal { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(11,15,25,0.85); backdrop-filter: blur(4px); display: flex; justify-content: center; align-items: center; z-index: 9999; padding: 20px; }
+    #login-overlay { background: var(--bg-dark); }
+    #day-modal { display: none; }
+    .modal-card { max-width: 380px; width: 100%; max-height: 88vh; overflow-y: auto; }
+    .modal-close { position: absolute; top: 18px; right: 18px; background: none; box-shadow: none; width: auto; padding: 4px 8px; font-size: 1.1rem; color: #DDA0DD; }
+    .modal-close:hover { transform: none; color: white; }
+
+    #loader { display: none; position: fixed; top: 20px; right: 20px; background: rgba(0,0,0,0.8); color: var(--accent-glow); padding: 10px 20px; border-radius: 20px; border: 1px solid var(--accent-pink); z-index: 9999; font-weight: 600; }
+    .empty-state { text-align: center; padding: 20px; color: #999; font-size: 0.85rem; }
+  </style>
+</head>
+<body>
+  <div id="starfield"></div>
+  <canvas id="sakura-canvas" class="sakura"></canvas>
+  <div id="loader">✨ Syncing...</div>
+
+  <div id="login-overlay">
+    <div class="card" style="max-width: 350px; text-align: center; width: 90%;">
+      <img src="https://maron-panda.github.io/zen-pockets/momorin-placeholder.png" alt="Panda" style="width: 100px; margin-bottom: 15px; animation: twinkle 3s infinite;">
+      <h2 style="color: var(--accent-glow); margin-bottom: 20px;">Panda's Prayer Tracker</h2>
+      <input type="password" id="login-pwd" placeholder="Enter Password">
+      <button onclick="attemptLogin()">Enter</button>
+      <p id="login-error" style="color: #FF1493; margin-top: 15px; display: none; font-size: 0.85rem;"></p>
+    </div>
+  </div>
+
+  <div class="container" id="app-container" style="display: none;">
+
+    <div class="status-banner card">
+      <h2>You've completed</h2>
+      <h1 id="status-pct">0%</h1>
+      <p style="color: #DDA0DD; font-size: 0.9rem;">of your obligations</p>
+      <p class="since" id="status-since">Start logging to begin your tracker</p>
+    </div>
+
+    <div class="card">
+      <h3>🌸 Today — <span id="today-label"></span></h3>
+      <div id="today-editor"></div>
+      <button onclick="saveToday()" style="margin-top: 10px;">Save Today</button>
+    </div>
+
+    <div class="card">
+      <h3>🕌 Prayer Stats</h3>
+      <div class="progress-label"><span>Obligations completed</span><span id="lbl-obligations-pct">0%</span></div>
+      <div class="progress-wrapper"><div class="progress-fill" id="fill-obligations"></div><div class="progress-text" id="txt-obligations">0 / 0</div></div>
+
+      <div class="stat-grid">
+        <div>
+          <div class="stat-num warn" id="stat-missed-subh">0</div>
+          <div class="stat-lbl">Missed Subh</div>
+        </div>
+        <div>
+          <div class="stat-num warn" id="stat-missed-duhrasr">0</div>
+          <div class="stat-lbl">Missed Duhr &amp; Asr</div>
+        </div>
+        <div>
+          <div class="stat-num warn" id="stat-missed-maghribisha">0</div>
+          <div class="stat-lbl">Missed Maghrib &amp; Isha</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>🌺 Sadaqa &amp; Dua</h3>
+      <div class="stat-grid" style="margin-top: 0; border-top: none; padding-top: 0;">
+        <div>
+          <div class="stat-num" id="stat-sadaqa-month">0</div>
+          <div class="stat-lbl">Sadaqa this month</div>
+        </div>
+        <div>
+          <div class="stat-num" id="stat-dua-month">0</div>
+          <div class="stat-lbl">Dua this month</div>
+        </div>
+        <div>
+          <div class="stat-num" id="stat-dua-streak">0 🔥</div>
+          <div class="stat-lbl">Dua streak</div>
+          <div class="stat-pill" id="stat-dua-best">0 🏆 best</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="cal-header">
+        <button class="cal-nav-btn" onclick="changeMonth(-1)">◀</button>
+        <div class="cal-title" id="cal-title"></div>
+        <button class="cal-nav-btn" onclick="changeMonth(1)">▶</button>
+      </div>
+      <div class="cal-grid" id="cal-weekdays"></div>
+      <div class="cal-grid" id="cal-grid" style="margin-top: 5px;"></div>
+      <div class="cal-legend">
+        <span><span class="legend-dot" style="background: var(--accent-glow);"></span>Prayed</span>
+        <span><span class="legend-dot" style="background: rgba(255,255,255,0.18);"></span>Missed</span>
+        <span style="opacity:0.6;">Dim day = not logged · tap any past day to edit</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>📊 Last 10 Days</h3>
+      <div class="chart-container view-10" id="chart-box"></div>
+    </div>
+
+  </div>
+
+  <div id="day-modal">
+    <div class="card modal-card" style="position: relative;">
+      <button class="modal-close" onclick="closeDayModal()">✕</button>
+      <h3 id="modal-date-label" style="margin-bottom: 5px;">Edit day</h3>
+      <p class="sub">Toggle what you did that day, then save.</p>
+      <div id="modal-editor"></div>
+      <button onclick="saveModalDay()" style="margin-top: 15px;">Save Day</button>
+      <button class="btn-ghost" onclick="clearModalDay()" style="margin-top: 10px;">Clear this day</button>
+    </div>
+  </div>
+
+  <script src="sakuraform.js"></script>
+  <script>
+    // ⚠️ REPLACE WITH YOUR WEB APP URL ⚠️
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbxo9HEr0pLb0DnejPXRnLKuuDbPwz5QQu1epa8qLbvXxQDqrwOkuLmV0IDztDnVYV1r/exec';
+
+    const WEEKDAYS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+    const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+    let state = { history: [], map: {}, calYear: null, calMonth: null, selectedDate: null };
+
+    // ---------- date helpers ----------
+    function toYMD(d) {
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const dd = String(d.getDate()).padStart(2, '0');
+      return `${yyyy}-${mm}-${dd}`;
+    }
+    const todayDate = new Date();
+    const todayStr = toYMD(todayDate);
+
+    function formatNiceDate(ymd) {
+      const [y, m, d] = ymd.split('-').map(Number);
+      const dt = new Date(y, m - 1, d);
+      return dt.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+    }
+
+    // ---------- background effects ----------
+    function createStarfield() {
+      const starfield = document.getElementById('starfield');
+      for (let i = 0; i < 150; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        star.style.left = Math.random() * 100 + '%'; star.style.top = Math.random() * 100 + '%';
+        star.style.width = star.style.height = Math.random() * 3 + 'px';
+        star.style.animationDelay = Math.random() * 2 + 's';
+        starfield.appendChild(star);
+      }
+    }
+    function createShootingStar() {
+      const starfield = document.getElementById('starfield');
+      const s = document.createElement('div');
+      s.className = 'shooting-star';
+      s.style.top = Math.random() * 50 + '%';
+      s.style.left = Math.random() * 100 + '%';
+      starfield.appendChild(s);
+      setTimeout(() => s.remove(), 3000);
+    }
+    createStarfield();
+    setInterval(createShootingStar, 2500);
+
+    // ---------- API ----------
+    async function apiCall(payload) {
+      document.getElementById('loader').style.display = 'block';
+      try {
+        const res = await fetch(scriptURL, { method: 'POST', body: JSON.stringify(payload) });
+        const data = await res.json();
+        document.getElementById('loader').style.display = 'none';
+        return data;
+      } catch (e) { document.getElementById('loader').style.display = 'none'; return { success: false }; }
+    }
+
+    async function attemptLogin() {
+      const pwd = document.getElementById('login-pwd').value;
+      if (!pwd) return;
+      const res = await apiCall({ action: 'login', password: pwd });
+      if (res.success) {
+        document.getElementById('login-overlay').style.display = 'none';
+        document.getElementById('app-container').style.display = 'block';
+        state.calYear = todayDate.getFullYear();
+        state.calMonth = todayDate.getMonth();
+        fetchData();
+      } else {
+        document.getElementById('login-error').innerText = res.message || 'Incorrect password!';
+        document.getElementById('login-error').style.display = 'block';
+      }
+    }
+
+    async function fetchData() {
+      const res = await apiCall({ action: 'get_data' });
+      if (res.success) {
+        state.history = res.history;
+        buildMap();
+        renderAll();
+      }
+    }
+
+    function buildMap() {
+      state.map = {};
+      state.history.forEach(e => { state.map[e.Date] = e; });
+    }
+
+    function getEntry(dateStr) { return state.map[dateStr] || null; }
+    function isTrue(v) { return v === true || v === 'TRUE' || v === 'true'; }
+    function isRegistered(entry) { return !!entry && isTrue(entry.Registered); }
+
+    // ---------- day editor (shared by Today card + modal popup) ----------
+    function editorHTML(prefix) {
+      return `
+        <div class="toggle-row registered-row">
+          <label class="toggle-label"><span class="emoji">📝</span>Registered<span class="hint">I'm logging this day</span></label>
+          <label class="switch"><input type="checkbox" id="${prefix}-registered"><span class="slider"></span></label>
+        </div>
+        <div class="toggle-divider"></div>
+        <div class="toggle-row">
+          <label class="toggle-label"><span class="emoji">🌅</span>Subh</label>
+          <label class="switch"><input type="checkbox" id="${prefix}-subh"><span class="slider"></span></label>
+        </div>
+        <div class="toggle-row">
+          <label class="toggle-label"><span class="emoji">☀️</span>Duhr &amp; Asr</label>
+          <label class="switch"><input type="checkbox" id="${prefix}-duhrAsr"><span class="slider"></span></label>
+        </div>
+        <div class="toggle-row">
+          <label class="toggle-label"><span class="emoji">🌙</span>Maghrib &amp; Isha</label>
+          <label class="switch"><input type="checkbox" id="${prefix}-maghribIsha"><span class="slider"></span></label>
+        </div>
+        <div class="toggle-divider"></div>
+        <div class="toggle-row">
+          <label class="toggle-label"><span class="emoji">🌸</span>Sadaqa</label>
+          <label class="switch"><input type="checkbox" id="${prefix}-sadaqa"><span class="slider"></span></label>
+        </div>
+        <div class="toggle-row">
+          <label class="toggle-label"><span class="emoji">🤲</span>Dua</label>
+          <label class="switch"><input type="checkbox" id="${prefix}-dua"><span class="slider"></span></label>
+        </div>`;
+    }
+
+    function populateEditor(prefix, entry) {
+      const fields = ['registered', 'subh', 'duhrAsr', 'maghribIsha', 'sadaqa', 'dua'];
+      const keyMap = { registered: 'Registered', subh: 'Subh', duhrAsr: 'DuhrAsr', maghribIsha: 'MaghribIsha', sadaqa: 'Sadaqa', dua: 'Dua' };
+      fields.forEach(f => {
+        const el = document.getElementById(`${prefix}-${f}`);
+        el.checked = entry ? isTrue(entry[keyMap[f]]) : false;
+      });
+    }
+
+    function readEditor(prefix) {
+      const vals = {
+        registered: document.getElementById(`${prefix}-registered`).checked,
+        subh: document.getElementById(`${prefix}-subh`).checked,
+        duhrAsr: document.getElementById(`${prefix}-duhrAsr`).checked,
+        maghribIsha: document.getElementById(`${prefix}-maghribIsha`).checked,
+        sadaqa: document.getElementById(`${prefix}-sadaqa`).checked,
+        dua: document.getElementById(`${prefix}-dua`).checked
+      };
+      // If anything was logged, the day counts as registered even if that switch wasn't touched.
+      if (vals.subh || vals.duhrAsr || vals.maghribIsha || vals.sadaqa || vals.dua) vals.registered = true;
+      return vals;
+    }
+
+    document.getElementById('today-editor').innerHTML = editorHTML('today');
+    document.getElementById('modal-editor').innerHTML = editorHTML('modal');
+    document.getElementById('today-label').innerText = formatNiceDate(todayStr);
+
+    async function saveToday() {
+      const vals = readEditor('today');
+      const res = await apiCall({ action: 'save_day', dateStr: todayStr, ...vals });
+      if (res.success) fetchData();
+    }
+
+    function openDayModal(dateStr) {
+      if (dateStr > todayStr) return;
+      state.selectedDate = dateStr;
+      document.getElementById('modal-date-label').innerText = formatNiceDate(dateStr);
+      populateEditor('modal', getEntry(dateStr));
+      document.getElementById('day-modal').style.display = 'flex';
+    }
+    function closeDayModal() { document.getElementById('day-modal').style.display = 'none'; }
+
+    async function saveModalDay() {
+      const vals = readEditor('modal');
+      const res = await apiCall({ action: 'save_day', dateStr: state.selectedDate, ...vals });
+      if (res.success) { closeDayModal(); fetchData(); }
+    }
+
+    async function clearModalDay() {
+      if (!confirm('Clear all data for this day? This marks it as not logged.')) return;
+      const res = await apiCall({ action: 'save_day', dateStr: state.selectedDate, registered: false, subh: false, duhrAsr: false, maghribIsha: false, sadaqa: false, dua: false });
+      if (res.success) { closeDayModal(); fetchData(); }
+    }
+
+    // ---------- calendar ----------
+    const weekdaysRow = document.getElementById('cal-weekdays');
+    WEEKDAYS.forEach(w => { const d = document.createElement('div'); d.className = 'cal-weekday'; d.innerText = w; weekdaysRow.appendChild(d); });
+
+    function changeMonth(delta) {
+      state.calMonth += delta;
+      if (state.calMonth > 11) { state.calMonth = 0; state.calYear++; }
+      if (state.calMonth < 0) { state.calMonth = 11; state.calYear--; }
+      buildCalendar();
+    }
+
+    function buildCalendar() {
+      document.getElementById('cal-title').innerText = `${MONTH_NAMES[state.calMonth]} ${state.calYear}`;
+      const grid = document.getElementById('cal-grid');
+      grid.innerHTML = '';
+
+      const firstOfMonth = new Date(state.calYear, state.calMonth, 1);
+      const offset = (firstOfMonth.getDay() + 6) % 7; // Monday-first offset
+      const daysInMonth = new Date(state.calYear, state.calMonth + 1, 0).getDate();
+
+      for (let i = 0; i < offset; i++) {
+        const empty = document.createElement('div');
+        empty.className = 'cal-day empty';
+        grid.appendChild(empty);
+      }
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dateStr = `${state.calYear}-${String(state.calMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const entry = getEntry(dateStr);
+        const registered = isRegistered(entry);
+        const isFuture = dateStr > todayStr;
+        const isToday = dateStr === todayStr;
+
+        const cell = document.createElement('div');
+        cell.className = 'cal-day' + (isFuture ? ' future' : '') + (isToday ? ' today' : '') + (!registered ? ' unregistered' : '');
+
+        let dotsHTML = '';
+        if (registered) {
+          dotsHTML = `<div class="cal-dots">
+            <span class="cal-dot ${isTrue(entry.Subh) ? 'done' : ''}"></span>
+            <span class="cal-dot ${isTrue(entry.DuhrAsr) ? 'done' : ''}"></span>
+            <span class="cal-dot ${isTrue(entry.MaghribIsha) ? 'done' : ''}"></span>
+          </div>
+          <div class="cal-extras">
+            <span class="${isTrue(entry.Sadaqa) ? 'done' : ''}">🌸</span>
+            <span class="${isTrue(entry.Dua) ? 'done' : ''}">🤲</span>
+          </div>`;
+        }
+
+        cell.innerHTML = `<span class="cal-daynum">${day}</span>${dotsHTML}`;
+        if (!isFuture) cell.onclick = () => openDayModal(dateStr);
+        grid.appendChild(cell);
+      }
+    }
+
+    // ---------- stats ----------
+    function computeStats() {
+      const registeredEntries = state.history.filter(isRegistered);
+
+      if (registeredEntries.length === 0) {
+        document.getElementById('status-pct').innerText = '0%';
+        document.getElementById('status-since').innerText = 'Start logging to begin your tracker';
+        document.getElementById('lbl-obligations-pct').innerText = '0%';
+        document.getElementById('fill-obligations').style.width = '0%';
+        document.getElementById('txt-obligations').innerText = '0 / 0';
+        ['subh','duhrasr','maghribisha'].forEach(k => document.getElementById(`stat-missed-${k}`).innerText = '0');
+        document.getElementById('stat-sadaqa-month').innerText = '0';
+        document.getElementById('stat-dua-month').innerText = '0';
+        document.getElementById('stat-dua-streak').innerText = '0 🔥';
+        document.getElementById('stat-dua-best').innerText = '0 🏆 best';
+        return;
+      }
+
+      const sortedDates = registeredEntries.map(e => e.Date).sort();
+      const firstDate = sortedDates[0];
+
+      let doneSlots = 0;
+      let missedSubh = 0, missedDuhrAsr = 0, missedMaghribIsha = 0;
+      registeredEntries.forEach(e => {
+        if (isTrue(e.Subh)) doneSlots++; else missedSubh++;
+        if (isTrue(e.DuhrAsr)) doneSlots++; else missedDuhrAsr++;
+        if (isTrue(e.MaghribIsha)) doneSlots++; else missedMaghribIsha++;
+      });
+      const totalSlots = registeredEntries.length * 3;
+      const pct = totalSlots ? ((doneSlots / totalSlots) * 100) : 0;
+
+      document.getElementById('status-pct').innerText = `${pct.toFixed(1)}%`;
+      document.getElementById('status-since').innerText = `Tracking since ${formatNiceDate(firstDate)} · ${registeredEntries.length} days logged`;
+      document.getElementById('lbl-obligations-pct').innerText = `${pct.toFixed(1)}%`;
+      document.getElementById('fill-obligations').style.width = `${pct}%`;
+      document.getElementById('txt-obligations').innerText = `${doneSlots} / ${totalSlots}`;
+
+      document.getElementById('stat-missed-subh').innerText = missedSubh;
+      document.getElementById('stat-missed-duhrasr').innerText = missedDuhrAsr;
+      document.getElementById('stat-missed-maghribisha').innerText = missedMaghribIsha;
+
+      // Sadaqa / Dua this month
+      const curYear = todayDate.getFullYear(), curMonth = todayDate.getMonth();
+      let sadaqaMonth = 0, duaMonth = 0;
+      state.history.forEach(e => {
+        const [y, m] = e.Date.split('-').map(Number);
+        if (y === curYear && (m - 1) === curMonth) {
+          if (isTrue(e.Sadaqa)) sadaqaMonth++;
+          if (isTrue(e.Dua)) duaMonth++;
+        }
+      });
+      document.getElementById('stat-sadaqa-month').innerText = sadaqaMonth;
+      document.getElementById('stat-dua-month').innerText = duaMonth;
+
+      // Dua streak (consecutive calendar days, current + best)
+      const duaDates = state.history.filter(e => isTrue(e.Dua)).map(e => e.Date).sort();
+      let streak = 0, best = 0;
+      if (duaDates.length > 0) {
+        const lastDua = duaDates[duaDates.length - 1];
+        const diffFromToday = (new Date(todayStr) - new Date(lastDua)) / 86400000;
+        if (diffFromToday <= 1) {
+          streak = 1;
+          for (let i = duaDates.length - 1; i > 0; i--) {
+            const diff = (new Date(duaDates[i]) - new Date(duaDates[i - 1])) / 86400000;
+            if (diff === 1) streak++; else break;
+          }
+        }
+        let temp = 1; best = 1;
+        for (let i = 1; i < duaDates.length; i++) {
+          const diff = (new Date(duaDates[i]) - new Date(duaDates[i - 1])) / 86400000;
+          if (diff === 1) { temp++; if (temp > best) best = temp; } else { temp = 1; }
+        }
+      }
+      document.getElementById('stat-dua-streak').innerText = `${streak} 🔥`;
+      document.getElementById('stat-dua-best').innerText = `${best} 🏆 best`;
+    }
+
+    // ---------- chart (last 10 days) ----------
+    function renderChart() {
+      const chartBox = document.getElementById('chart-box');
+      const days10 = [];
+      for (let i = 9; i >= 0; i--) {
+        const d = new Date(todayDate);
+        d.setDate(d.getDate() - i);
+        days10.push(toYMD(d));
+      }
+
+      let barsHTML = '';
+      days10.forEach(dateStr => {
+        const entry = getEntry(dateStr);
+        const registered = isRegistered(entry);
+        let doneCount = 0;
+        if (registered) {
+          if (isTrue(entry.Subh)) doneCount++;
+          if (isTrue(entry.DuhrAsr)) doneCount++;
+          if (isTrue(entry.MaghribIsha)) doneCount++;
+        }
+        const pct = registered ? Math.max((doneCount / 3) * 100, doneCount > 0 ? 8 : 0) : 0;
+        const niceDate = dateStr.substring(8, 10) + '.' + dateStr.substring(5, 7);
+        const tooltip = registered ? `${niceDate}<br>${doneCount} / 3 prayers` : `${niceDate}<br>Not logged`;
+
+        barsHTML += `
+          <div class="bar-wrapper">
+            <div class="bar-tooltip">${tooltip}</div>
+            <div class="bar" style="height: ${pct}%; background: ${pct === 0 ? 'rgba(255,255,255,0.08)' : ''};"></div>
+            <div class="date-label">${niceDate}</div>
+          </div>`;
+      });
+      chartBox.innerHTML = barsHTML;
+    }
+
+    function renderAll() {
+      populateEditor('today', getEntry(todayStr));
+      buildCalendar();
+      computeStats();
+      renderChart();
+    }
+  </script>
+</body>
+</html>
