@@ -152,6 +152,20 @@
 
     #loader { display: none; position: fixed; top: 20px; right: 20px; background: rgba(0,0,0,0.8); color: var(--accent-glow); padding: 10px 20px; border-radius: 20px; border: 1px solid var(--accent-pink); z-index: 9999; font-weight: 600; }
     .empty-state { text-align: center; padding: 20px; color: #999; font-size: 0.85rem; }
+
+    /* 100-Day Star Map */
+    .map-container { position: relative; width: 100%; padding: 15px 10px 5px; display: flex; flex-direction: column; align-items: center; overflow: hidden; }
+    .road-row { height: 20px; margin-bottom: 22px; position: relative; width: 100%; display: flex; justify-content: space-between; align-items: center; }
+    .road-row:last-child { margin-bottom: 0; }
+    .road-row::before { content: ''; position: absolute; left: 0; right: 0; top: 9px; height: 2px; background: var(--bar-bg); z-index: 1; }
+    .road-row:nth-child(odd):not(:last-child)::after { content: ''; position: absolute; right: -12px; top: 9px; width: 24px; height: 40px; border: 2px solid var(--bar-bg); border-left: none; border-radius: 0 20px 20px 0; z-index: 1; }
+    .road-row:nth-child(even):not(:last-child)::after { content: ''; position: absolute; left: -12px; top: 9px; width: 24px; height: 40px; border: 2px solid var(--bar-bg); border-right: none; border-radius: 20px 0 0 20px; z-index: 1; }
+    .road-row:nth-child(even) { flex-direction: row-reverse; }
+    .star-dot { width: 13px; height: 13px; background: rgba(0,0,0,0.5); border: 1.5px solid rgba(255,255,255,0.15); border-radius: 50%; z-index: 2; position: relative; transition: 0.3s; }
+    .star-dot.partial { border-color: #DDA0DD; background: transparent; }
+    .star-dot.full { background: var(--accent-glow); border-color: #fff; box-shadow: 0 0 8px var(--accent-glow); }
+    .dot-tip { position: absolute; bottom: 130%; left: 50%; transform: translateX(-50%); font-size: 0.6rem; background: rgba(0,0,0,0.9); padding: 3px 6px; border-radius: 6px; white-space: nowrap; opacity: 0; pointer-events: none; transition: 0.2s; z-index: 20; }
+    .star-dot:hover .dot-tip { opacity: 1; }
   </style>
 </head>
 <body>
@@ -240,8 +254,14 @@
     </div>
 
     <div class="card">
-      <h3>📊 Last 10 Days</h3>
-      <div class="chart-container view-10" id="chart-box"></div>
+      <h3 style="margin-bottom: 5px;">🌟 100-Day Star Map</h3>
+      <p style="font-size: 0.8rem; color: #DDA0DD; text-align: center; margin-bottom: 15px;">A star lights up on any day you completed all 3 prayers</p>
+      <div class="map-container" id="prayer-map"></div>
+      <div class="cal-legend" style="margin-top: 10px;">
+        <span><span class="legend-dot" style="background: var(--accent-glow); box-shadow: 0 0 6px var(--accent-glow);"></span>All prayers done</span>
+        <span><span class="legend-dot" style="border: 1.5px solid #DDA0DD; background: transparent;"></span>Logged, incomplete</span>
+        <span><span class="legend-dot" style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.15);"></span>Not logged</span>
+      </div>
     </div>
 
   </div>
@@ -569,45 +589,50 @@
       document.getElementById('stat-dua-best').innerText = `${best} 🏆 best`;
     }
 
-    // ---------- chart (last 10 days) ----------
-    function renderChart() {
-      const chartBox = document.getElementById('chart-box');
-      const days10 = [];
-      for (let i = 9; i >= 0; i--) {
+    // ---------- 100-day star map ----------
+    function buildPrayerMap() {
+      const mapEl = document.getElementById('prayer-map');
+      mapEl.innerHTML = '';
+
+      const days100 = [];
+      for (let i = 99; i >= 0; i--) {
         const d = new Date(todayDate);
         d.setDate(d.getDate() - i);
-        days10.push(toYMD(d));
+        days100.push(toYMD(d));
       }
 
-      let barsHTML = '';
-      days10.forEach(dateStr => {
-        const entry = getEntry(dateStr);
-        const registered = isRegistered(entry);
-        let doneCount = 0;
-        if (registered) {
-          if (isTrue(entry.Subh)) doneCount++;
-          if (isTrue(entry.DuhrAsr)) doneCount++;
-          if (isTrue(entry.MaghribIsha)) doneCount++;
-        }
-        const pct = registered ? Math.max((doneCount / 3) * 100, doneCount > 0 ? 8 : 0) : 0;
-        const niceDate = dateStr.substring(8, 10) + '.' + dateStr.substring(5, 7);
-        const tooltip = registered ? `${niceDate}<br>${doneCount} / 3 prayers` : `${niceDate}<br>Not logged`;
+      const dotsPerRow = 10, rows = 10;
+      for (let r = 0; r < rows; r++) {
+        const rowDiv = document.createElement('div');
+        rowDiv.className = 'road-row';
+        for (let c = 0; c < dotsPerRow; c++) {
+          const dateStr = days100[(r * dotsPerRow) + c];
+          const entry = getEntry(dateStr);
+          const registered = isRegistered(entry);
+          let doneCount = 0;
+          if (registered) {
+            if (isTrue(entry.Subh)) doneCount++;
+            if (isTrue(entry.DuhrAsr)) doneCount++;
+            if (isTrue(entry.MaghribIsha)) doneCount++;
+          }
+          const statusClass = doneCount === 3 ? ' full' : (registered ? ' partial' : '');
+          const niceDate = dateStr.substring(8, 10) + '.' + dateStr.substring(5, 7);
+          const tipText = registered ? `${niceDate} · ${doneCount}/3 prayers` : `${niceDate} · not logged`;
 
-        barsHTML += `
-          <div class="bar-wrapper">
-            <div class="bar-tooltip">${tooltip}</div>
-            <div class="bar" style="height: ${pct}%; background: ${pct === 0 ? 'rgba(255,255,255,0.08)' : ''};"></div>
-            <div class="date-label">${niceDate}</div>
-          </div>`;
-      });
-      chartBox.innerHTML = barsHTML;
+          const dot = document.createElement('div');
+          dot.className = 'star-dot' + statusClass;
+          dot.innerHTML = `<span class="dot-tip">${tipText}</span>`;
+          rowDiv.appendChild(dot);
+        }
+        mapEl.appendChild(rowDiv);
+      }
     }
 
     function renderAll() {
       populateEditor('today', getEntry(todayStr));
       buildCalendar();
       computeStats();
-      renderChart();
+      buildPrayerMap();
     }
   </script>
 </body>
