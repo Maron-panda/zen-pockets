@@ -153,19 +153,10 @@
     #loader { display: none; position: fixed; top: 20px; right: 20px; background: rgba(0,0,0,0.8); color: var(--accent-glow); padding: 10px 20px; border-radius: 20px; border: 1px solid var(--accent-pink); z-index: 9999; font-weight: 600; }
     .empty-state { text-align: center; padding: 20px; color: #999; font-size: 0.85rem; }
 
-    /* 100-Day Star Map */
-    .map-container { position: relative; width: 100%; padding: 15px 10px 5px; display: flex; flex-direction: column; align-items: center; overflow: hidden; }
-    .road-row { height: 20px; margin-bottom: 22px; position: relative; width: 100%; display: flex; justify-content: space-between; align-items: center; }
-    .road-row:last-child { margin-bottom: 0; }
-    .road-row::before { content: ''; position: absolute; left: 0; right: 0; top: 9px; height: 2px; background: var(--bar-bg); z-index: 1; }
-    .road-row:nth-child(odd):not(:last-child)::after { content: ''; position: absolute; right: -12px; top: 9px; width: 24px; height: 40px; border: 2px solid var(--bar-bg); border-left: none; border-radius: 0 20px 20px 0; z-index: 1; }
-    .road-row:nth-child(even):not(:last-child)::after { content: ''; position: absolute; left: -12px; top: 9px; width: 24px; height: 40px; border: 2px solid var(--bar-bg); border-right: none; border-radius: 20px 0 0 20px; z-index: 1; }
-    .road-row:nth-child(even) { flex-direction: row-reverse; }
-    .star-dot { width: 13px; height: 13px; background: rgba(0,0,0,0.5); border: 1.5px solid rgba(255,255,255,0.15); border-radius: 50%; z-index: 2; position: relative; transition: 0.3s; }
-    .star-dot.partial { border-color: #DDA0DD; background: transparent; }
-    .star-dot.full { background: var(--accent-glow); border-color: #fff; box-shadow: 0 0 8px var(--accent-glow); }
-    .dot-tip { position: absolute; bottom: 130%; left: 50%; transform: translateX(-50%); font-size: 0.6rem; background: rgba(0,0,0,0.9); padding: 3px 6px; border-radius: 6px; white-space: nowrap; opacity: 0; pointer-events: none; transition: 0.2s; z-index: 20; }
-    .star-dot:hover .dot-tip { opacity: 1; }
+    /* Road to Jannah */
+    #road-panda { filter: drop-shadow(0 0 5px rgba(236,111,156,0.85)); transition: x 0.7s ease, y 0.7s ease; }
+    #jannah-gate { transition: 0.4s; }
+    #jannah-gate.lit { filter: drop-shadow(0 0 6px var(--accent-glow)); }
   </style>
 </head>
 <body>
@@ -254,13 +245,28 @@
     </div>
 
     <div class="card">
-      <h3 style="margin-bottom: 5px;">🌟 100-Day Star Map</h3>
-      <p style="font-size: 0.8rem; color: #DDA0DD; text-align: center; margin-bottom: 15px;">A star lights up on any day you completed all 3 prayers</p>
-      <div class="map-container" id="prayer-map"></div>
+      <h3 style="margin-bottom: 5px;">🕌 Road to Jannah</h3>
+      <p style="font-size: 0.8rem; color: #DDA0DD; text-align: center; margin-bottom: 12px;">Every missed prayer pulls you back — make it up to move forward</p>
+
+      <div style="text-align: center; margin-bottom: 10px;">
+        <span style="font-size: 1.4rem; color: var(--accent-glow); font-weight: 700;" id="road-backlog-num">0</span>
+        <span style="font-size: 0.8rem; color: #DDA0DD;"> prayers to make up</span>
+        <div style="font-size: 0.75rem; color: white; margin-top: 4px;" id="road-message"></div>
+      </div>
+
+      <svg id="road-svg" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: auto; overflow: visible; display: block;">
+        <path d="M 20 175 C 90 175, 90 115, 160 115 C 230 115, 230 55, 300 55 C 340 55, 360 35, 380 25"
+              fill="none" stroke="#2a2444" stroke-width="16" stroke-linecap="round"/>
+        <path id="road-path" d="M 20 175 C 90 175, 90 115, 160 115 C 230 115, 230 55, 300 55 C 340 55, 360 35, 380 25"
+              fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2" stroke-dasharray="6 9" stroke-linecap="round"/>
+        <text x="20" y="196" text-anchor="middle" font-size="14">🌑</text>
+        <text id="jannah-gate" x="380" y="17" text-anchor="middle" font-size="18">🕌</text>
+        <image id="road-panda" href="https://maron-panda.github.io/zen-pockets/momorin-placeholder.png" width="26" height="26" x="7" y="162"/>
+      </svg>
+
       <div class="cal-legend" style="margin-top: 10px;">
-        <span><span class="legend-dot" style="background: var(--accent-glow); box-shadow: 0 0 6px var(--accent-glow);"></span>All prayers done</span>
-        <span><span class="legend-dot" style="border: 1.5px solid #DDA0DD; background: transparent;"></span>Logged, incomplete</span>
-        <span><span class="legend-dot" style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.15);"></span>Not logged</span>
+        <span>🌑 Start</span>
+        <span>🕌 Jannah gate</span>
       </div>
     </div>
 
@@ -589,50 +595,53 @@
       document.getElementById('stat-dua-best').innerText = `${best} 🏆 best`;
     }
 
-    // ---------- 100-day star map ----------
-    function buildPrayerMap() {
-      const mapEl = document.getElementById('prayer-map');
-      mapEl.innerHTML = '';
+    // ---------- Road to Jannah (live prayer backlog) ----------
+    const ROAD_MAX_BACKLOG = 15; // outstanding missed prayer-slots at which the panda sits at the very start
 
-      const days100 = [];
-      for (let i = 99; i >= 0; i--) {
-        const d = new Date(todayDate);
-        d.setDate(d.getDate() - i);
-        days100.push(toYMD(d));
+    function updateRoadToJannah() {
+      const registeredEntries = state.history.filter(isRegistered);
+
+      let outstandingMissed = 0;
+      registeredEntries.forEach(e => {
+        let done = 0;
+        if (isTrue(e.Subh)) done++;
+        if (isTrue(e.DuhrAsr)) done++;
+        if (isTrue(e.MaghribIsha)) done++;
+        outstandingMissed += (3 - done);
+      });
+
+      let progress; // 0 = start of road, 1 = Jannah gate
+      let message;
+      if (registeredEntries.length === 0) {
+        progress = 0;
+        message = 'Log your first day to start the journey!';
+      } else {
+        const clamped = Math.min(outstandingMissed, ROAD_MAX_BACKLOG);
+        progress = 1 - (clamped / ROAD_MAX_BACKLOG);
+        if (outstandingMissed === 0) message = "All caught up — you're at the gates! 🌸";
+        else if (outstandingMissed <= 3) message = 'So close to Jannah, keep going!';
+        else if (outstandingMissed <= 8) message = 'A little catching up needed 🌙';
+        else message = 'Time to make up some prayers 💫';
       }
 
-      const dotsPerRow = 10, rows = 10;
-      for (let r = 0; r < rows; r++) {
-        const rowDiv = document.createElement('div');
-        rowDiv.className = 'road-row';
-        for (let c = 0; c < dotsPerRow; c++) {
-          const dateStr = days100[(r * dotsPerRow) + c];
-          const entry = getEntry(dateStr);
-          const registered = isRegistered(entry);
-          let doneCount = 0;
-          if (registered) {
-            if (isTrue(entry.Subh)) doneCount++;
-            if (isTrue(entry.DuhrAsr)) doneCount++;
-            if (isTrue(entry.MaghribIsha)) doneCount++;
-          }
-          const statusClass = doneCount === 3 ? ' full' : (registered ? ' partial' : '');
-          const niceDate = dateStr.substring(8, 10) + '.' + dateStr.substring(5, 7);
-          const tipText = registered ? `${niceDate} · ${doneCount}/3 prayers` : `${niceDate} · not logged`;
+      const path = document.getElementById('road-path');
+      const total = path.getTotalLength();
+      const pt = path.getPointAtLength(total * progress);
 
-          const dot = document.createElement('div');
-          dot.className = 'star-dot' + statusClass;
-          dot.innerHTML = `<span class="dot-tip">${tipText}</span>`;
-          rowDiv.appendChild(dot);
-        }
-        mapEl.appendChild(rowDiv);
-      }
+      const panda = document.getElementById('road-panda');
+      panda.setAttribute('x', pt.x - 13);
+      panda.setAttribute('y', pt.y - 24);
+
+      document.getElementById('road-backlog-num').innerText = outstandingMissed;
+      document.getElementById('road-message').innerText = message;
+      document.getElementById('jannah-gate').classList.toggle('lit', outstandingMissed === 0 && registeredEntries.length > 0);
     }
 
     function renderAll() {
       populateEditor('today', getEntry(todayStr));
       buildCalendar();
       computeStats();
-      buildPrayerMap();
+      updateRoadToJannah();
     }
   </script>
 </body>
