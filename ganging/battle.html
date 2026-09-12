@@ -1,0 +1,69 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Battle Royale — Kingdom of Tables</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="app">
+  <div class="topbar"><div class="wordmark">Kingdom of Tables</div></div>
+
+  <div id="mode-view">
+    <div class="page-title">Battle Royale</div>
+    <div class="page-sub">5 minutes. How many can you solve?</div>
+    <div class="tiles" style="grid-template-columns:1fr;">
+      <button class="tile battle" id="mode-normal" style="text-align:left;border:none;cursor:pointer;">
+        <div class="t-title">Normal</div>
+        <div class="t-sub">Random mix, tables 0–10</div>
+      </button>
+      <button class="tile portal" id="mode-adaptive" style="text-align:left;border:none;cursor:pointer;">
+        <div class="t-title">Character Development</div>
+        <div class="t-sub">More practice on your weak spots</div>
+      </button>
+    </div>
+  </div>
+
+  <div id="loading-view" style="display:none;" class="loading">Loading your stats…</div>
+
+  <div id="arena-view" style="display:none;">
+    <div class="arena">
+      <div class="arena-top"><span id="score-text">Score: 0</span><span id="streak-text">Streak: 0</span></div>
+      <div class="timer" id="timer-text">5:00</div>
+      <div class="problem-text" id="problem-text"></div>
+      <form id="answer-form">
+        <input type="number" inputmode="numeric" class="answer-input" id="answer-input" placeholder="?" autocomplete="off">
+        <button type="submit" class="btn btn-primary" style="background:#fff;color:var(--purple);">Check</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="result-view" style="display:none;">
+    <div class="result-card">
+      <div class="page-sub" style="padding:0;">Round over!</div>
+      <div class="result-score" id="result-score"></div>
+      <div class="result-stats" id="result-stats"></div>
+      <div id="new-badges"></div>
+      <button class="btn btn-primary" id="view-leaderboard-btn">View Royal Palace</button>
+      <button class="btn btn-outline" id="play-again-btn">Play again</button>
+    </div>
+  </div>
+
+  <nav class="bottom-nav">
+    <a href="practice.html" class="nav-item"><span class="icon">🧮</span>Practice</a>
+    <a href="battle.html" class="nav-item active"><span class="icon">⚡</span>Battle</a>
+    <a href="leaderboard.html" class="nav-item"><span class="icon">🏆</span>Palace</a>
+    <a href="profile.html" class="nav-item"><span class="icon">⭐</span>Portal</a>
+  </nav>
+</div>
+<script src="js/api.js"></script>
+<script src="js/session.js"></script>
+<script src="js/adaptive.js"></script>
+<script src="js/achievements.js"></script>
+<script src="js/battle.js"></script>
+</body>
+</html>
