@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Royal Palace — Kingdom of Tables</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="ganging/css_pretty.css">
+</head>
+<body>
+<div class="app">
+  <div class="topbar"><div class="wordmark">Kingdom of Tables</div></div>
+  <div class="page-title">Royal Palace</div>
+  <div class="page-sub">Top scores, all time</div>
+
+  <div id="board-loading" class="loading">Loading the standings…</div>
+  <div id="board-view" style="display:none;">
+    <div class="podium" id="podium"></div>
+    <div class="rank-rows" id="rank-rows"></div>
+  </div>
+  <div id="board-empty" class="loading" style="display:none;">No battles played yet — be the first!</div>
+
+  <nav class="bottom-nav">
+    <a href="ganging/practice.html" class="nav-item"><span class="icon">🧮</span>Practice</a>
+    <a href="ganging/battle.html" class="nav-item"><span class="icon">⚡</span>Battle</a>
+    <a href="ganging/leaderboard.html" class="nav-item active"><span class="icon">🏆</span>Palace</a>
+    <a href="ganging/profile.html" class="nav-item"><span class="icon">⭐</span>Portal</a>
+  </nav>
+</div>
+<script src="ganging/js/api.js"></script>
+<script src="ganging/js/session.js"></script>
+<script src="ganging/js/leaderboard.js"></script>
+</body>
+</html>
