@@ -1,0 +1,54 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kingdom of Tables</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="ganging/css_pretty.css">
+</head>
+<body>
+<div class="app" style="display:flex;flex-direction:column;justify-content:center;padding-bottom:40px;">
+
+  <div class="center-text" style="padding:0 22px 30px;">
+    <div class="page-title" style="padding:0;">Kingdom of Tables</div>
+    <div class="hint-text" style="margin-top:8px;">Enter your name to begin</div>
+  </div>
+
+  <div id="step-name">
+    <div class="field-group">
+      <input type="text" id="username-input" class="field-input" placeholder="Your name" autocomplete="off">
+    </div>
+    <div class="field-group">
+      <button class="btn btn-primary" id="continue-btn">Continue</button>
+    </div>
+  </div>
+
+  <div id="step-login" style="display:none;">
+    <div class="hint-text" id="welcome-back-text"></div>
+    <div class="field-group">
+      <input type="password" inputmode="numeric" maxlength="4" id="pin-login-input" class="field-input" placeholder="4-digit PIN">
+    </div>
+    <div class="error-text" id="login-error" style="display:none;"></div>
+    <div class="field-group"><button class="btn btn-primary" id="login-btn">Enter the kingdom</button></div>
+    <div class="field-group"><button class="btn btn-outline" id="back-from-login">Back</button></div>
+  </div>
+
+  <div id="step-register" style="display:none;">
+    <div class="hint-text" id="not-registered-text"></div>
+    <div class="field-group">
+      <input type="password" inputmode="numeric" maxlength="4" id="pin-register-input" class="field-input" placeholder="Choose a 4-digit PIN">
+    </div>
+    <div class="error-text" id="register-error" style="display:none;"></div>
+    <div class="field-group"><button class="btn btn-primary" id="register-btn">Create my account</button></div>
+    <div class="field-group"><button class="btn btn-outline" id="back-from-register">Back</button></div>
+  </div>
+
+</div>
+<script src="ganging/js/api.js"></script>
+<script src="ganging/js/session.js"></script>
+<script src="ganging/js/auth.js"></script>
+</body>
+</html>
